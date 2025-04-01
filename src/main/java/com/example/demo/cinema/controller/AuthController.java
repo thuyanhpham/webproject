@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.cinema.dto.AuthResponse;
 import com.example.demo.cinema.dto.LoginRequest;
 import com.example.demo.cinema.dto.RegisterRequest;
-import com.example.demo.cinema.entity.PasswordResetToken;
 import com.example.demo.cinema.entity.User;
-import com.example.demo.cinema.repository.PasswordResetTokenRepository;
 import com.example.demo.cinema.security.JwtUtil;
 import com.example.demo.cinema.service.PasswordResetService;
 import com.example.demo.cinema.service.TokenBlacklistService;
@@ -30,13 +28,10 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
+//test
 	private UserService userService;
 	private PasswordEncoder passwordEncoder;
-	private JwtUtil jwtUtil;
-	private PasswordResetService passwordResetService;
-	private PasswordResetTokenRepository passwordResetTokenRepository;
-	private TokenBlacklistService tokenBlacklistService;
+	
 	
 	
 	
