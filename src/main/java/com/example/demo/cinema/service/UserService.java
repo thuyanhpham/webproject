@@ -1,47 +1,127 @@
 package com.example.demo.cinema.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Status;
+
 @Service
 public class UserService {
 	
 	private UserRepository userRepository;
-	private PasswordEncoder passwordEncoder;
+	private BCryptPasswordEncoder passwordEncoder;
+	private HttpSession session;
 	
-	public void saveUser(User user) {
-		userRepository.save(user);
-	}
-	
-	public boolean existByUsername(String username) {
-		return userRepository.existByUsername(username);
-	}
-	
-	public boolean existByEmail(String email) {
-		return userRepository.existByEmail(email);
-	}
-	
-	public Optional<User> authenticateUser(String usernameOrEmail, String password) {
-		Optional<User> user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
-		
-		if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-			return user;
+	// Đăng ký user
+	public String registerUser(String email, String password, String fullname) {
+		if (userRepository.findByEmail(email).isPresent()) {
+			return "Email đã tồn tại!";
 		}
-		
-		return Optional.empty();
-		
+		User user = new User();
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(password));
+		user.setFullname(fullname);
+		userRepository.save(user);
+		return "Đăng ký thành công!";
 	}
 	
-	public void updatePasswordByEmail(String email, String newPassword) {
-		Optional<User> userOpt = userRepository.findByEmail(email);
-		if (userOpt.isPresent()) {
-			User user = userOpt.get();
+	// Đăng nhập sử dụng sesion
+	public String loginUser(String email, String password) {
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			if (passwordEncoder.matches(password, user.getPassword())) {
+				session.setAttribute("user", user);
+				return "Đăng nhập thành công!";
+			}
+		}
+		return "Email hoặc mật khẩu không chính xác!";
+	}
+	
+	public Optional<User> findByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+	
+	
+	// Đăng xuất
+	public String logoutUser() {
+		session.invalidate();
+		return "Đăng xuất thành công!";
+	}
+	
+	// Quên mật khẩu
+	public String forgotPassword(String email) {
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			String newPassword = "12345678";
 			user.setPassword(passwordEncoder.encode(newPassword));
 			userRepository.save(user);
+			return "Mật khẩu mới đã được đặt thành công!";
 		}
+		return "Email không tồn tại!";
+	}
+	
+	// Lấy danh sách tất cả user (Admin)
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
+	}
+	
+	// Lấy thông tin user theo ID
+	public User getUserById(Long id) {
+		return userRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+	}
+	
+	// Cập nhật thông tin cá nhân
+	public User updateUser(Long id, User updatedUser) {
+		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		
+		if (updatedUser.getFullname() != null) {
+			user.setFullname(updatedUser.getFullname());
+		}
+		if (updatedUser.getPhone() != null) {
+			user.setPhone(updatedUser.getPhone());
+		}
+		if (updatedUser.getGender() != null) {
+			user.setGender(updatedUser.getGender());
+		}
+		if (updatedUser.getBirthday() != null) {
+			user.setBirthday(updatedUser.getBirthday());
+		}
+		
+		return userRepository.save(user);
+	}
+	
+	// Đổi mật khẩu
+	public void changePassword(Long id, String oldPassword, String newPassword) {
+		User user = getUserById(id);
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			throw new RuntimeException("Mật khẩu cũ không đúng");
+		}
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+		
+	}
+	
+	// Cập nhật trạng thái tài khoản (Admin)
+	public User updateUserStatus(Long id, int status) {
+		User user = getUserById(id);
+		Status newStatus = Status.fromString(status);
+		user.setStatus(newStatus);
+		return userRepository.save(user);
+	}
+	
+	// Xóa tài khoản (Admin)
+	public void deleteUser(Long id) {
+		userRepository.deleteById(id);
 	}
 	
 }

@@ -1,119 +1,116 @@
 package com.example.demo.cinema.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.cinema.dto.AuthResponse;
-import com.example.demo.cinema.dto.LoginRequest;
-import com.example.demo.cinema.dto.RegisterRequest;
 import com.example.demo.cinema.entity.User;
-import com.example.demo.cinema.security.JwtUtil;
-import com.example.demo.cinema.service.PasswordResetService;
-import com.example.demo.cinema.service.TokenBlacklistService;
+import com.example.demo.cinema.repository.UserRepository;
 import com.example.demo.cinema.service.UserService;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
-//test
-	private UserService userService;
+
+	private UserRepository userRepository;
 	private PasswordEncoder passwordEncoder;
+	private UserService userService;
 	
-	
-	
-	
-	//Xử lý đăng ký
+	//API Đăng ký
 	@PostMapping("/register")
-	public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-		if (userService.existByUsername(request.getUsername())) {
-			return ResponseEntity.badRequest().body("Tên đăng nhập đã tồn tại!");
+	public Map<String, String> register(@RequestParam String username, @RequestParam String password, @RequestParam String email) {
+		Map<String, String> response = new HashMap<>();
+		if (userRepository.findByUsername(username).isPresent()) {
+			response.put("message", "Username đã tồn tại");
+			return response;
 		}
 		
-		if (userService.existByEmail(request.getEmail())) {
-			return ResponseEntity.badRequest().body("Email đã được sử dụng!");
-		}
+		User user =new User();
+		user.setUsername(username);
+		user.setPassword(passwordEncoder.encode(password));
+		user.setEmail(email);
+		userRepository.save(user);
 		
+		response.put("message", "Đăng ký thành công");
+		return response;
 		
-		return ResponseEntity.ok("Đăng ký thành công!");
 	}
 	
-	//Xử lý đăng nhập
+	// API Đăng nhập
 	@PostMapping("/login")
-	public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
-		Optional<User> user = userService.authenticateUser(request.getUsernameOrEmail(), request.getPassword());
+	public Map<String, String> login(@RequestParam String username, @RequestParam String password, HttpSession session) {
+		Map<String, String> response = new HashMap<>();
+		Optional<User> optionalUser = userService.findByUsername(username);
 		
-		if (user.isPresent()) {
-			String token = jwtUtil.generateToken(user.get().getUsername());
-			
-			AuthResponse authResponse = new AuthResponse();
-			return ResponseEntity.ok(authResponse);
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			if (new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+				session.setAttribute("user", user);
+				response.put("message", "Đăng nhập thành công!");
+				
+				// Kiểm tra nếu role không null và gọi toString() trên đối tượng role
+				if (user.getRole() != null) {
+					response.put("role", user.getRole().toString());
+				} else {
+					response.put("role", "UNKNOWN");
+				}
 		} else {
-			return ResponseEntity.badRequest().body("Tên đăng nhập hoặc mật khẩu không đúng!");
+			response.put("message",  "Tên đăng nhập hoặc mật khẩu không đúng!");
 		}
-		
+	} 
+		return response; 
 	}
 	
-	//API quên mật khẩu
-	@PostMapping("/forgot-password")
-	public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> request) {
-		String email = request.get("email");
-		
-		if (!userService.existByEmail(email)) {
-			return ResponseEntity.badRequest().body("Email không tồn tại trong hệ thống!");
+	// API Kiểm tra trạng thái đăng nhập
+	@GetMapping("/check-login")
+	public Map<String, String> checkLogin(HttpSession session) {
+		Map<String, String> response = new HashMap<>();
+		if (session.getAttribute("username") != null) {
+			response.put("message", "Đã đăng nhập");
+			response.put("username", session.getAttribute("username").toString());
 			
+		} else {
+			response.put("message", "Chưa đăng nhập");
 		}
-		
-		String token = passwordResetService.createdResetToken(email);
-		
-		return ResponseEntity.ok("Mã đặt lại mật khẩu đã được gửi qua email!");
+		return response;
 	}
 	
-	//API đặt lại mật khẩu
-	@PostMapping("/reset-password")
-	public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
-		String token = request.get("token");
-		String newPassword = request.get("newPassword");
-		
-		//Kiểm tra token hợp lệ
-		Optional<PasswordResetToken> resetTokenOpt = passwordResetService.validateResetToken(token);
-		if (resetTokenOpt.isEmpty()) {
-			return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn!");
-			
-		}
-		
-		PasswordResetToken resetToken = resetTokenOpt.get();
-		String email = resetToken.getEmail();
-		
-		//Đặt lại mật khẩu mới
-		userService.updatePasswordByEmail(email, newPassword);
-		
-		//Xóa token sau khi sử dụng
-		passwordResetTokenRepository.delete(resetToken);
-		
-		return ResponseEntity.ok("Mật khẩu đã được đặt lại thành công!");
-	}
-	
+	// API Đăng xuất
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(HttpServletRequest request) {
-	String authHeader = request.getHeader("Authorization");
-	if (authHeader != null && authHeader.startsWith("Bearer ")) {
-		String token = authHeader.substring(7);
-		tokenBlacklistService.blacklistToken(token);
+	public Map<String, String> logout(HttpSession session) {
+		session.invalidate();
+		Map<String, String> response = new HashMap<>();
+		response.put("message", "Đăng xuất thành công");
+		return response;
 	}
-	SecurityContextHolder.clearContext();
-	return ResponseEntity.ok("Đăng xuất thành công!");
-  }
+	
+	// API Quên mật khẩu
+	@PostMapping("/forgot-password")
+	public Map<String, String> forgotPassword(@RequestParam String email) {
+		Optional<User> userOpt = userRepository.findByEmail(email);
+		Map<String, String> response = new HashMap<>();
+		
+		if (userOpt.isEmpty()) {
+			response.put("message", "Email không tồn tại");
+			return response;
+		}
+		
+		User user = userOpt.get();
+		String newPassword = "123456";
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+		
+		response.put("message", "Mật khẩu mới đã được đặt: " + newPassword);
+		return response;
+	}
 }
