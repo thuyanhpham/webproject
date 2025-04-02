@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.service.UserService;
 
@@ -38,6 +40,12 @@ public class UserController {
 		return ResponseEntity.ok(userService.getUserById(id));
 	}
 	
+	//Cập nhật thông tin cá nhân
+	@PutMapping("/{id}")
+	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updateUser) {
+		return ResponseEntity.ok(userService.updateUser(id, updateUser));
+	}
+	
 	// Đổi mật khẩu
 	@PostMapping("/{id}/change-password")
 	public ResponseEntity<String> changePassword(@PathVariable Long id, @RequestParam String oldPassword, @RequestParam String newPassword) {
@@ -45,22 +53,18 @@ public class UserController {
 		return ResponseEntity.ok("Đổi mật khẩu thành công");
 	}
 	
-	// Cập nhật trạng thái tài khoản (Admin quyền)
+	// Cập nhật trạng thái tài khoản (Admin)
+	@PatchMapping("/{id}/status")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<String> updateUserStatus(@PathVariable Long id, @RequestParam Status status) {
+		return ResponseEntity.ok(userService.updateUserStatus(id, status));
+	}
+	
+	// Xóa tài khoản (Admin)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<String> deleteUser(@PathVariable Long id) {
 		userService.deleteUser(id);
-		return ResponseEntity.ok("Xóa tài khoản thành công");
-	}
-	
-	// Cập nhật thông tin người dùng
-	@PutMapping("/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-		try {
-			User updated = userService.updateUser(id, updatedUser);
-			return ResponseEntity.ok(updated);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
+		return ResponseEntity.ok("Xóa tài khoản thành công!");
 	}
 }

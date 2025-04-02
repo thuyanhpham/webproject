@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class CustomUserDetailsService {
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain customSecurityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(auth -> auth
 					.requestMatchers("/api/users/**").authenticated()
