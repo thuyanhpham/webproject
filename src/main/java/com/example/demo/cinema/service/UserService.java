@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Status;
 
 @Service
 public class UserService {
@@ -82,21 +82,11 @@ public class UserService {
 	
 	// Cập nhật thông tin cá nhân
 	public User updateUser(Long id, User updatedUser) {
-		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-		
-		if (updatedUser.getFullname() != null) {
-			user.setFullname(updatedUser.getFullname());
-		}
-		if (updatedUser.getPhone() != null) {
-			user.setPhone(updatedUser.getPhone());
-		}
-		if (updatedUser.getGender() != null) {
-			user.setGender(updatedUser.getGender());
-		}
-		if (updatedUser.getBirthday() != null) {
-			user.setBirthday(updatedUser.getBirthday());
-		}
-		
+		User user = getUserById(id);
+		user.setFullname(updatedUser.getFullname());
+		user.setPhone(updatedUser.getPhone());
+		user.setGender(updatedUser.getGender());
+		user.setBirthday(updatedUser.getBirthday());
 		return userRepository.save(user);
 	}
 	
@@ -112,10 +102,9 @@ public class UserService {
 	}
 	
 	// Cập nhật trạng thái tài khoản (Admin)
-	public User updateUserStatus(Long id, int status) {
+	public User updateUserStatus(Long id, Status status) {
 		User user = getUserById(id);
-		Status newStatus = Status.fromString(status);
-		user.setStatus(newStatus);
+		user.setStatus(status);
 		return userRepository.save(user);
 	}
 	
