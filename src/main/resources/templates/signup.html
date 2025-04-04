@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sign Up</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css">
+	<link rel="stylesheet" th:href="@{/css/main.css}">
+	
+</head>
+
+<body>
+
+	<section class="account-section bg_img" th:style="'backgound-image: url(' + @{/images/account-bg.jng} + ')'">
+		<div class="container">
+			<div class="padding-top padding-bottom">
+				<div class="account-area">
+					<div class="section-header-3">
+						<span class="cate">Welcome</span>
+						<h2 class="title">to Our Service</h2>						
+					</div>
+					
+					<form class="account-form" th:action="@{/register}" method="post" th:object="${user}">
+						<div class="form-group">
+							<label for="email">Email<span>*</span></label>
+							<input type="email" id="email" th:field="*{email}" placeholder="Enter Your Email" required>
+						</div>
+						<div class="form-group">
+						<label for="username">Username<span>*</span></label>
+						<input type="text" id="username" th:field="*{username}" placeholder="Enter Your Username" required>
+						</div>
+						<div class="form-group">
+							<label for="password">Password<span>*</span></label>
+							<input type="password" id="password" th:field="*{password}" placeholder="Enter Your Password" required>
+						</div>
+						<div class="form-group checkgroup">
+							<input type="checkbox" id="terms" required>
+							<label for="terms">I agree to the<a href="#">Terms & Privacy Policy</a></label>
+						</div>
+						<div class="form-group text-center">
+							<button type="Submit">Sign Up</button>
+						</div>
+					</form>
+					<div class="option">
+						Already have an account? <a th:href="@{/login}">Login</a>
+					</div>
+					
+				</div>
+			
+			</div>
+		
+		</div>
+		
+	</section>
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<script th:src="@{/js/boostrap.min.js}"></script>
+</body>
+</html>
