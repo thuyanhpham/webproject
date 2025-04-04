@@ -2,7 +2,6 @@ package com.example.demo.cinema.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,7 +55,7 @@ public class UserController {
 	// Cập nhật trạng thái tài khoản (Admin)
 	@PatchMapping("/{id}/status")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<String> updateUserStatus(@PathVariable Long id, @RequestParam Status status) {
+	public ResponseEntity<User> updateUserStatus(@PathVariable Long id, @RequestParam Status status) {
 		return ResponseEntity.ok(userService.updateUserStatus(id, status));
 	}
 	

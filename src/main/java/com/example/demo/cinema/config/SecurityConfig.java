@@ -22,6 +22,8 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 			.authorizeHttpRequests(auth -> auth
 					.requestMatchers("/auth/login", "/auth/register", "/auth/forgot-passord").permitAll()
+					.requestMatchers("/api/users/**").authenticated()
+					.requestMatchers("/api/users").hasRole("ADMIN")
 					.anyRequest().authenticated()
 			)
 			.formLogin(form -> form
