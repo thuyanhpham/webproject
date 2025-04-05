@@ -3,6 +3,8 @@ package com.example.demo.cinema.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,10 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.example.demo.cinema.service.UserService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+	private UserService userService;
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
@@ -32,7 +38,7 @@ public class SecurityConfig {
 					.permitAll()
 			)
 			.logout(logout -> logout
-					.logoutUrl("/auth/login")
+					.logoutUrl("/auth/logout")
 					.logoutSuccessUrl("/auth/login")
 					.invalidateHttpSession(true)
 					.deleteCookies("JSESSIONID")
@@ -47,5 +53,11 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 	
-
+	@Bean 
+	public AuthenticationManager authenticationManeger() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(userService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return new ProviderManager(provider);
+	}
 }

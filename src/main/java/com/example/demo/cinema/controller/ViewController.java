@@ -14,4 +14,9 @@ public class ViewController {
 	public String showRegisterForm() {
 		return "signup";
 	}
+	
+	@GetMapping("/login")
+	public String loginPage() {
+		return "login";
+	}
 }

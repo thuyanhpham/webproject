@@ -3,6 +3,10 @@ package com.example.demo.cinema.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +17,7 @@ import com.example.demo.cinema.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 	
 	private UserRepository userRepository;
 	private BCryptPasswordEncoder passwordEncoder;
@@ -32,29 +36,41 @@ public class UserService {
 		return "Đăng ký thành công!";
 	}
 	
-	// Đăng nhập sử dụng sesion
-	public String loginUser(String email, String password) {
-		Optional<User> optionalUser = userRepository.findByEmail(email);
-		if (optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			if (passwordEncoder.matches(password, user.getPassword())) {
-				session.setAttribute("user", user);
-				return "Đăng nhập thành công!";
-			}
-		}
-		return "Email hoặc mật khẩu không chính xác!";
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy User"));
+		
+		return new org.springframework.security.core.userdetails.User(user.getUsername(),
+						user.getPassword(),
+						List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
 	}
+	
+	
+//	// Đăng nhập sử dụng sesion
+//	public String loginUser(String email, String password) {
+//		Optional<User> optionalUser = userRepository.findByEmail(email);
+//		if (optionalUser.isPresent()) {
+//			User user = optionalUser.get();
+//			if (passwordEncoder.matches(password, user.getPassword())) {
+//				session.setAttribute("user", user);
+//				return "Đăng nhập thành công!";
+//			}
+//		}
+//		return "Email hoặc mật khẩu không chính xác!";
+//	}
 	
 	public Optional<User> findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
 	
 	
-	// Đăng xuất
-	public String logoutUser() {
-		session.invalidate();
-		return "Đăng xuất thành công!";
-	}
+//	// Đăng xuất
+//	public String logoutUser() {
+//		session.invalidate();
+//		return "Đăng xuất thành công!";
+//	}
 	
 	// Quên mật khẩu
 	public String forgotPassword(String email) {
@@ -112,5 +128,6 @@ public class UserService {
 	public void deleteUser(Long id) {
 		userRepository.deleteById(id);
 	}
-	
+
+
 }

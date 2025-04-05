@@ -46,30 +46,30 @@ public class AuthController {
 		
 	}
 	
-	// API Đăng nhập
-	@PostMapping("/login")
-	public Map<String, String> login(@RequestParam String username, @RequestParam String password, HttpSession session) {
-		Map<String, String> response = new HashMap<>();
-		Optional<User> optionalUser = userService.findByUsername(username);
-		
-		if (optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			if (new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-				session.setAttribute("user", user);
-				response.put("message", "Đăng nhập thành công!");
-				
-				// Kiểm tra nếu role không null và gọi toString() trên đối tượng role
-				if (user.getRole() != null) {
-					response.put("role", user.getRole().toString());
-				} else {
-					response.put("role", "UNKNOWN");
-				}
-		} else {
-			response.put("message",  "Tên đăng nhập hoặc mật khẩu không đúng!");
-		}
-	} 
-		return response; 
-	}
+//	// API Đăng nhập
+//	@PostMapping("/login")
+//	public Map<String, String> login(@RequestParam String username, @RequestParam String password, HttpSession session) {
+//		Map<String, String> response = new HashMap<>();
+//		Optional<User> optionalUser = userService.findByUsername(username);
+//		
+//		if (optionalUser.isPresent()) {
+//			User user = optionalUser.get();
+//			if (new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+//				session.setAttribute("user", user);
+//				response.put("message", "Đăng nhập thành công!");
+//				
+//				// Kiểm tra nếu role không null và gọi toString() trên đối tượng role
+//				if (user.getRole() != null) {
+//					response.put("role", user.getRole().toString());
+//				} else {
+//					response.put("role", "UNKNOWN");
+//				}
+//		} else {
+//			response.put("message",  "Tên đăng nhập hoặc mật khẩu không đúng!");
+//		}
+//	} 
+//		return response; 
+//	}
 	
 	// API Kiểm tra trạng thái đăng nhập
 	@GetMapping("/check-login")
@@ -85,14 +85,14 @@ public class AuthController {
 		return response;
 	}
 	
-	// API Đăng xuất
-	@PostMapping("/logout")
-	public Map<String, String> logout(HttpSession session) {
-		session.invalidate();
-		Map<String, String> response = new HashMap<>();
-		response.put("message", "Đăng xuất thành công");
-		return response;
-	}
+//	// API Đăng xuất
+//	@PostMapping("/logout")
+//	public Map<String, String> logout(HttpSession session) {
+//		session.invalidate();
+//		Map<String, String> response = new HashMap<>();
+//		response.put("message", "Đăng xuất thành công");
+//		return response;
+//	}
 	
 	// API Quên mật khẩu
 	@PostMapping("/forgot-password")
