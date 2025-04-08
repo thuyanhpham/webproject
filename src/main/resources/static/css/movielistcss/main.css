@@ -1,5 +1,15 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i,800&display=swap");
 /*
+Template Name: Boleto - Online Ticket Booking Website HTML Template
+Template URI: http://pixner.net/boleto/
+Author: pixelaxis
+Author URI: https: //themeforest.net/user/pixelaxis
+Description: Boleto | Online Ticket Booking Website HTML Template. Boleto is a Pixel-Perfect Powerful,
+Online Ticket Booking Website HTML Template for all types of Cinema Hall and Online Premium TV Channel.
+Version: 1.0.0
+Text Domain: 
+*/
+/*
 ///// CSS Index \\
 1. Reset CSS Start
 2. General CSS
@@ -46,6 +56,16 @@
 41.Leave-Comment CSS
 ---------------------------
 */
+/*! HTML5 Boilerplate v7.0.1 | MIT License | https://html5boilerplate.com/ */
+/* main.css 1.0.0 | MIT License | https://github.com/h5bp/main.css#readme */
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
 html {
   color: #222;
   font-size: 1em;
