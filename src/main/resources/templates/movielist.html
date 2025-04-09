@@ -228,7 +228,7 @@
                                                 <h5 class="title"><a th:href="@{/movie-details/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
                                                 <p class="duration" th:if="${movie.duration != null}" th:text="${(movie.duration / 60) + 'h ' + (movie.duration % 60) + 'm'}"></p>
                                                 <div class="movie-tags"><a href="#" th:each="g : ${movie.genres}" th:text="${g.name}" class="mr-1 mb-1"></a></div>
-                                                <div class="release"><span>Release Date : </span><a href="#" th:if="${movie.releaseDate != null}" th:text="${#dates.format(movie.releaseDate, 'MMMM dd, yyyy')}"></a><a href="#" th:unless="${movie.releaseDate != null}">N/A</a></div>
+                                                
                                                 <ul class="movie-rating-percent">
                                                      <!-- Ảnh từ static/images/ -->
                                                     <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
@@ -291,13 +291,10 @@
     <!-- ==========Newslater-Section========== -->
 
     <!-- ==================== SCRIPTS Paths (All inside movielistjs) ==================== -->
-  
-		<script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
+  <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
 		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
 		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
 		<script th:src="@{/js/movielistjs/plugins.js}"></script>
-		<script th:src="@{/js/movielistjs/popper.min.js}"></script> <!-- nếu có -->
-		
 		<script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
 		<script th:src="@{/js/movielistjs/nice-select.js}"></script>
 		<script th:src="@{/js/movielistjs/odometer.min.js}"></script>
@@ -324,8 +321,8 @@
                  var query = $('input[name="query"]').val() || (currentQuery != null ? currentQuery : '');
                  var sort = $('select[name="sortSelector"]').val();
                  var size = $('select[name="sizeSelector"]').val();
-                 var targetUrl = /*[[@{/movielist}]]*/ '/movielist' + '?query=' + encodeURIComponent(query) + '&sort=' + sort + '&size=' + size + '&page=0';
-                 window.location.href = targetUrl;
+                 var targetUrl = /*[[@{/movielist}]]*/ '/movielist' ;
+                 window.location.href = targetUrl + '?query=' + encodeURIComponent(query) + '&sort=' + sort + '&size=' + size + '&page=0';
             });
 
              // Khởi tạo Popup Video

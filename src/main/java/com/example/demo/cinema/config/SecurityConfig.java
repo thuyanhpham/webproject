@@ -48,7 +48,7 @@ public class SecurityConfig {
 						.anyRequest().authenticated() // Mọi request khác phải xác thực
 				)
 				.formLogin(form -> form
-						.loginPage("/login") // Chỉ định trang login tùy chỉnh
+						//.loginPage("/login") // Chỉ định trang login tùy chỉnh
 						// ====> SỬA URL THÀNH CÔNG SAU LOGIN <====
 						.defaultSuccessUrl("/movielist", true) // Chuyển đến movielist sau khi login
 						// =======================================
