@@ -113,4 +113,8 @@ public class AuthController {
 		response.put("message", "Mật khẩu mới đã được đặt: " + newPassword);
 		return response;
 	}
+	
+	// cimema list
+	
+	
 }

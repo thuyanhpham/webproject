@@ -482,8 +482,4 @@
         owlB.trigger('prev.owl.carousel', [300]);
     })
   });
-<<<<<<< HEAD
 })(jQuery);
-=======
-})(jQuery);
->>>>>>> a438f6641e1fbea9a4705a862a9de4f583c54063
