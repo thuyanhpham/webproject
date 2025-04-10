@@ -3,6 +3,7 @@ package com.example.demo.cinema.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,6 +20,8 @@ import com.example.demo.cinema.service.UserService;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	@Autowired
+	@Lazy
 	private UserService userService;
 	
 	@Bean
@@ -27,7 +30,7 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/", "/login", "/register", "/forgot-passord", "/home", "/css/**", "/js/**", "/images/**", "/webfont/**").permitAll()
+					.requestMatchers("/", "/login", "/register", "/forgot-password", "/home", "/css/**", "/js/**", "/images/**", "/webfont/**").permitAll()
 					.requestMatchers("/api/users/**").authenticated()
 					.requestMatchers("/api/users").hasRole("ADMIN")
 					.anyRequest().authenticated()

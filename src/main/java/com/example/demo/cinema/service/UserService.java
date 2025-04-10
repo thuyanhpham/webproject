@@ -3,35 +3,53 @@ package com.example.demo.cinema.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.cinema.entity.Role;
 import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
+import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
-
-import jakarta.servlet.http.HttpSession;
 
 @Service
 public class UserService implements UserDetailsService {
-	
+
+	@Autowired
 	private UserRepository userRepository;
-	private BCryptPasswordEncoder passwordEncoder;
-	private HttpSession session;
+	private PasswordEncoder passwordEncoder;
+	private RoleRepository roleRepository;
+	
+	public UserService(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+		this.passwordEncoder = passwordEncoder;
+		this.roleRepository = roleRepository;
+	}
 	
 	// Đăng ký user
-	public String registerUser(String email, String password, String fullname) {
+	public String registerUser(String email, String username, String password, String fullname) {
 		if (userRepository.findByEmail(email).isPresent()) {
 			return "Email đã tồn tại!";
 		}
+		
+		if (userRepository.findByUsername(username).isPresent()) {
+			return "Username đã tồn tại!";
+		}
+		
+		
+		Role userRole = roleRepository.findByName("USER")
+				.orElseThrow(() -> new RuntimeException("Không tìm thấy role USER"));
+		
 		User user = new User();
 		user.setEmail(email);
+		user.setUsername(username);
 		user.setPassword(passwordEncoder.encode(password));
 		user.setFullname(fullname);
+		user.setRole(userRole);
 		userRepository.save(user);
 		return "Đăng ký thành công!";
 	}
@@ -44,45 +62,30 @@ public class UserService implements UserDetailsService {
 		
 		return new org.springframework.security.core.userdetails.User(user.getUsername(),
 						user.getPassword(),
-						List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
+						List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())));
 	}
-	
-	
-//	// Đăng nhập sử dụng sesion
-//	public String loginUser(String email, String password) {
-//		Optional<User> optionalUser = userRepository.findByEmail(email);
-//		if (optionalUser.isPresent()) {
-//			User user = optionalUser.get();
-//			if (passwordEncoder.matches(password, user.getPassword())) {
-//				session.setAttribute("user", user);
-//				return "Đăng nhập thành công!";
-//			}
-//		}
-//		return "Email hoặc mật khẩu không chính xác!";
-//	}
 	
 	public Optional<User> findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
 	
+	// Cập nhật mật khẩu
+	public String updatePasswordByEmail(String email, String newPassword) {
+		email = email.trim().toLowerCase();
+		
+	    Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
+	    if (optionalUser.isPresent()) {
+	        User user = optionalUser.get();
+	        user.setPassword(passwordEncoder.encode(newPassword));
+	        userRepository.save(user);
+	        return "Cập nhật mật khẩu thành công.";
+	    }
+	    return "Không tìm thấy người dùng với email này.";
+	}
+
 	
-//	// Đăng xuất
-//	public String logoutUser() {
-//		session.invalidate();
-//		return "Đăng xuất thành công!";
-//	}
-	
-	// Quên mật khẩu
-	public String forgotPassword(String email) {
-		Optional<User> optionalUser = userRepository.findByEmail(email);
-		if (optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			String newPassword = "12345678";
-			user.setPassword(passwordEncoder.encode(newPassword));
-			userRepository.save(user);
-			return "Mật khẩu mới đã được đặt thành công!";
-		}
-		return "Email không tồn tại!";
+	public void save(User user) {
+		userRepository.save(user);
 	}
 	
 	// Lấy danh sách tất cả user (Admin)

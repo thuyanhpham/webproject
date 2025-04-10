@@ -18,13 +18,13 @@
     <link rel="stylesheet" th:href="@{/css/nice-select.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 
-    <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 </head>
 
 <body>
 
     <!-- Sign-In Section -->
-    <section class="account-section bg_img" th:style="'background-image: url(' + @{/assets/images/account/account-bg.jpg} + ')'">
+    <section class="account-section bg_img" th:style="'background-image: url(' + @{/images/account/account-bg.jpg} + ')'">
         <div class="container">
             <div class="padding-top padding-bottom">
                 <div class="account-area">
@@ -36,8 +36,8 @@
                     <form class="account-form" th:action="@{/login}" method="post">
                         <!-- Spring Security requires these names: username + password -->
                         <div class="form-group">
-                            <label for="username">Email<span>*</span></label>
-                            <input type="text" placeholder="Enter Your Email" id="username" name="username" required>
+                            <label for="username">Username<span>*</span></label>
+                            <input type="text" placeholder="Enter Your Username" id="username" name="username" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password<span>*</span></label>

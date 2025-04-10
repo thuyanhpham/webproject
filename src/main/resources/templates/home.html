@@ -166,17 +166,6 @@
                                      <option th:if="${availableDates == null}" value="2024-10-23">23/10/2024</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <div class="thumb">
-                                    <img th:src="@{/images/ticket/cinema.png}" alt="ticket">
-                                </div>
-                                <span class="type">cinema</span>
-                                <select class="select-bar" name="cinemaId">
-                                    <option value="">Select Cinema</option>
-                                    <option th:each="cinema : ${cinemas}" th:value="${cinema.id}" th:text="${cinema.name}">Awaken</option>
-                                     <option th:if="${cinemas == null}" value="awaken">Awaken</option>
-                                </select>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -331,7 +320,7 @@
             <div class="footer-bottom">
                 <div class="footer-bottom-area">
                     <div class="left">
-                        <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}">2024</span>. All Rights Reserved By <a href="#">Boleto</a></p>
+                        <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}">2025</span>. All Rights Reserved By <a href="#">Boleto</a></p>
                     </div>
                     <!--/* Modified Footer Links */-->
                     <ul class="links">
