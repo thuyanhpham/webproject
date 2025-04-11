@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleto - Login</title>
+ 
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+ 
+    <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
+</head>
+ 
+<body>
+ 
+    <!-- Sign-In Section -->
+    <section class="account-section bg_img" th:style="'background-image: url(' + @{/assets/images/account/account-bg.jpg} + ')'">
+        <div class="container">
+            <div class="padding-top padding-bottom">
+                <div class="account-area">
+                    <div class="section-header-3">
+                        <span class="cate">Hello</span>
+                        <h2 class="title">Welcome back</h2>
+                    </div>
+ 
+                    <form class="account-form" th:action="@{/login}" method="post">
+                        <!-- Spring Security requires these names: username + password -->
+                        <div class="form-group">
+                            <label for="username">Email<span>*</span></label>
+                            <input type="text" placeholder="Enter Your Email" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password<span>*</span></label>
+                            <input type="password" placeholder="Password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group checkgroup">
+                            <input type="checkbox" id="remember-me" name="remember-me">
+                            <label for="remember-me">Remember password</label>
+                            <a th:href="@{/forgot-password}" class="forget-pass">Forget Password?</a>
+                        </div>
+ 
+                        <!-- Login error message -->
+                        <div th:if="${param.error}" class="text-danger text-center mb-2">
+                            Invalid username or password
+                        </div>
+                        <div th:if="${param.logout}" class="text-success text-center mb-2">
+                            You have been logged out successfully
+                        </div>
+ 
+                        <div class="form-group text-center">
+                            <input type="submit" value="Log in">
+                        </div>
+                    </form>
+ 
+                    <div class="option">
+                        Don't have an account? <a th:href="@{/register}">Sign up now</a>
+                    </div>
+ 
+                    <div class="or"><span>Or</span></div>
+ 
+                    <ul class="social-icons">
+                        <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fab fa-google"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- Scripts -->
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/viewport.jquery.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+ 
+</html>
+ 

@@ -77,9 +77,9 @@ public class MovieController {
     }
 
 
-    @GetMapping("/")
-    public String homePage() {
-         // Chuyển hướng về trang danh sách phim làm trang chủ
-         return "redirect:/movielist";
-    }
+//    @GetMapping("/")
+//    public String homePage() {
+//         // Chuyển hướng về trang danh sách phim làm trang chủ
+//         return "redirect:/movielist";
+//    }
 }

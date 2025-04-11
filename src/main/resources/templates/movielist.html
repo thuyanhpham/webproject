@@ -126,8 +126,7 @@
                         <ul class="tab-menu ticket-tab-menu">
                              <!-- Ảnh từ static/images/ -->
                             <li class="active"><div class="tab-thumb"><img th:src="@{/images/ticket-tab01.png}" alt="ticket"></div><span>movie</span></li>
-                            <li><div class="tab-thumb"><img th:src="@{/images/ticket-tab02.png}" alt="ticket"></div><span>events</span></li>
-                            <li><div class="tab-thumb"><img th:src="@{/images/ticket-tab03.png}" alt="ticket"></div><span>sports</span></li>
+             
                         </ul>
                     </div>
                 </div>
@@ -137,31 +136,16 @@
                         <form class="ticket-search-form" th:action="@{/movielist}" method="get">
                             <div class="form-group large"><input type="text" name="query" placeholder="Search for Movies" th:value="${queryParam}"><button type="submit"><i class="fas fa-search"></i></button></div>
                              <!-- Ảnh từ static/images/ -->
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city</span><select class="select-bar" name="city"><option value="london">London</option><option value="dhaka">Dhaka</option></select></div>
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select class="select-bar" name="date"><option value="2020-10-23">23/10/2020</option></select></div>
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/cinema.png}" alt="ticket"></div><span class="type">cinema</span><select class="select-bar" name="cinema"><option value="Awaken">Awaken</option></select></div>
+                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city</span><select  name="city"><option value="london">Hà Nội</option></select></div>
+                            <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select  name="date" class="select-bar" style=" border-radius: 6px; width: 150px; height: 40px; " ><option value="2020-10-23">23/10/2020</option>
+                            <option value="2020-10-23">23/10/2020</option></select></div>
+                            
                              <input type="hidden" name="size" th:value="${pageSize}">
                              <input type="hidden" name="sort" th:value="${sortParam}">
                         </form>
                     </div>
-                     <!-- Tab tìm kiếm events -->
-                    <div class="tab-item">
-                        <form class="ticket-search-form">
-                           <div class="form-group large"><input type="text" placeholder="Search fo Events"><button type="submit"><i class="fas fa-search"></i></button></div>
-                           <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city</span><select class="select-bar"><option value="london">London</option></select></div>
-                           <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select class="select-bar"><option value="26-12-19">23/10/2020</option></select></div>
-                           <div class="form-group"><div class="thumb"><img th:src="@{/images/cinema.png}" alt="ticket"></div><span class="type">event</span><select class="select-bar"><option value="angular">angular</option></select></div>
-                        </form>
-                    </div>
-                    <!-- Tab tìm kiếm sports -->
-                    <div class="tab-item">
-                        <form class="ticket-search-form">
-                           <div class="form-group large"><input type="text" placeholder="Search fo Sports"><button type="submit"><i class="fas fa-search"></i></button></div>
-                           <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city</span><select class="select-bar"><option value="london">London</option></select></div>
-                           <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select class="select-bar"><option value="26-12-19">23/10/2020</option></select></div>
-                           <div class="form-group"><div class="thumb"><img th:src="@{/images/cinema.png}" alt="ticket"></div><span class="type">sports</span><select class="select-bar"><option value="football">football</option></select></div>
-                        </form>
-                    </div>
+                 
+                 
                 </div>
             </div>
         </div>
@@ -270,14 +254,7 @@
 
     <!-- ==========Newslater-Section========== -->
     <footer class="footer-section">
-        <div class="newslater-section padding-bottom">
-            <div class="container">
-                 <!-- Ảnh nền từ static/images/ (Đảm bảo file tồn tại) -->
-                <div class="newslater-container bg_img" th:attr="data-background=@{/images/newslater-bg01.jpg}" th:style="'background-image: url(\'' + @{/images/newslater-bg01.jpg} + '\');'">
-                    <div class="newslater-wrapper"><h5 class="cate">subscribe to Boleto </h5><h3 class="title">to get exclusive benefits</h3><form class="newslater-form" method="post" th:action="@{/subscribe}"><input type="email" name="email" placeholder="Your Email Address" required><button type="submit">subscribe</button></form><p>We respect your privacy, so we never share your info</p></div>
-                </div>
-            </div>
-        </div>
+      
         <div class="container">
             <div class="footer-top">
                  <!-- Ảnh từ static/images/ -->
@@ -294,7 +271,9 @@
   <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
 		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
 		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
+
 		<script th:src="@{/js/movielistjs/plugins.js}"></script>
+		<script th:src="@{/js/movielistjs/popper.min.js}"></script>
 		<script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
 		<script th:src="@{/js/movielistjs/nice-select.js}"></script>
 		<script th:src="@{/js/movielistjs/odometer.min.js}"></script>
@@ -305,7 +284,7 @@
 		<script th:src="@{/js/movielistjs/isotope.pkgd.min.js}"></script>
 		<script th:src="@{/js/movielistjs/contentInt.js}"></script>
 		<script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
-		<script th:src="@{/js/movielistjs/main.js}"></script>
+		<script th:src="@{/js/main.js}"></script>
 
     <!-- Inline script để xử lý tương tác -->
     <script th:inline="javascript">

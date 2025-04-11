@@ -114,6 +114,12 @@ public class AuthController {
 		return response;
 	}
 	
+	// đăng nhập
+		@GetMapping("/login")
+		public String LoginPage() {
+			return "login";
+		}
+	
 	// cimema list
 	
 	
