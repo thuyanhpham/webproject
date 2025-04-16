@@ -136,7 +136,7 @@
                         <form class="ticket-search-form" th:action="@{/movielist}" method="get">
                             <div class="form-group large"><input type="text" name="query" placeholder="Search for Movies" th:value="${queryParam}"><button type="submit"><i class="fas fa-search"></i></button></div>
                              <!-- Ảnh từ static/images/ -->
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city</span><select  name="city"><option value="london">Hà Nội</option></select></div>
+                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city: Hà Nội</span></div>
                             <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select  name="date" class="select-bar" style=" border-radius: 6px; width: 150px; height: 40px; " ><option value="2020-10-23">23/10/2020</option>
                             <option value="2020-10-23">23/10/2020</option></select></div>
                             
@@ -291,7 +291,7 @@
         /*<![CDATA[*/
         $(document).ready(function() {
              // Khởi tạo NiceSelect
-             if ($.fn.niceSelect) { $('.select-bar').niceSelect(); }
+            // if ($.fn.niceSelect) { $('.select-bar').niceSelect(); }
 
              const currentQuery = /*[[${queryParam}]]*/ null;
 

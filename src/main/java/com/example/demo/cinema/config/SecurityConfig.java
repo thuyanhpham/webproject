@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.example.demo.cinema.service.UserService;
 
@@ -32,23 +33,26 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // ---- TÀI NGUYÊN TĨNH ----
                 .requestMatchers(
-                    "/css/**",
-                    "/js/**",
-                    "/images/**",
-                    "/webfonts/**",
-                    "/fonts/**"
+                		 new AntPathRequestMatcher("/css/**"),
+                         new AntPathRequestMatcher("/js/**"),
+                         new AntPathRequestMatcher("/images/**"),
+                         new AntPathRequestMatcher("/webfonts/**"),
+                         new AntPathRequestMatcher("/fonts/**")
                 ).permitAll()
 
                 // ---- ENDPOINT CÔNG KHAI ----
                 .requestMatchers(
-                    "/",
-                    "/movielist",
-                    "/movie-details/**",
-                    "/login",                 // Trang login custom
-                    "/auth/login",            // API xử lý login
-                    "/auth/register", 
-                    "/auth/forgot-password",
-                    "/subscribe"
+                	    new AntPathRequestMatcher("/"),
+                        new AntPathRequestMatcher("/movielist"),
+                        // Sử dụng AntPathRequestMatcher cho các đường dẫn có biến
+                        new AntPathRequestMatcher("/movie/{id}"), // Khớp /movie/bất_kỳ_id_nào
+                        new AntPathRequestMatcher("/movies/{movieId}/showtimes"), // <<< SỬA Ở ĐÂY: Khớp chính xác cấu trúc controller
+                        new AntPathRequestMatcher("/movie-details/**"),
+                        new AntPathRequestMatcher("/login"),
+                        new AntPathRequestMatcher("/auth/login"),
+                        new AntPathRequestMatcher("/auth/register"),
+                        new AntPathRequestMatcher("/auth/forgot-password"),
+                        new AntPathRequestMatcher("/subscribe")
                 ).permitAll()
 
                 // ---- YÊU CẦU XÁC THỰC HOẶC ROLE ----

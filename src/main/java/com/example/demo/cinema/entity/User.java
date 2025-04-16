@@ -38,6 +38,18 @@ public class User {
 	private String password;
 	
 	
+	@Column(name = "avatar_url", length = 255) // Hoặc dùng @Lob nếu URL có thể rất dài
+	private String avatarUrl;
+
+	// Thêm getter và setter cho avatarUrl
+	public String getAvatarUrl() {
+	    return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+	    this.avatarUrl = avatarUrl;
+	}
+	
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	
