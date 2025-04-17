@@ -1,6 +1,10 @@
 package com.example.demo.cinema.controller;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.cinema.entity.Role;
+import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
+import com.example.demo.cinema.security.CustomUserDetails;
 import com.example.demo.cinema.service.UserService;
 
 @Controller
@@ -31,9 +37,9 @@ public class AuthController {
 	
 	
 	@GetMapping("/")
-	public String homePage(Model model) {
+	public String index(Model model) {
 			model.addAttribute("pageTitle", "Boleto - Online Movie Ticket Booking");
-		return "home";
+		return "index";
 	}
 	
 	
@@ -68,6 +74,7 @@ public class AuthController {
 		user.setUsername(username);
 		user.setPassword(passwordEncoder.encode(password));
 		user.setEmail(email);
+		user.setStatus(Status.ACTIVE);
 		
 		Long defaultRoleId = 1L;
 		Role role = roleRepository.findById(defaultRoleId).orElse(null);
@@ -89,10 +96,11 @@ public class AuthController {
 	}
 	
 	
+	
 	// API Quên mật khẩu
 	@GetMapping("/forgot-password")
 	public String showForgotPasswordForm() {
-	    return "forgot-password";
+	    return "user/forgot-password";
 	}
 
 	@PostMapping("/forgot-password")
@@ -104,7 +112,7 @@ public class AuthController {
 
 	    if (!password.equals(confirmPassword)) {
 	        redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp.");
-	        return "redirect:/forgot-password";
+	        return "redirect:/user/forgot-password";
 	    }
 
 	    String result = userService.updatePasswordByEmail(email, password);
@@ -113,7 +121,7 @@ public class AuthController {
 	        return "redirect:/login";
 	    } else {
 	        redirectAttributes.addFlashAttribute("error", result);
-	        return "redirect:/forgot-password";
+	        return "redirect:/user/forgot-password";
 	    }
 	}
 
