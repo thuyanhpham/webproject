@@ -1,74 +1,30 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!--/* Static CSS references */-->
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/all.min.css}">
-    <link rel="stylesheet" th:href="@{/css/animate.css}">
-    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
-    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
-    <link rel="stylesheet" th:href="@{/css/odometer.css}">
-    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
-    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
-    <link rel="stylesheet" th:href="@{/css/nice-select.css}">
-    <link rel="stylesheet" th:href="@{/css/jquery.animatedheadline.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+  <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/animate.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/css.css}" />
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/fontawesome.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/magnific-popup.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/nice-select.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/odometer.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/owl.carousel.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/owl.theme.default.min.css}" />
 
-    <!--/* Favicon */-->
+    <!-- Favicon Path (Assuming favicon.png exists in static/images/) -->
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
     <!--/* Page Title */-->
-    <title th:text="${pageTitle ?: 'Boleto - Welcome'}">Boleto - Online Movie Ticket Booking</title>
+    <title th:text="${pageTitle ?: 'Boleto - Online Movie Ticket Booking'}">Boleto - Online Movie Ticket Booking</title>
 
-    <!--/* Add specific style for logout button if needed */-->
-    <style>
-        .logout-button-form {
-            display: inline-block; /* Changed for better alignment */
-            margin-left: 10px; /* Add some space after the username */
-            vertical-align: middle; /* Align form with text */
-        }
-        .logout-button {
-            background: none!important;
-            border: none;
-            padding: 0!important;
-            color: #ffffff; /* Header link color */
-            text-decoration: none;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit; /* Match header link weight */
-            text-transform: capitalize; /* Match header link style */
-            line-height: inherit;
-        }
-        .logout-button:hover {
-            color: #31d7a9; /* Theme hover color */
-        }
-        .header-user-info { /* Style for username */
-             color: #ffffff; /* Header text color */
-             font-weight: inherit; /* Match header link weight */
-             display: inline-block; /* To allow vertical alignment */
-             vertical-align: middle; /* Align text with button */
-        }
-        /* Adjust header button padding if needed */
-        .header-button.pr-0 {
-            padding-right: 0 !important;
-        }
-        /* Style for Login/Register buttons if needed */
-        .header-button a {
-            color: #ffffff;
-            text-decoration: none;
-            text-transform: capitalize;
-             margin-left: 15px; /* Space between buttons */
-        }
-        .header-button a:hover {
-            color: #31d7a9;
-        }
-    </style>
 </head>
 
 <body>
@@ -89,60 +45,57 @@
     </a>
     <!-- ==========Overlay========== -->
 
-    <!-- ==========Header-Section (FIXED - Handles both Logged-In & Logged-Out) ========== -->
-    <header class="header-section">
+    <!-- ==========Header-Section========== -->
+     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
                 <div class="logo">
-                    <!-- Link to home -->
-                    <a th:href="@{/}"> <!-- Changed to /home if that's the main page -->
-                        <img th:src="@{/images/logo.png}" alt="logo">
+                    <a th:href="@{/}">
+                        <img th:src="@{/images/logo.png}" alt="logo"> 
                     </a>
                 </div>
                 <ul class="menu">
-                    <!-- Single Home Link (as requested previously) -->
-                    <li>
-                        <a th:href="@{/}" th:classappend="${currentPage == 'home'} ? 'active' : ''">Home</a> <!-- Assuming / is home -->
+                     <li class="menu-item-has-children">
+                        <a href="#">Home</a>
+                     
                     </li>
-
                     <li class="menu-item-has-children">
-                        <a th:href="@{/movies}">movies</a>
+                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movie')} ? 'active' : ''">movies</a>
                         <ul class="submenu">
-                            <li><a th:href="@{/movies/list}">Movie Listing</a></li>
+                            
+                            <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
                             <li><a th:href="@{/movie-details}">Movie Details</a></li>
+                            
                             <li><a th:href="@{/movie-ticket-plan}">Movie Ticket Plan</a></li>
                             <li><a th:href="@{/movie-seat-plan}">Movie Seat Plan</a></li>
                             <li><a th:href="@{/movie-checkout}">Movie Checkout</a></li>
+                            
                         </ul>
                     </li>
-                    <li class="menu-item-has-children">
-                        <a href="#">Info</a> <!-- Renamed 'pages', removed auth links -->
-                        <ul class="submenu">
-                            <li><a th:href="@{/about}">About Us</a></li>
-                            <li><a th:href="@{/apps-download}">Apps Download</a></li>
-                        </ul>
+                
+                     
+                      <li class="menu-item-has-children">
+                         <a href="#">pages</a>
+                         <ul class="submenu">
+                             <li><a th:href="@{/about}">About Us</a></li>
+                             <li><a th:href="@{/apps-download}">Apps Download</a></li>
+                             <li><a th:href="@{/sign-in}">Sign In</a></li>
+                             <li><a th:href="@{/sign-up}">Sign Up</a></li>
+                             <li><a th:href="@{/404}">404</a></li>
+                         </ul>
+                     </li>
+                     
+                     
+                     
+                    <li class="header-button pr-0">
+                        <a th:href="@{/sign-up}">join us</a>
                     </li>
-
-                    <!-- === SECTION FIXED: User Info/Logout OR Login/Register === -->
-                    <!-- Displayed ONLY if user IS authenticated -->
-                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <!-- Display Username using security extras -->
-                        <span class="header-user-info">
-                            Xin chào, <span sec:authentication="principal.username">Người dùng</span>!
-                        </span>
-                        <!-- Logout Button Form -->
-                        <form class="logout-button-form" th:action="@{/logout}" method="post">
-                           <button class="logout-button" type="submit">Đăng xuất</button>
-                        </form>
-                    </li>
-                    <!-- === END FIXED SECTION === -->
-
                 </ul>
                 <div class="header-bar d-lg-none">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
             </div>
         </div>
     </header>
@@ -150,7 +103,7 @@
 
     <!-- ==========Banner-Section========== -->
     <section class="banner-section">
-         <div class="banner-bg bg_img bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner/banner01.jpg} + ');'"></div>
+         <div class="banner-bg bg_img bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner01.jpg} + '); height: 400px; border: 1px solid red;'"></div>
         <div class="container">
             <div class="banner-content">
                 <h1 class="title cd-headline clip">
@@ -168,86 +121,56 @@
     <!-- ==========Ticket-Search (Movie Only) ========== -->
     <section class="search-ticket-section padding-top pt-lg-0">
         <div class="container">
-            <div class="search-tab bg_img" th:styleappend="'background-image: url(' + @{/images/ticket/ticket-bg01.jpg} + ');'">
+            <div class="search-tab bg_img" th:styleappend="'background-image: url(' + @{/images/ticket-bg01.jpg} + ');'">
                 <div class="row align-items-center mb--20">
                     <div class="col-lg-6 mb-20">
-                        <!-- === SECTION REVISED: Welcome Message === -->
                         <div class="search-ticket-header">
-                             <!-- Personalized Welcome Message (Authenticated Users) -->
-                             <!-- Using sec:authentication inside the authorized block -->
-                             <h6 class="category" sec:authorize="isAuthenticated()">
-                                 Welcome back, <span sec:authentication="principal.username">User</span>!
-                             </h6>
-                             <!-- Generic Welcome Message (Anonymous Users) -->
-                             <h6 class="category" sec:authorize="!isAuthenticated()">
-                                 welcome to Boleto
-                             </h6>
-                             <h3 class="title">what are you looking for</h3>
-                         </div>
-                         <!-- === END REVISED SECTION === -->
+                            <h6 class="category">welcome to Boleto </h6>
+                            <h3 class="title">what are you looking for</h3>
+                        </div>
                     </div>
                     <div class="col-lg-6 mb-20">
                         <ul class="tab-menu ticket-tab-menu">
                             <li class="active">
                                 <div class="tab-thumb">
-                                    <img th:src="@{/images/ticket/ticket-tab01.png}" alt="ticket">
+                                    <img th:src="@{/images/ticket-tab01.png}" alt="ticket">
                                 </div>
                                 <span>movie</span>
                             </li>
-                            <!-- Add other tabs (events, sports) here if needed -->
                         </ul>
                     </div>
                 </div>
                 <div class="tab-area">
                     <div class="tab-item active">
-                        <!-- Movie Search Form -->
                         <form class="ticket-search-form" th:action="@{/search/movie}" method="get">
-                             <div class="form-group large">
+                            <div class="form-group large">
                                 <input type="text" name="query" placeholder="Search for Movies">
                                 <button type="submit"><i class="fas fa-search"></i></button>
                             </div>
                             <div class="form-group">
                                 <div class="thumb">
-                                    <img th:src="@{/images/ticket/city.png}" alt="ticket">
+                                    <img th:src="@{/images/city.png}" alt="ticket">
                                 </div>
                                 <span class="type">city</span>
                                 <select class="select-bar" name="cityId">
                                     <option value="">Select City</option>
-                                    <!--/* Dynamically populate cities */-->
                                     <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}">London</option>
-                                    <!--/* Fallback/placeholder if cities is null/empty */-->
-                                    <option th:if="${cities == null or #lists.isEmpty(cities)}" value="">No Cities Available</option>
+                                    <option th:if="${cities == null}" value="london">London</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <div class="thumb">
-                                    <img th:src="@{/images/ticket/date.png}" alt="ticket">
+                                    <img th:src="@{/images/date.png}" alt="ticket">
                                 </div>
                                 <span class="type">date</span>
                                 <select class="select-bar" name="date">
                                      <option value="">Select Date</option>
-                                     <!--/* Dynamically populate dates */-->
                                      <option th:each="showDate : ${availableDates}" th:value="${#temporals.format(showDate, 'yyyy-MM-dd')}" th:text="${#temporals.format(showDate, 'dd/MM/yyyy')}">23/10/2024</option>
-                                     <!--/* Fallback/placeholder */-->
-                                     <option th:if="${availableDates == null or #lists.isEmpty(availableDates)}" value="">No Dates Available</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <div class="thumb">
-                                    <img th:src="@{/images/ticket/cinema.png}" alt="ticket">
-                                </div>
-                                <span class="type">cinema</span>
-                                <select class="select-bar" name="cinemaId">
-                                    <option value="">Select Cinema</option>
-                                     <!--/* Dynamically populate cinemas */-->
-                                    <option th:each="cinema : ${cinemas}" th:value="${cinema.id}" th:text="${cinema.name}">Awaken</option>
-                                     <!--/* Fallback/placeholder */-->
-                                     <option th:if="${cinemas == null or #lists.isEmpty(cinemas)}" value="">No Cinemas Available</option>
+                                     <option th:if="${availableDates == null}" value="2024-10-23">23/10/2024</option>
                                 </select>
                             </div>
                         </form>
                     </div>
-                    <!-- Add other tab-items (events, sports) here if needed -->
                 </div>
             </div>
         </div>
@@ -270,15 +193,13 @@
                     </ul>
                 </div>
                 <div class="tab-area mb-30-none">
-                    <!-- Movie Tabs Content (Now Showing, Coming Soon, Exclusive) -->
                     <div class="tab-item active">
                         <div th:if="${not #lists.isEmpty(nowShowingMovies)}" class="owl-carousel owl-theme tab-slider">
-                            <!-- Movie Item Loop -->
                             <div class="item" th:each="movie : ${nowShowingMovies}">
                                 <div class="movie-grid">
                                     <div class="movie-thumb c-thumb">
                                         <a th:href="@{/movie-details/{id}(id=${movie.id})}">
-                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie/movie01.jpg'}" alt="movie">
+                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie01.jpg'}" alt="movie">
                                         </a>
                                     </div>
                                     <div class="movie-content bg-one">
@@ -287,54 +208,53 @@
                                         </h5>
                                         <ul class="movie-rating-percent">
                                             <li>
-                                                <div class="thumb"><img th:src="@{/images/movie/tomato.png}" alt="movie"></div>
+                                                <div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div>
                                                 <span class="content" th:text="${movie.ratingTomatoes != null ? movie.ratingTomatoes + '%' : 'N/A'}">88%</span>
                                             </li>
                                             <li>
-                                                <div class="thumb"><img th:src="@{/images/movie/cake.png}" alt="movie"></div>
+                                                <div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div>
                                                 <span class="content" th:text="${movie.ratingCake != null ? movie.ratingCake + '%' : 'N/A'}">88%</span>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                            <!-- End Movie Item Loop -->
                         </div>
                         <div th:unless="${not #lists.isEmpty(nowShowingMovies)}" class="text-center padding-top padding-bottom">
                             <p>No movies currently showing.</p>
                         </div>
                     </div>
-                     <div class="tab-item">
-                        <!-- Coming Soon Movies -->
-                         <div th:if="${not #lists.isEmpty(comingSoonMovies)}" class="owl-carousel owl-theme tab-slider">
-                            <div class="item" th:each="movie : ${comingSoonMovies}">
+                    <div class="tab-item">
+                        <div th:if="${not #lists.isEmpty(comingSoonMovies)}" class="owl-carousel owl-theme tab-slider">
+                             <div class="item" th:each="movie : ${comingSoonMovies}">
                                 <div class="movie-grid">
                                     <div class="movie-thumb c-thumb">
                                         <a th:href="@{/movie-details/{id}(id=${movie.id})}">
-                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie/movie02.jpg'}" alt="movie">
+                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie02.jpg'}" alt="movie">
                                         </a>
                                     </div>
                                     <div class="movie-content bg-one">
                                         <h5 class="title m-0">
                                             <a th:href="@{/movie-details/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
                                         </h5>
-                                        <ul class="movie-rating-percent"><li><span class="content">Coming Soon</span></li></ul>
+                                        <ul class="movie-rating-percent">
+                                            <li><span class="content">Coming Soon</span></li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                         </div>
-                         <div th:unless="${not #lists.isEmpty(comingSoonMovies)}" class="text-center padding-top padding-bottom">
+                        </div>
+                        <div th:unless="${not #lists.isEmpty(comingSoonMovies)}" class="text-center padding-top padding-bottom">
                             <p>No upcoming movies announced yet.</p>
                         </div>
                     </div>
                     <div class="tab-item">
-                         <!-- Exclusive Movies -->
                          <div th:if="${not #lists.isEmpty(exclusiveMovies)}" class="owl-carousel owl-theme tab-slider">
                              <div class="item" th:each="movie : ${exclusiveMovies}">
                                 <div class="movie-grid">
-                                     <div class="movie-thumb c-thumb">
+                                    <div class="movie-thumb c-thumb">
                                         <a th:href="@{/movie-details/{id}(id=${movie.id})}">
-                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie/movie03.jpg'}" alt="movie">
+                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie03.jpg'}" alt="movie">
                                         </a>
                                     </div>
                                     <div class="movie-content bg-one">
@@ -343,34 +263,36 @@
                                         </h5>
                                         <ul class="movie-rating-percent">
                                             <li>
-                                                <div class="thumb"><img th:src="@{/images/movie/tomato.png}" alt="movie"></div>
+                                                <div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div>
                                                 <span class="content" th:text="${movie.ratingTomatoes != null ? movie.ratingTomatoes + '%' : 'N/A'}">88%</span>
                                             </li>
-                                            <li>
-                                                <div class="thumb"><img th:src="@{/images/movie/cake.png}" alt="movie"></div>
+                                             <li>
+                                                <div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div>
                                                 <span class="content" th:text="${movie.ratingCake != null ? movie.ratingCake + '%' : 'N/A'}">88%</span>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                         </div>
-                         <div th:unless="${not #lists.isEmpty(exclusiveMovies)}" class="text-center padding-top padding-bottom">
+                        </div>
+                        <div th:unless="${not #lists.isEmpty(exclusiveMovies)}" class="text-center padding-top padding-bottom">
                             <p>No exclusive movies available right now.</p>
                         </div>
                     </div>
-                    <!-- End Movie Tabs Content -->
                 </div>
             </div>
         </div>
     </section>
     <!-- ==========Movie-Section========== -->
 
+    <!-- Removed Event Section -->
+    <!-- Removed Sports Section -->
+
     <!-- ==========Newslater-Section========== -->
     <footer class="footer-section">
         <div class="newslater-section padding-bottom">
             <div class="container">
-                <div class="newslater-container bg_img" th:styleappend="'background-image: url(' + @{/images/newslater/newslater-bg01.jpg} + ');'">
+                <div class="newslater-container bg_img" th:styleappend="'background-image: url(' + @{/images/newslater-bg01.jpg} + ');'">
                     <div class="newslater-wrapper">
                         <h5 class="cate">subscribe to Boleto </h5>
                         <h3 class="title">to get exclusive benefits</h3>
@@ -401,13 +323,15 @@
             <div class="footer-bottom">
                 <div class="footer-bottom-area">
                     <div class="left">
-                        <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}">2024</span>. All Rights Reserved By <a href="#">Boleto</a></p>
+                        <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}">2025</span>. All Rights Reserved By <a href="#">Boleto</a></p>
                     </div>
+                    <!--/* Modified Footer Links */-->
                     <ul class="links">
                         <li><a th:href="@{/about}">About</a></li>
                         <li><a th:href="@{/terms}">Terms Of Use</a></li>
                         <li><a th:href="@{/privacy}">Privacy Policy</a></li>
                         <li><a th:href="@{/faq}">FAQ</a></li>
+                        <!-- Removed Feedback -->
                     </ul>
                 </div>
             </div>
@@ -415,21 +339,23 @@
     </footer>
     <!-- ==========Newslater-Section========== -->
 
-    <!--/* Static JS references */-->
-    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
-    <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/heandline.js}"></script>
-    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
-    <script th:src="@{/js/magnific-popup.min.js}"></script>
-    <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/wow.min.js}"></script>
-    <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/odometer.min.js}"></script>
-    <script th:src="@{/js/viewport.jquery.js}"></script>
-    <script th:src="@{/js/nice-select.js}"></script>
-    <script th:src="@{/js/main.js}"></script>
+  <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
+		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
+		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
+
+		<script th:src="@{/js/movielistjs/plugins.js}"></script>
+		<script th:src="@{/js/movielistjs/popper.min.js}"></script>
+		<script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
+		<script th:src="@{/js/movielistjs/nice-select.js}"></script>
+		<script th:src="@{/js/movielistjs/odometer.min.js}"></script>
+		<script th:src="@{/js/movielistjs/owl.carousel.min.js}"></script>
+		<script th:src="@{/js/movielistjs/viewport.jquery.js}"></script>
+		<script th:src="@{/js/movielistjs/wow.min.js}"></script>
+		<script th:src="@{/js/movielistjs/countdown.min.js}"></script>
+		<script th:src="@{/js/movielistjs/isotope.pkgd.min.js}"></script>
+		<script th:src="@{/js/movielistjs/contentInt.js}"></script>
+		<script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
+		<script th:src="@{/js/main.js}"></script>
 
 </body>
 </html>
