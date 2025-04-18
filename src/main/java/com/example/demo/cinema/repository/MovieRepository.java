@@ -43,5 +43,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
            "WHERE m.id = :id")
     Optional<Movie> findByIdWithDetails(@Param("id") Long id); // Trả về Optional
 
-    // ... các phương thức khác của bạn ...
+   
 }

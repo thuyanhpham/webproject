@@ -32,7 +32,7 @@ public class HomeController {
     }
 
     // *** Map cả "/" và "/home" ***
-    @GetMapping({"/home"})
+    @GetMapping({ "/home" })
     public String userHomePage(Model model, Principal principal) {
         log.info("Accessing user home page '/' or '/home'");
 
@@ -54,15 +54,15 @@ public class HomeController {
             model.addAttribute("nowShowingMovies", nowShowing != null ? nowShowing : Collections.emptyList());
             model.addAttribute("comingSoonMovies", comingSoon != null ? comingSoon : Collections.emptyList());
             log.info("Fetched movies: Now Showing ({}), Coming Soon ({})",
-                     nowShowing != null ? nowShowing.size() : 0,
-                     comingSoon != null ? comingSoon.size() : 0);
+                    nowShowing != null ? nowShowing.size() : 0,
+                    comingSoon != null ? comingSoon.size() : 0);
 
             // *** 2. Lấy danh sách ngày cho dropdown ***
             // *** Đảm bảo phương thức này tồn tại trong ShowtimeService ***
             List<LocalDate> availableDates = showtimeService.findAllAvailableShowtimeDates();
             model.addAttribute("availableDates", availableDates != null ? availableDates : Collections.emptyList());
             log.info("Fetched search dropdown data: Dates ({})",
-                     availableDates != null ? availableDates.size() : 0);
+                    availableDates != null ? availableDates.size() : 0);
 
             // *** 3. Thêm các thông tin khác (Banner) ***
             model.addAttribute("bannerUrl", "/images/banner01.jpg");
