@@ -36,8 +36,7 @@
     <!-- ==========Overlay========== -->
     <div class="overlay"></div> <a href="#" class="scrollToTop"> <i class="fas fa-angle-up"></i> </a>
 
-    <!-- ==========Header-Section========== -->
-    <!-- Kept original header structure, replace with fragment if you have one -->
+      <!-- ==========Header-Section========== -->
     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
@@ -47,20 +46,17 @@
                     </a>
                 </div>
                 <ul class="menu">
-                     <li class="menu-item-has-children">
-                        <a href="#">Home</a>
-                     
+                     <li class="menu-item-has-children" >
+                        <a th:href="@{/home}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/home')} ? 'active' : ''">Home</a>                   
                     </li>
                     <li class="menu-item-has-children">
-                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movie')} ? 'active' : ''">movies</a>
-                        <ul class="submenu">
-                            
+                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
+                        <ul class="submenu"> 
                             <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
-                            <li><a th:href="@{/movie-details}">Movie Details</a></li>
-                            
-                            <li><a th:href="@{/movie-ticket-plan}">Movie Ticket Plan</a></li>
-                            <li><a th:href="@{/movie-seat-plan}">Movie Seat Plan</a></li>
-                            <li><a th:href="@{/movie-checkout}">Movie Checkout</a></li>
+                            <li><a th:href="@{/movielist}">Movie Details</a></li>  
+                            <li><a th:href="@{/movielist}">Movie Ticket Plan</a></li>
+                            <li><a th:href="@{/movielist}">Movie Seat Plan</a></li>
+                            <li><a th:href="@{/movielist}">Movie Checkout</a></li>
                             
                         </ul>
                     </li>
@@ -76,12 +72,18 @@
                              <li><a th:href="@{/404}">404</a></li>
                          </ul>
                      </li>
-                     
-                     
-                     
-                    <li class="header-button pr-0">
-                        <a th:href="@{/sign-up}">join us</a>
-                    </li>
+	                     <!-- Hiển thị lời chào nếu đã đăng nhập -->
+	                <li class="menu-item" sec:authorize="isAuthenticated()">
+	                    <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
+	                </li>
+	 
+	                <!-- Nút Logout nếu đã đăng nhập -->
+	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
+	                    <form th:action="@{/logout}" method="post" >
+	                        <a type="submit">Log out</a>
+	                    </form>
+	                </li>                     
+                              
                 </ul>
                 <div class="header-bar d-lg-none">
 					<span></span>

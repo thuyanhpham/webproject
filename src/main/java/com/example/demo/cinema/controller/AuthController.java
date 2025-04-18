@@ -1,126 +1,125 @@
 package com.example.demo.cinema.controller;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+ 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+ 
+import com.example.demo.cinema.entity.Role;
+import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
+import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
 import com.example.demo.cinema.service.UserService;
-
-import jakarta.servlet.http.HttpSession;
-
-@RestController
-@RequestMapping("/auth")
+ 
+@Controller
+@RequestMapping("")
 public class AuthController {
-
+ 
+	@Autowired
 	private UserRepository userRepository;
+	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
 	private UserService userService;
+	@Autowired
+	private RoleRepository roleRepository;
+	
+	
+	@GetMapping("/")
+	public String index(Model model) {
+			model.addAttribute("pageTitle", "Boleto - Online Movie Ticket Booking");
+		return "index";
+	}
+	
 	
 	//API Đăng ký
+	@GetMapping("/register")
+	public String showRegisterForm(Model model) {
+		model.addAttribute("user", new User());
+		return "register";
+	}
+	
 	@PostMapping("/register")
-	public Map<String, String> register(@RequestParam String username, @RequestParam String password, @RequestParam String email) {
-		Map<String, String> response = new HashMap<>();
+	public String register(@RequestParam String fullname, @RequestParam String username, @RequestParam String password, @RequestParam String confirmPassword, @RequestParam String email, RedirectAttributes redirectAttributes) {
+		email = email.trim().toLowerCase();
+		
 		if (userRepository.findByUsername(username).isPresent()) {
-			response.put("message", "Username đã tồn tại");
-			return response;
+			redirectAttributes.addFlashAttribute("error", "Username đã tồn tại");
+			return "redirect:/register";
 		}
 		
-		User user =new User();
+		if (userRepository.findByEmailIgnoreCase(email).isPresent()) {
+			redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng");
+			return "redirect:/register";
+		}
+		
+		if (!password.equals(confirmPassword)) {
+			redirectAttributes.addFlashAttribute("error", "Mật khẩu không khớp");
+			return "redirect:/register";
+		}
+		
+		User user = new User();
+		user.setFullname(fullname);
 		user.setUsername(username);
 		user.setPassword(passwordEncoder.encode(password));
 		user.setEmail(email);
+		user.setStatus(Status.ACTIVE);
+		
+		Long defaultRoleId = 1L;
+		Role role = roleRepository.findById(defaultRoleId).orElse(null);
+		if (role == null) {
+			redirectAttributes.addFlashAttribute("error", "Không tìm thấy role mặc định trong hệ thống.");
+			return "redirect:/register";
+		}
+		user.setRole(role);
 		userRepository.save(user);
 		
-		response.put("message", "Đăng ký thành công");
-		return response;
-		
+		redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập. ");
+		return "redirect:/login";
 	}
 	
-	// API Đăng nhập
-	@PostMapping("/login")
-	public Map<String, String> login(@RequestParam String username, @RequestParam String password, HttpSession session) {
-		Map<String, String> response = new HashMap<>();
-		Optional<User> optionalUser = userService.findByUsername(username);
-		
-		if (optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			if (new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-				session.setAttribute("user", user);
-				response.put("message", "Đăng nhập thành công!");
-				
-				// Kiểm tra nếu role không null và gọi toString() trên đối tượng role
-				if (user.getRole() != null) {
-					response.put("role", user.getRole().toString());
-				} else {
-					response.put("role", "UNKNOWN");
-				}
-		} else {
-			response.put("message",  "Tên đăng nhập hoặc mật khẩu không đúng!");
-		}
-	} 
-		return response; 
+	// Đăng nhập
+	@GetMapping("/login")
+	public String LoginPage() {
+		return "login";
 	}
 	
-	// API Kiểm tra trạng thái đăng nhập
-	@GetMapping("/check-login")
-	public Map<String, String> checkLogin(HttpSession session) {
-		Map<String, String> response = new HashMap<>();
-		if (session.getAttribute("username") != null) {
-			response.put("message", "Đã đăng nhập");
-			response.put("username", session.getAttribute("username").toString());
-			
-		} else {
-			response.put("message", "Chưa đăng nhập");
-		}
-		return response;
-	}
 	
-	// API Đăng xuất
-	@PostMapping("/logout")
-	public Map<String, String> logout(HttpSession session) {
-		session.invalidate();
-		Map<String, String> response = new HashMap<>();
-		response.put("message", "Đăng xuất thành công");
-		return response;
-	}
 	
 	// API Quên mật khẩu
-	@PostMapping("/forgot-password")
-	public Map<String, String> forgotPassword(@RequestParam String email) {
-		Optional<User> userOpt = userRepository.findByEmail(email);
-		Map<String, String> response = new HashMap<>();
-		
-		if (userOpt.isEmpty()) {
-			response.put("message", "Email không tồn tại");
-			return response;
-		}
-		
-		User user = userOpt.get();
-		String newPassword = "123456";
-		user.setPassword(passwordEncoder.encode(newPassword));
-		userRepository.save(user);
-		
-		response.put("message", "Mật khẩu mới đã được đặt: " + newPassword);
-		return response;
+	@GetMapping("/forgot-password")
+	public String showForgotPasswordForm() {
+	    return "forgot-password";
 	}
-	
-	// đăng nhập
-		@GetMapping("/login")
-		public String LoginPage() {
-			return "login";
-		}
-	
-	// cimema list
+ 
+	@PostMapping("/forgot-password")
+	public String processForgotPassword(
+	        @RequestParam("email") String email,
+	        @RequestParam("password") String password,
+	        @RequestParam("confirmPassword") String confirmPassword,
+	        RedirectAttributes redirectAttributes) {
+ 
+	    if (!password.equals(confirmPassword)) {
+	        redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp.");
+	        return "redirect:/forgot-password";
+	    }
+ 
+	    String result = userService.updatePasswordByEmail(email, password);
+	    if (result.contains("thành công")) {
+	        redirectAttributes.addFlashAttribute("success", result + " Vui lòng đăng nhập.");
+	        return "redirect:/login";
+	    } else {
+	        redirectAttributes.addFlashAttribute("error", result);
+	        return "redirect:/forgot-password";
+	    }
+	}
+ 
 	
 	
 }

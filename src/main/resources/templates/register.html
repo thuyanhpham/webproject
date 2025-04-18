@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boleto - Login</title>
+    <title>Boleto - Sign Up</title>
  
-   <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/css.css}" />
@@ -25,46 +25,56 @@
  
 <body>
  
-    <!-- Sign-In Section -->
+    <!-- ==========Sign-Up Section========== -->
     <section class="account-section bg_img" th:attr="data-background=@{/images/account-bg.jpg}">
         <div class="container">
             <div class="padding-top padding-bottom">
                 <div class="account-area">
                     <div class="section-header-3">
-                        <span class="cate">Hello</span>
-                        <h2 class="title">Welcome back</h2>
+                        <span class="cate">Welcome</span>
+                        <h2 class="title">to Boleto</h2>
                     </div>
  
-                    <form class="account-form" th:action="@{/login}" method="post">
+                    <form class="account-form" th:action="@{/register}" method="post">
+                    	<div class="form-group">
+                            <label for="fullname">Full Name<span>*</span></label>
+                            <input type="text" placeholder="Enter Your Full Name" id="fullname" name="fullname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email<span>*</span></label>
+                            <input type="email" placeholder="Enter Your Email" id="email" name="email" required>
+                        </div>
                         <div class="form-group">
                             <label for="username">Username<span>*</span></label>
-                            <input type="text" placeholder="Enter Your Username" id="username" name="username" required>
+                            <input type="text" placeholder="Username" id="username" name="username" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password<span>*</span></label>
                             <input type="password" placeholder="Password" id="password" name="password" required>
                         </div>
+                        <div class="form-group">
+    						<label for="confirmPassword">Confirm Password<span>*</span></label>
+    						<input type="password" placeholder="Confirm Password" id="confirmPassword" name="confirmPassword" required>
+						</div>
                         <div class="form-group checkgroup">
-                            <input type="checkbox" id="remember-me" name="remember-me">
-                            <label for="remember-me">Remember password</label>
-                            <a th:href="@{/forgot-password}" class="forget-pass">Forget Password?</a>
+                            <input type="checkbox" id="terms" required checked>
+                            <label for="terms">
+                                I agree to the <a href="#">Terms, Privacy Policy</a> and <a href="#">Fees</a>
+                            </label>
                         </div>
  
-                        <!-- Login error message -->
-                        <div th:if="${param.error}" class="text-danger text-center mb-2">
-                            Invalid username or password
-                        </div>
-                        <div th:if="${param.logout}" class="text-success text-center mb-2">
-                            You have been logged out successfully
-                        </div>
+                        <!-- Thông báo lỗi -->
+                        <div th:if="${error}" class="text-danger text-center mb-2" th:text="${error}"></div>
+						<div th:if="${success}" class="text-success text-center mb-2" th:text="${success}"></div>
+ 
  
                         <div class="form-group text-center">
-                            <input type="submit" value="Log in">
+                            <input type="submit" value="Sign Up">
                         </div>
                     </form>
  
                     <div class="option">
-                        Don't have an account? <a th:href="@{/register}">Sign up now</a>
+                        Already have an account? <a th:href="@{/login}">Login</a>
                     </div>
  
                     <div class="or"><span>Or</span></div>
@@ -79,7 +89,7 @@
         </div>
     </section>
  
-    <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
+<script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
 		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
 		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
  
@@ -97,5 +107,5 @@
 		<script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
 		<script th:src="@{/js/main.js}"></script>
 </body>
- 
 </html>
+ 

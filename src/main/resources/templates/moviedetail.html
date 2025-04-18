@@ -44,31 +44,27 @@
     </a>
     <!-- ==========Overlay========== -->
 
-    <!-- ==========Header-Section========== -->
+       <!-- ==========Header-Section========== -->
     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
                 <div class="logo">
-                    <a th:href="@{/}"> <!-- Link to homepage -->
-                        <img th:src="@{/images/logo.png}" alt="logo">
+                    <a th:href="@{/}">
+                        <img th:src="@{/images/logo.png}" alt="logo"> 
                     </a>
                 </div>
-                <!-- Update menu links as needed -->
-                       <ul class="menu">
-                     <li class="menu-item-has-children">
-                        <a href="#">Home</a>
-                     
+                <ul class="menu">
+                     <li class="menu-item-has-children" >
+                        <a th:href="@{/home}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/home')} ? 'active' : ''">Home</a>                   
                     </li>
                     <li class="menu-item-has-children">
-                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movie')} ? 'active' : ''">movies</a>
-                        <ul class="submenu">
-                            
+                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
+                        <ul class="submenu"> 
                             <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
-                            <li><a th:href="@{/movie-details}">Movie Details</a></li>
-                            
-                            <li><a th:href="@{/movie-ticket-plan}">Movie Ticket Plan</a></li>
-                            <li><a th:href="@{/movie-seat-plan}">Movie Seat Plan</a></li>
-                            <li><a th:href="@{/movie-checkout}">Movie Checkout</a></li>
+                            <li><a th:href="@{/movielist}">Movie Details</a></li>  
+                            <li><a th:href="@{/movielist}">Movie Ticket Plan</a></li>
+                            <li><a th:href="@{/movielist}">Movie Seat Plan</a></li>
+                            <li><a th:href="@{/movielist}">Movie Checkout</a></li>
                             
                         </ul>
                     </li>
@@ -84,27 +80,33 @@
                              <li><a th:href="@{/404}">404</a></li>
                          </ul>
                      </li>
-                     
-                     
-                     
-                    <li class="header-button pr-0">
-                        <a th:href="@{/sign-up}">join us</a>
-                    </li>
+	                     <!-- Hiển thị lời chào nếu đã đăng nhập -->
+	                <li class="menu-item" sec:authorize="isAuthenticated()">
+	                    <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
+	                </li>
+	 
+	                <!-- Nút Logout nếu đã đăng nhập -->
+	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
+	                    <form th:action="@{/logout}" method="post" >
+	                        <a type="submit">Log out</a>
+	                    </form>
+	                </li>                     
+                              
                 </ul>
                 <div class="header-bar d-lg-none">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
             </div>
         </div>
     </header>
     <!-- ==========Header-Section========== -->
-
+    
     <!-- ==========Banner-Section========== -->
     <!-- Use dynamic background image from movie.bannerUrl -->
     <section class="details-banner bg_img"
-             th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/assets/images/banner/banner03.jpg} + ');'"
+             th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/banner03.jpg} + ');'"
              th:attr="data-background=${movie != null and movie.bannerUrl != null ? movie.bannerUrl : './assets/images/banner/banner03.jpg'}">
         <div class="container">
             <!-- Only render if movie object exists -->
@@ -208,7 +210,7 @@
                     </div>
                 </div>
                 <!-- Dynamic book tickets link -->
-                <a th:href="@{/movie/{id}/ticket-plan(id=${movie.id})}" class="custom-button">book tickets</a>
+                <a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id})}" class="custom-button">book tickets</a>
             </div>
         </div>
     </section>
