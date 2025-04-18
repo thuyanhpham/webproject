@@ -55,7 +55,8 @@ public class MovieService { // Đổi tên class từ MovieService thành MovieS
 
     @Transactional(readOnly = true)
     public Movie findMovieByIdWithDetails(Long id) {
-        // *** QUAN TRỌNG: Đảm bảo phương thức findByIdWithDetails tồn tại trong MovieRepository ***
+        // *** QUAN TRỌNG: Đảm bảo phương thức findByIdWithDetails tồn tại trong
+        // MovieRepository ***
         Movie movie = movieRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
 
@@ -63,8 +64,6 @@ public class MovieService { // Đổi tên class từ MovieService thành MovieS
         // Cách 1: Dùng Hibernate.initialize (Cần import org.hibernate.Hibernate)
         // Hibernate.initialize(movie.getPhotoUrls());
         // Hibernate.initialize(movie.getAvailableFormats());
-
-       
 
         return movie;
     }
@@ -86,24 +85,35 @@ public class MovieService { // Đổi tên class từ MovieService thành MovieS
 
     /**
      * Lấy danh sách phim đang chiếu (ngày phát hành <= hôm nay).
+     * 
      * @return List<Movie> phim đang chiếu.
      */
     @Transactional(readOnly = true)
     public List<Movie> findNowShowingMovies() {
         LocalDate today = LocalDate.now();
-        // *** QUAN TRỌNG: Đảm bảo phương thức findByReleaseDateLessThanEqualOrderByReleaseDateDesc tồn tại trong MovieRepository ***
+        // *** QUAN TRỌNG: Đảm bảo phương thức
+        // findByReleaseDateLessThanEqualOrderByReleaseDateDesc tồn tại trong
+        // MovieRepository ***
         return movieRepository.findByReleaseDateLessThanEqualOrderByReleaseDateDesc(today);
     }
 
     /**
      * Lấy danh sách phim sắp chiếu (ngày phát hành > hôm nay).
+     * 
      * @return List<Movie> phim sắp chiếu.
      */
     @Transactional(readOnly = true)
     public List<Movie> findComingSoonMovies() {
         LocalDate today = LocalDate.now();
-        // *** QUAN TRỌNG: Đảm bảo phương thức findByReleaseDateGreaterThanOrderByReleaseDateAsc tồn tại trong MovieRepository ***
+        // *** QUAN TRỌNG: Đảm bảo phương thức
+        // findByReleaseDateGreaterThanOrderByReleaseDateAsc tồn tại trong
+        // MovieRepository ***
         return movieRepository.findByReleaseDateGreaterThanOrderByReleaseDateAsc(today);
     }
+
+    @Transactional(readOnly = true)
+    public Movie getMovieById(Long id) {
+        return movieRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
+    }
 }
- 
