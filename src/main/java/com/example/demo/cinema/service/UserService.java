@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,17 +16,16 @@ import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
-import com.example.demo.cinema.security.CustomUserDetails;
 
 @Service
 public class UserService implements UserDetailsService {
 
+	@Autowired
 	private UserRepository userRepository;
 	private PasswordEncoder passwordEncoder;
 	private RoleRepository roleRepository;
 	
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
-		this.userRepository = userRepository;
+	public UserService(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
 	}
@@ -50,7 +50,6 @@ public class UserService implements UserDetailsService {
 		user.setPassword(passwordEncoder.encode(password));
 		user.setFullname(fullname);
 		user.setRole(userRole);
-		user.setStatus(Status.ACTIVE);
 		userRepository.save(user);
 		return "Đăng ký thành công!";
 	}
@@ -61,7 +60,9 @@ public class UserService implements UserDetailsService {
 		User user = userRepository.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy User"));
 		
-		return new CustomUserDetails(user);
+		return new org.springframework.security.core.userdetails.User(user.getUsername(),
+						user.getPassword(),
+						List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())));
 	}
 	
 	public Optional<User> findByUsername(String username) {

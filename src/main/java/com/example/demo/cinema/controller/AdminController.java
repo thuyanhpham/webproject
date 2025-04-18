@@ -23,16 +23,16 @@ public class AdminController {
     @Autowired
     private GenreRepository genreRepository;
 
-    
     @GetMapping
     public String showAdminDashboard(Model model) {
         log.info("Accessing Admin Dashboard");
-        // TODO: Thêm logic để lấy dữ liệu cần thiết cho dashboard (ví dụ: số lượng phim, user...)
+        // TODO: Thêm logic để lấy dữ liệu cần thiết cho dashboard (ví dụ: số lượng
+        // phim, user...)
         // model.addAttribute("totalMovies", movieService.countMovies());
-        // model.addAttribute("totalUsers", userService.countUsers()); // Giả sử có userService
+        // model.addAttribute("totalUsers", userService.countUsers()); // Giả sử có
+        // userService
         return "admin/dashboard";
     }
-
 
     @GetMapping("/movies")
     public String listMovies(Model model) {
@@ -79,17 +79,15 @@ public class AdminController {
     }
 
     @GetMapping("/movies/details/{id}")
-     public String showMovieDetails(@PathVariable Long id, Model model) {
-         log.info("Showing movie details for admin, id: {}", id);
-         Movie movie = movieService.getMovieById(id);
-         if (movie == null) {
-             log.warn("Movie with id {} not found for details view", id);
-             return "redirect:/admin/movies?error=Movie_not_found";
-         }
-         model.addAttribute("movie", movie);
-         return "admin/movie/details"; // View: templates/admin/movie/details.html
-     }
-
+    public String showMovieDetails(@PathVariable Long id, Model model) {
+        log.info("Showing movie details for admin, id: {}", id);
+        Movie movie = movieService.getMovieById(id);
+        if (movie == null) {
+            log.warn("Movie with id {} not found for details view", id);
+            return "redirect:/admin/movies?error=Movie_not_found";
+        }
+        model.addAttribute("movie", movie);
+        return "admin/movie/details"; // View: templates/admin/movie/details.html
+    }
 
 }
-

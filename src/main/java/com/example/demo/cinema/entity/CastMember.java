@@ -25,7 +25,8 @@ public class CastMember {
     private Set<MovieCast> movieCasts = new HashSet<>();
 
     // Constructors
-    public CastMember() {}
+    public CastMember() {
+    }
 
     public CastMember(String name, String imageUrl) {
         this.name = name;
@@ -34,49 +35,49 @@ public class CastMember {
 
     // Getters and Setters
     public Long getId() {
-		return id;
-	}
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public Set<MovieCast> getMovieCasts() {
-		return movieCasts;
-	}
+    public Set<MovieCast> getMovieCasts() {
+        return movieCasts;
+    }
 
-	public void setMovieCasts(Set<MovieCast> movieCasts) {
-		this.movieCasts = movieCasts;
-	}
-    
+    public void setMovieCasts(Set<MovieCast> movieCasts) {
+        this.movieCasts = movieCasts;
+    }
+
     // equals() and hashCode() based on id
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         CastMember that = (CastMember) o;
         return id != null && Objects.equals(id, that.id);
     }
 
-
-
-	@Override
+    @Override
     public int hashCode() {
         return getClass().hashCode();
     }

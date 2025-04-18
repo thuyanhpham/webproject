@@ -32,37 +32,14 @@ public class MovieCrew {
     }
 
     // Getters and Setters
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Movie getMovie() {
-		return movie;
-	}
-
-	public void setMovie(Movie movie) {
-		this.movie = movie;
-	}
-
-	public CrewMember getCrewMember() {
-		return crewMember;
-	}
-
-	public void setCrewMember(CrewMember crewMember) {
-		this.crewMember = crewMember;
-	}
-
-	public String getJobTitle() {
-		return jobTitle;
-	}
-
-	public void setJobTitle(String jobTitle) {
-		this.jobTitle = jobTitle;
-	}
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Movie getMovie() { return movie; }
+    public void setMovie(Movie movie) { this.movie = movie; }
+    public CrewMember getCrewMember() { return crewMember; }
+    public void setCrewMember(CrewMember crewMember) { this.crewMember = crewMember; }
+    public String getJobTitle() { return jobTitle; }
+    public void setJobTitle(String jobTitle) { this.jobTitle = jobTitle; }
 
     // equals() and hashCode() - quan trọng nếu dùng Set
     @Override
@@ -75,8 +52,7 @@ public class MovieCrew {
                Objects.equals(jobTitle, movieCrew.jobTitle); // Thêm jobTitle để phân biệt
     }
 
-
-	@Override
+    @Override
     public int hashCode() {
         return Objects.hash(movie, crewMember, jobTitle);
     }

@@ -1,14 +1,13 @@
 package com.example.demo.cinema.entity;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import jakarta.persistence.ForeignKey;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,38 +29,44 @@ public class User {
 	@Column(nullable = false, unique = true, length = 100)
 	private String email;
 	
-	@Column(nullable = true, length = 255)
+	@Column(nullable = false, unique = true, length = 255)
 	private String fullname;
 	
-	@Column(length = 15)
 	private String phone;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false)
 	private String password;
 	
 	
+	@Column(name = "avatar_url", length = 255) // Hoặc dùng @Lob nếu URL có thể rất dài
+	private String avatarUrl;
+
+	// Thêm getter và setter cho avatarUrl
+	public String getAvatarUrl() {
+	    return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+	    this.avatarUrl = avatarUrl;
+	}
+	
 	@Enumerated(EnumType.STRING)
-	@Column(length = 10)
 	private Gender gender;
 	
 	private LocalDate birthday;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false)
 	private Status status = Status.ACTIVE;
 	
-	@Column(updatable = false, nullable = false)
+	@Column(updatable = false)
 	private LocalDateTime createdAt;
 	
 	private LocalDateTime updatedAt;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_user_role"))
+	@ManyToOne
+	@JoinColumn(name = "role_id", nullable = false)
 	private Role role;
-	
-	public User() {
-		
-	}
 	
 	@PrePersist
 	protected void onCreate() {
@@ -169,30 +174,4 @@ public class User {
 	}
 
 	
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() !=o.getClass()) return false;
-		User user = (User) o;
-		
-	if (id!= null && user.id != null) {
-		return Objects.equals(id, user.id);
-	}
-		return Objects.equals(username, user.username);
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(id != null ? id : username);
-	}
-	
-	@Override
-	public String toString() {
-		return "User{" +
-				"id=" + id +
-				", username='" + username + '\'' +
-				", email='" + email + '\'' +
-				", role=" + (role != null ? role.getName() : "null") +
-				'}';
-	}
 }

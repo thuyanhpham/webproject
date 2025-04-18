@@ -49,46 +49,16 @@ public class Genre {
     }
 
     // Getters and Setters (cho id, name, createdAt, updatedAt, movies)
-    public Long getId() {
- 		return id;
- 	}
-
- 	public void setId(Long id) {
- 		this.id = id;
- 	}
-
- 	public String getName() {
- 		return name;
- 	}
-
- 	public void setName(String name) {
- 		this.name = name;
- 	}
-
- 	public LocalDateTime getCreatedAt() {
- 		return createdAt;
- 	}
-
- 	public void setCreatedAt(LocalDateTime createdAt) {
- 		this.createdAt = createdAt;
- 	}
-
- 	public LocalDateTime getUpdatedAt() {
- 		return updatedAt;
- 	}
-
- 	public void setUpdatedAt(LocalDateTime updatedAt) {
- 		this.updatedAt = updatedAt;
- 	}
-
- 	public Set<Movie> getMovies() {
- 		return movies;
- 	}
-
- 	public void setMovies(Set<Movie> movies) {
- 		this.movies = movies;
- 	}
-
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public Set<Movie> getMovies() { return movies; }
+    public void setMovies(Set<Movie> movies) { this.movies = movies; }
 
 
     // equals() and hashCode() dựa trên 'id' hoặc 'name' (nếu unique) là quan trọng
@@ -104,8 +74,7 @@ public class Genre {
         return Objects.equals(name, genre.name);
     }
 
- 
-	@Override
+    @Override
     public int hashCode() {
          if (id != null) {
             return Objects.hash(id);
