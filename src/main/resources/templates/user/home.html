@@ -49,61 +49,54 @@
 
     <!-- ==========Header-Section (Logged-In User Version Only) ========== -->
     <header class="header-section">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo">
-                    <!-- Link to home -->
-                    <a th:href="@{/home}">
-                        <img th:src="@{/images/logo.png}" alt="logo">
-                    </a>
-                </div>
-                <ul class="menu">
-                    <!-- Single Home Link -->
-                    <li>
-                        <a th:href="@{/home}" th:classappend="${currentPage == 'home'} ? 'active' : ''">Home</a>
-                    </li>
+    <div class="container">
+        <div class="header-wrapper">
+            <div class="logo">
+                <a th:href="@{/}">
+                    <img th:src="@{/images/logo.png}" alt="logo">
+                </a>
+            </div>
+            <ul class="menu">
+                <li class="menu-item-has-children">
+                    <a href="#">Home</a>
+                </li>
+                <li class="menu-item-has-children">
+                    <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movie')} ? 'active' : ''">Movies</a>
+                    <ul class="submenu">
+                        <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
+                        <li><a th:href="@{/movie-details}">Movie Details</a></li>
+                        <li><a th:href="@{/movie-ticket-plan}">Movie Ticket Plan</a></li>
+                        <li><a th:href="@{/movie-seat-plan}">Movie Seat Plan</a></li>
+                        <li><a th:href="@{/movie-checkout}">Movie Checkout</a></li>
+                    </ul>
+                </li>
+                <li class="menu-item-has-children">
+                    <a href="#">Pages</a>
+                    <ul class="submenu">
+                        <li><a th:href="@{/about}">About Us</a></li>
+                        <li><a th:href="@{/apps-download}">Apps Download</a></li>
+                        <li><a th:href="@{/sign-in}">Sign In</a></li>
+                        <li><a th:href="@{/sign-up}">Sign Up</a></li>
+                        <li><a th:href="@{/404}">404</a></li>
+                    </ul>
+                </li>
 
-                    <li class="menu-item-has-children">
-                        <a th:href="@{/movies}">movies</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/movies/list}">Movie Listing</a></li>
-                            <li><a th:href="@{/movie-details}">Movie Details</a></li>
-                            <li><a th:href="@{/movie-ticket-plan}">Movie Ticket Plan</a></li>
-                            <li><a th:href="@{/movie-seat-plan}">Movie Seat Plan</a></li>
-                            <li><a th:href="@{/movie-checkout}">Movie Checkout</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="#">Info</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/about}">About Us</a></li>
-                            <li><a th:href="@{/apps-download}">Apps Download</a></li>
-                        </ul>
-                    </li>
 
-                    <!-- === SECTION SIMPLIFIED: Only shows logged-in info === -->
-                    <!-- Displayed ONLY if user IS authenticated (Implicitly true for this page) -->
-                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <!-- Display Username using security extras -->
-                        <span class="header-user-info">
-                            Xin chào, <span sec:authentication="principal.username">Người dùng</span>!
-                        </span>
-                        <!-- Logout Button Form -->
-                        <form class="logout-button-form" th:action="@{/logout}" method="post">
-                           <button class="logout-button" type="submit">Đăng xuất</button>
-                        </form>
-                    </li>
-                    <!-- === END SIMPLIFIED SECTION === -->
+                <!-- Chỉ hiển thị khi người dùng đã đăng nhập -->
+				<li class="header-button pr-0" sec:authorize="isAuthenticated()">
+				    <span style="color: white; margin-right: 10px;">Xin chào, <b sec:authentication="name"></b>!</span>
+				    <a th:href="@{/logout}">Log Out</a>
+				</li>
 
-                </ul>
-                <div class="header-bar d-lg-none">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+            </ul>
+            <div class="header-bar d-lg-none">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
-    </header>
+    </div>
+</header>
     <!-- ==========Header-Section========== -->
 
     <!-- ==========Banner-Section========== -->

@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Objects;
-
+import org.hibernate.annotations.Cascade;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -54,11 +55,8 @@ public class Movie {
     @Column(nullable = false, length = 100)
     private String director;
 
-//    @Lob
-//    @Column(nullable = false, columnDefinition = "TEXT")
-//    private String actors; // Lưu ý: Trường này có thể không còn cần thiết nếu dùng MovieCast
 
-    @Column(nullable = false, precision = 2, scale = 1)
+    @Column(precision = 2, scale = 1)
     private BigDecimal rating;
 
     @Column(name = "trailer_url", nullable = false, length = 255)
@@ -67,14 +65,27 @@ public class Movie {
     @Column(name = "poster_url", nullable = false, length = 255)
     private String posterUrl;
 
-    @Column(name = "banner_url", length = 255) // Đã thêm bannerUrl
+    @Column(name = "banner_url", length = 255)
     private String bannerUrl;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 50)
+    private MovieStatus status = MovieStatus.COMING_SOON;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+    
+    @Column(name = "cast_list", length = 1000)
+    private String cast;
+    
+    @Column(name = "genres_text", length = 500)
+    private String genres;
+    
+    @Column(name = "format_text", length = 200)
+    private String availableFormats;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Showtime> showtimes = new HashSet<>();
@@ -103,22 +114,10 @@ public class Movie {
             showtime.setMovie(null);
         }
     } 
-    // Mối quan hệ với Genre
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "movie_genres",
-        joinColumns = @JoinColumn(name = "movie_id"),
-        inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private Set<Genre> genres = new HashSet<>();
 
     // Mối quan hệ với Review
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
-
-    // Mối quan hệ với MovieCast (bảng trung gian cast)
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<MovieCast> movieCasts = new HashSet<>();
 
     // Mối quan hệ với MovieCrew (bảng trung gian crew)
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -130,17 +129,13 @@ public class Movie {
     @Column(name = "photo_url", nullable = false, length=255)
     private List<String> photoUrls = new ArrayList<>();
 
-    // Các định dạng phim có sẵn
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "movie_formats", joinColumns = @JoinColumn(name = "movie_id"))
-    @Column(name = "format_name", nullable = false, length=50)
-    private Set<String> availableFormats = new HashSet<>();
-
-
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (status == null) {
+        	status = MovieStatus.COMING_SOON;
+        }
     }
 
     @PreUpdate
@@ -150,17 +145,32 @@ public class Movie {
 
     // Constructor mặc định
     public Movie() {}
-
     
-    // --- Helper methods ---
-    public void addGenre(Genre genre) {
-        if (genre != null) {
-            this.genres.add(genre);
-            genre.getMovies().add(this);
-        }
-    }
+    public String getAvailableFormats() {
+		return availableFormats;
+	}
 
-    public Long getId() {
+	public void setAvailableFormats(String availableFormats) {
+		this.availableFormats = availableFormats;
+	}
+
+	public String getGenres() {
+		return genres;
+	}
+
+	public void setGenres(String genres) {
+		this.genres = genres;
+	}
+
+	public String getCast() {
+		return cast;
+	}
+
+	public void setCast(String cast) {
+		this.cast = cast;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
@@ -264,12 +274,12 @@ public class Movie {
 		this.updatedAt = updatedAt;
 	}
 
-	public Set<Genre> getGenres() {
-		return genres;
+	public MovieStatus getStatus() {
+		return status;
 	}
 
-	public void setGenres(Set<Genre> genres) {
-		this.genres = genres;
+	public void setStatus(MovieStatus status) {
+		this.status = status;
 	}
 
 	public Set<Review> getReviews() {
@@ -280,13 +290,6 @@ public class Movie {
 		this.reviews = reviews;
 	}
 
-	public Set<MovieCast> getMovieCasts() {
-		return movieCasts;
-	}
-
-	public void setMovieCasts(Set<MovieCast> movieCasts) {
-		this.movieCasts = movieCasts;
-	}
 
 	public Set<MovieCrew> getMovieCrews() {
 		return movieCrews;
@@ -303,31 +306,6 @@ public class Movie {
 	public void setPhotoUrls(List<String> photoUrls) {
 		this.photoUrls = photoUrls;
 	}
-
-	public Set<String> getAvailableFormats() {
-		return availableFormats;
-	}
-
-	public void setAvailableFormats(Set<String> availableFormats) {
-		this.availableFormats = availableFormats;
-	}
-
-	public void removeGenre(Genre genre) {
-        if (genre != null) {
-            this.genres.remove(genre);
-            genre.getMovies().remove(this);
-        }
-    }
-
-    public void addCastMember(CastMember castMember, String characterName) {
-        MovieCast movieCast = new MovieCast(this, castMember, characterName);
-        this.movieCasts.add(movieCast);
-    }
-
-    public void removeCastMember(CastMember castMember) {
-        // Sửa lại: dùng equals chuẩn
-        this.movieCasts.removeIf(mc -> mc.getMovie().equals(this) && mc.getCastMember().equals(castMember));
-    }
 
     public void addCrewMember(CrewMember crewMember, String jobTitle) {
          MovieCrew movieCrew = new MovieCrew(this, crewMember, jobTitle);

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Giữ nguyên namespace -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
@@ -6,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <!-- ==================== GIỮ NGUYÊN TOÀN BỘ CSS TỪ user/home.html ==================== -->
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/css.css}" />
@@ -19,94 +21,132 @@
     <link rel="stylesheet" th:href="@{/css/movielistcss/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/owl.theme.default.min.css}" />
 
-    <!-- Favicon Path (Assuming favicon.png exists in static/images/) -->
+    <!-- Favicon Path (Giữ nguyên) -->
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <!--/* Page Title - Changed for Admin */-->
-    <title th:text="${pageTitle ?: 'Admin Dashboard'}">Admin Dashboard - Boleto</title>
+    <!--/* Page Title */-->
+    <title>Admin Dashboard - Boleto</title>
 
- 
+    <!--/* CSS tùy chỉnh cho dashboard (Có thể giữ lại hoặc bỏ đi nếu không cần) */-->
+    <style>
+        /* Style cho các widget thống kê (Giữ lại) */
+        .admin-widget { background: rgba(20, 24, 60, 0.8); padding: 25px; border-radius: 10px; margin-bottom: 30px; color: #fff; display: flex; align-items: center; border: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .admin-widget:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .admin-widget .widget-icon { font-size: 3rem; margin-right: 25px; width: 60px; text-align: center; color: #31d7a9; }
+        .admin-widget .widget-icon.icon-users { color: #31d7a9; } /* Đã sửa */
+        .admin-widget .widget-icon.icon-movies { color: #ffc107; }
+        .admin-widget .widget-icon.icon-bookings { color: #0dcaf0; }
+        .admin-widget .widget-content .title { font-size: 1.1rem; margin-bottom: 8px; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+        .admin-widget .widget-content .amount { font-size: 2.2rem; font-weight: 700; margin-bottom: 12px; }
+        /* .admin-widget .widget-content .view-link { color: #888; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; } */
+        /* .admin-widget .widget-content .view-link:hover { color: #31d7a9; } */
+
+        /* Style cho Quick Actions (Giữ lại) */
+        .quick-actions-section { margin-top: 50px; padding-top: 30px; border-top: 1px solid #2d3450; }
+        .quick-actions-section .title { color: #fff; text-align: center; margin-bottom: 30px; font-size: 1.8rem; }
+        .quick-actions-section .custom-button { display: inline-block; padding: 12px 25px; margin: 0 10px 15px 10px; background: linear-gradient(to bottom, #4453a1, #333c7a); color: #fff; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: none; }
+        .quick-actions-section .custom-button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(46, 96, 209, 0.4); }
+        .quick-actions-section .custom-button i { margin-right: 8px; }
+
+         /* Style cho phần đăng xuất (Giữ nguyên) */
+         .header-button.pr-0 { display: flex; align-items: center; }
+         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+         .header-user-greeting b { color: #fff; font-weight: 600; }
+         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+         .logout-button-styled {
+            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+         }
+         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+
+
+         /* Đảm bảo class active cho menu admin (Giữ nguyên) */
+         .header-section .menu > li > a.active,
+         .header-section .menu .submenu li a.active { color: #31d7a9 !important; font-weight: 600; }
+
+        /* Style cho page title section (Giữ nguyên) */
+        .page-title { padding: 80px 0; }
+        .page-title .title { font-size: 2.5rem; margin-bottom: 10px; }
+        .page-title .breadcrumb { padding-left: 0; margin-bottom: 0; list-style: none; display: flex; justify-content: center; }
+        .page-title .breadcrumb li { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
+        .page-title .breadcrumb li:not(:last-child)::after { content: "/"; margin: 0 10px; opacity: 0.7; }
+        .page-title .breadcrumb li a { color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: color 0.3s ease; }
+        .page-title .breadcrumb li a:hover { color: #fff; }
+        .page-title .breadcrumb li:last-child { color: #fff; }
+
+         /* Style cho section chính */
+         .admin-dashboard-section { background-color: #032055; }
+
+         /* === CSS MỚI ĐỂ BIẾN WIDGET THÀNH LINK === */
+         a.admin-widget-link,
+         a.admin-widget-link:hover,
+         a.admin-widget-link:focus {
+             text-decoration: none; /* Bỏ gạch chân */
+             color: inherit; /* Giữ màu chữ trắng */
+             display: block; /* Làm cho thẻ <a> chiếm toàn bộ không gian cột */
+         }
+
+    </style>
 </head>
 
 <body>
-    <!-- ==========Preloader (KEEP) ========== -->
+    <!-- ==========Preloader (Giữ nguyên) ========== -->
     <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
-    <!-- ==========Overlay (KEEP) ========== -->
+    <!-- ==========Overlay (Giữ nguyên) ========== -->
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
-    <!-- ==========Header-Section (Admin Version) ========== -->
-    <header class="header-section">
+    <!-- ==========Header-Section (Giữ nguyên) ========== -->
+     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
                 <div class="logo">
-                    <!-- Link to Admin Dashboard Home -->
-                    <a th:href="@{/admin/dashboard}">
+                    <a th:href="@{/admin}">
                         <img th:src="@{/images/logo.png}" alt="logo">
+                         <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span>
                     </a>
                 </div>
                 <ul class="menu">
-                    <!-- Admin Menu Items -->
-                    <li>
-                        <a th:href="@{/admin/dashboard}" th:classappend="${currentPage == 'dashboard'} ? 'active' : ''">Dashboard</a>
-                    </li>
-                     <li class="menu-item-has-children">
+                    <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li>
+                    <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings') or #strings.startsWith(currentURI, '/admin/showtimes') or #strings.startsWith(currentURI, '/admin/genres'))} ? 'active' : ''">
                         <a href="#">Management</a>
                         <ul class="submenu">
-                            <li><a th:href="@{/admin/users}" th:classappend="${currentPage == 'users'} ? 'active' : ''">Users</a></li>
-                            <li><a th:href="@{/admin/movies}" th:classappend="${currentPage == 'movies'} ? 'active' : ''">Movies</a></li>
-                            <li><a th:href="@{/admin/bookings}" th:classappend="${currentPage == 'bookings'} ? 'active' : ''">Bookings</a></li>
-                             <li><a th:href="@{/admin/showtimes}" th:classappend="${currentPage == 'showtimes'} ? 'active' : ''">Showtimes</a></li>
-                             <li><a th:href="@{/admin/cinemas}" th:classappend="${currentPage == 'cinemas'} ? 'active' : ''">Cinemas</a></li>
-                             <!-- Add other management links as needed -->
+                             <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li>
+                            <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li>
+                            <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li>
+                            <li><a th:href="@{/admin/showtimes}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/showtimes')} ? 'active' : ''">Showtimes</a></li>
+                            <li><a th:href="@{/admin/genres}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/genres')} ? 'active' : ''">Genres</a></li>
                         </ul>
                     </li>
-                     <li>
-                         <a th:href="@{/admin/settings}" th:classappend="${currentPage == 'settings'} ? 'active' : ''">Settings</a>
-                    </li>
-                    <li> <!-- Link back to main site home -->
-                        <a th:href="@{/home}" target="_blank">View Site</a>
-                    </li>
-
-                    <!-- Logged-in Admin Info & Logout (KEEP) -->
+                    <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li>
+                    <li><a th:href="@{/home}" target="_blank">View Site</a></li>
                     <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <span class="header-user-info">
-                            Admin: <span sec:authentication="principal.username">Admin</span>
-                        </span>
-                        <form class="logout-button-form" th:action="@{/logout}" method="post">
-                           <button class="logout-button" type="submit">Đăng xuất</button>
-                        </form>
+                        <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span>
+						<form class="logout-button-form" th:action="@{/logout}" method="post">
+						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						    <button class="logout-button-styled" type="submit">LOG OUT</button>
+						</form>
                     </li>
-                    <!-- End Logged-in Info -->
-
                 </ul>
-                <div class="header-bar d-lg-none">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+                <div class="header-bar d-lg-none"><span></span><span></span><span></span></div>
             </div>
         </div>
     </header>
     <!-- ==========Header-Section========== -->
 
-    <!-- ==========Page-Title-Section (Admin Banner) ========== -->
-    <!-- Using a simpler banner style often found on inner pages -->
-    <section class="page-title bg_img" th:styleappend="'background-image: url(' + @{/images/banner05.jpg} + ');'">
+    <!-- ========== Banner Section (Giữ nguyên) ========== -->
+    <section class="banner-section">
+         <div class="banner-bg bg_img bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner01.jpg} + ');'"></div>
         <div class="container">
-            <div class="page-title-content">
-                <h1 class="title">Admin Dashboard</h1>
-                <ul class="breadcrumb">
-                    <li><a th:href="@{/admin/dashboard}">Admin Home</a></li>
-                    <li>Dashboard</li>
-                </ul>
+            <div class="banner-content">
+                <h1 class="title cd-headline clip"> <span class="d-block">Admin</span> Panel for <span class="color-theme cd-words-wrapper p-0 m-0" style="width: auto;"> <b class="is-visible">Movies</b> </span> </h1>
+                <p>Manage your movie booking application efficiently.</p>
             </div>
         </div>
     </section>
-    <!-- ==========Page-Title-Section========== -->
+    <!-- ==========Banner-Section========== -->
 
 
-    <!-- ========== Admin Dashboard Content Section ========== -->
+    <!-- ========== Admin Dashboard Content Section (Sửa thẻ Movies) ========== -->
     <section class="admin-dashboard-section padding-top padding-bottom">
         <div class="container">
             <div class="section-header-3">
@@ -114,141 +154,97 @@
                 <h2 class="title">Dashboard Statistics</h2>
                 <p>Quick summary of key site metrics.</p>
             </div>
-
             <div class="row mb-30-none justify-content-center">
                 <!-- Stat Card 1: Total Users -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="admin-widget">
-                        <div class="widget-icon"><i class="fas fa-users"></i></div>
-                        <div class="widget-content">
-                            <h4 class="title">Total Users</h4>
-                            <!--/* TODO: Replace 'N/A' with actual data from the model attribute, e.g., ${totalUsers} */-->
-                            <h2 class="amount" th:text="${totalUsers ?: 'N/A'}">0</h2>
-                            <a th:href="@{/admin/users}" class="view-link">Manage Users</a>
+                     <!-- Có thể làm thẻ User thành link tương tự -->
+                     <a th:href="@{/admin/users}" class="admin-widget-link">
+                        <div class="admin-widget">
+                            <div class="widget-icon icon-users"><i class="fas fa-users"></i></div>
+                            <div class="widget-content">
+                                <h4 class="title">Total Users</h4>
+                                <h2 class="amount" th:text="${totalUsers ?: 'N/A'}">0</h2>
+                                <!-- Bỏ link nhỏ nếu không cần -->
+                            </div>
                         </div>
-                    </div>
+                     </a>
                 </div>
-
                 <!-- Stat Card 2: Total Movies -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="admin-widget">
-                       <div class="widget-icon"><i class="fas fa-film"></i></div>
-                        <div class="widget-content">
-                            <h4 class="title">Total Movies</h4>
-                             <!--/* TODO: Replace 'N/A' with actual data, e.g., ${totalMovies} */-->
-                            <h2 class="amount" th:text="${totalMovies ?: 'N/A'}">0</h2>
-                            <a th:href="@{/admin/movies}" class="view-link">Manage Movies</a>
-                        </div>
-                    </div>
-                </div>
-
+				<div class="col-md-6 col-lg-4">
+				    <a th:href="@{/admin/movies}" class="admin-widget-link"> <!-- Link đến movie list -->
+				        <div class="admin-widget"> <!-- div.admin-widget gốc nằm trong <a> -->
+				           <div class="widget-icon icon-movies"><i class="fas fa-film"></i></div>
+				            <div class="widget-content">
+				                <h4 class="title">Total Movies</h4>
+				                <h2 class="amount" th:text="${totalMovies ?: 'N/A'}">0</h2>
+				            </div>
+				        </div>
+				    </a>
+				</div>
                 <!-- Stat Card 3: Total Bookings -->
                 <div class="col-md-6 col-lg-4">
-                   <div class="admin-widget">
-                       <div class="widget-icon"><i class="fas fa-ticket-alt"></i></div>
-                        <div class="widget-content">
-                            <h4 class="title">Total Bookings</h4>
-                             <!--/* TODO: Replace 'N/A' with actual data, e.g., ${totalBookings} */-->
-                            <h2 class="amount" th:text="${totalBookings ?: 'N/A'}">0</h2>
-                             <a th:href="@{/admin/bookings}" class="view-link">View Bookings</a>
+                     <!-- Có thể làm thẻ Bookings thành link tương tự -->
+                     <a th:href="@{/admin/bookings}" class="admin-widget-link">
+                        <div class="admin-widget">
+                           <div class="widget-icon icon-bookings"><i class="fas fa-ticket-alt"></i></div>
+                            <div class="widget-content">
+                                <h4 class="title">Total Bookings</h4>
+                                <h2 class="amount" th:text="${totalBookings ?: 'N/A'}">0</h2>
+                                <!-- Bỏ link nhỏ nếu không cần -->
+                            </div>
                         </div>
-                    </div>
+                     </a>
                 </div>
-
-                 <!-- Add more cards/widgets as needed (e.g., Revenue, Showtimes, Cinemas) -->
-                 <!--
-                 <div class="col-md-6 col-lg-4">
-                   <div class="admin-widget">
-                       <div class="widget-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <div class="widget-content">
-                            <h4 class="title">Total Revenue</h4>
-                            <h2 class="amount" th:text="${totalRevenue ?: 'N/A'}">0</h2>
-                             <a href="#" class="view-link">View Reports</a>
-                        </div>
-                    </div>
-                </div>
-                -->
             </div>
-
-            <!-- Optional: Quick Actions Section -->
+            <!-- Quick Actions (Giữ nguyên) -->
             <div class="quick-actions-section">
                  <h3 class="title mb-4">Quick Actions</h3>
-                 <a th:href="@{/admin/movies/add}" class="custom-button">Add New Movie</a>
-                 <a th:href="@{/admin/users/add}" class="custom-button">Add New User</a>
-                 <a th:href="@{/admin/showtimes/add}" class="custom-button">Add Showtime</a>
-                 <a th:href="@{/admin/cinemas/add}" class="custom-button">Add Cinema</a>
-                 <!-- Add more relevant quick action links -->
+                 <div style="text-align: center;">
+                     <a th:href="@{/admin/movies/create}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
+                     <a th:href="@{/admin/users/create}" class="custom-button"><i class="fas fa-user-plus"></i> Add User</a>
+                     <a th:href="@{/admin/showtimes/create}" class="custom-button"><i class="fas fa-clock"></i> Add Showtime</a>
+                     <a th:href="@{/admin/cinemas/create}" class="custom-button"><i class="fas fa-building"></i> Add Cinema</a>
+                 </div>
             </div>
         </div>
     </section>
     <!-- ========== End Admin Dashboard Content Section ========== -->
 
 
-    <!-- ==========Footer Section (KEEP)========== -->
-    <footer class="footer-section">
-        <!-- Newsletter (Keep or remove based on preference) -->
-        <div class="newslater-section padding-bottom">
-            <div class="container">
-                <div class="newslater-container bg_img" th:styleappend="'background-image: url(' + @{/images/newslater-bg01.jpg} + ');'">
-                    <div class="newslater-wrapper">
-                        <h5 class="cate">subscribe to Boleto </h5>
-                        <h3 class="title">to get exclusive benefits</h3>
-                        <form class="newslater-form" th:action="@{/subscribe}" method="post">
-                            <input type="email" name="email" placeholder="Your Email Address" required>
-                            <button type="submit">subscribe</button>
-                        </form>
-                        <p>We respect your privacy, so we never share your info</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer Top & Bottom (Keep for consistency) -->
-        <div class="container">
-            <div class="footer-top">
-                <div class="logo"> <a th:href="@{/admin/dashboard}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div>
-                <ul class="social-icons">
-                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                    <li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
-                    <li><a href="#"><i class="fab fa-google"></i></a></li>
-                    <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                </ul>
-            </div>
-            <div class="footer-bottom">
-                <div class="footer-bottom-area">
-                    <div class="left">
-                         <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}">2025</span>. All Rights Reserved By <a href="#">Boleto Admin</a></p>
-                    </div>
-                    <ul class="links">
-                        <li><a th:href="@{/about}">About</a></li>
-                        <li><a th:href="@{/terms}">Terms Of Use</a></li>
-                        <li><a th:href="@{/privacy}">Privacy Policy</a></li>
-                        <li><a th:href="@{/faq}">FAQ</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <!-- ==========Footer Section (Giữ nguyên)========== -->
+     <footer class="footer-section">
+        <div class="newslater-section padding-bottom"> <div class="container"> <div class="newslater-container bg_img" th:styleappend="'background-image: url(' + @{/images/newslater-bg01.jpg} + ');'"> <div class="newslater-wrapper"> <h5 class="cate">subscribe to Boleto </h5> <h3 class="title">to get exclusive benefits</h3> <form class="newslater-form" th:action="@{/subscribe}" method="post"> <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <input type="email" name="email" placeholder="Your Email Address" required> <button type="submit">subscribe</button> </form> <p>We respect your privacy, so we never share your info</p> </div> </div> </div> </div>
+        <div class="container"> <div class="footer-top"> <div class="logo"> <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div> <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul> </div> <div class="footer-bottom"> <div class="footer-bottom-area"> <div class="left"> <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}">2025</span>. Admin Panel by <a href="#">Boleto</a></p> </div> <ul class="links"> <li><a href="#">About</a></li> <li><a href="#">Terms Of Use</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">FAQ</a></li> </ul> </div> </div> </div>
     </footer>
     <!-- ==========Footer Section========== -->
 
-    <!--/* Static JS references (KEEP ALL) */-->
+    <!-- ==================== GIỮ NGUYÊN TOÀN BỘ SCRIPTS TỪ user/home.html ==================== -->
     <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
-		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
-		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
+    <script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/movielistjs/plugins.js}"></script>
+    <script th:src="@{/js/movielistjs/popper.min.js}"></script>
+    <script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/movielistjs/nice-select.js}"></script>
+    <script th:src="@{/js/movielistjs/odometer.min.js}"></script>
+    <script th:src="@{/js/movielistjs/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/movielistjs/viewport.jquery.js}"></script>
+    <script th:src="@{/js/movielistjs/wow.min.js}"></script>
+    <script th:src="@{/js/movielistjs/countdown.min.js}"></script>
+    <script th:src="@{/js/movielistjs/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/movielistjs/contentInt.js}"></script>
+    <script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
 
-		<script th:src="@{/js/movielistjs/plugins.js}"></script>
-		<script th:src="@{/js/movielistjs/popper.min.js}"></script>
-		<script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
-		<script th:src="@{/js/movielistjs/nice-select.js}"></script>
-		<script th:src="@{/js/movielistjs/odometer.min.js}"></script>
-		<script th:src="@{/js/movielistjs/owl.carousel.min.js}"></script>
-		<script th:src="@{/js/movielistjs/viewport.jquery.js}"></script>
-		<script th:src="@{/js/movielistjs/wow.min.js}"></script>
-		<script th:src="@{/js/movielistjs/countdown.min.js}"></script>
-		<script th:src="@{/js/movielistjs/isotope.pkgd.min.js}"></script>
-		<script th:src="@{/js/movielistjs/contentInt.js}"></script>
-		<script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
-		<script th:src="@{/js/main.js}"></script>
+    <!-- Có thể thêm script JS riêng cho admin nếu cần -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+             console.log("Admin dashboard page loaded (inheriting home styles).");
+             // Khởi tạo các plugin JS của theme nếu cần
+        });
+        /*]]>*/
+    </script>
 
 </body>
 </html>

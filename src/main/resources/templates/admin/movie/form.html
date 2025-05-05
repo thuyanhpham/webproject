@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- CSS Links (Giữ nguyên) -->
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/animate.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/css.css}" />
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/fontawesome.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/magnific-popup.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/nice-select.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/odometer.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/owl.carousel.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/owl.theme.default.min.css}" />
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title th:text="${movie.id == null} ? 'Admin - Add Movie' : 'Admin - Edit Movie'">Admin - Movie Form</title>
+
+    <!-- CSS TÙY CHỈNH (Giữ nguyên) -->
+     <style>
+        body { background-color: #032055; color: #ccc; }
+        .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
+        .form-label { color: #a0a3bd; margin-bottom: .5rem; font-weight: 500;}
+        .form-control, .form-select, .form-check-input { background-color: rgba(255, 255, 255, 0.05); border: 1px solid #2d3450; color: #fff; border-radius: 5px; }
+        .form-control:focus, .form-select:focus, .form-check-input:focus { background-color: rgba(255, 255, 255, 0.1); border-color: #50a6fc; color: #fff; box-shadow: none; }
+        .form-control::placeholder { color: #6c757d; }
+        .form-check-label { color: #ccc; }
+        .btn-save { display: inline-block; padding: 12px 30px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #001232; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; border: none; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-save:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
+        .btn-cancel { display: inline-block; padding: 10px 25px; background: transparent; color: #aaa; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s ease; border: 1px solid #444; margin-left: 15px; }
+        .btn-cancel:hover { background: #444; color: #fff; }
+        .required-star { color: #ff4343; margin-left: 2px;}
+        .text-danger { color: #fff !important; font-size: 0.85em; margin-top: 4px; }
+        .header-section .menu > li > a.active { color: #31d7a9 !important; }
+        .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+        .header-user-greeting b { color: #ffffff; font-weight: 600; }
+        .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+        .logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
+        .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+        .checkbox-group { padding: 10px; border: 1px solid #2d3450; border-radius: 5px; background-color: rgba(255, 255, 255, 0.05);}
+        .checkbox-group .form-check { margin-bottom: 8px; }
+        .form-check-inline { margin-right: 1rem; }
+    </style>
+</head>
+
+<body>
+    <!-- Preloader, Overlay, ScrollToTop (Giữ nguyên) -->
+    <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
+
+    <!-- Header Admin (Giữ nguyên) -->
+    <header class="header-section">
+       <div class="container"> <div class="header-wrapper"> <div class="logo"> <a th:href="@{/admin}"> <img th:src="@{/images/logo.png}" alt="logo"> <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span> </a> </div> <ul class="menu"> <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li> <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings') or #strings.startsWith(currentURI, '/admin/showtimes') or #strings.startsWith(currentURI, '/admin/genres'))} ? 'active' : ''"> <a href="#">Management</a> <ul class="submenu"> <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li> <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li> <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li> <li><a th:href="@{/admin/showtimes}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/showtimes')} ? 'active' : ''">Showtimes</a></li> <li><a th:href="@{/admin/genres}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/genres')} ? 'active' : ''">Genres</a></li> </ul> </li> <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li> <li><a th:href="@{/home}" target="_blank">View Site</a></li> <li class="header-button pr-0" sec:authorize="isAuthenticated()"> <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span> <form class="logout-button-form" th:action="@{/logout}" method="post"> <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <button class="logout-button-styled" type="submit">LOG OUT</button> </form> </li> </ul> <div class="header-bar d-lg-none"><span></span><span></span><span></span></div> </div> </div>
+    </header>
+
+    <!-- Phần Nội dung Chính: Form Thêm/Sửa Phim -->
+    <section class="admin-section padding-top padding-bottom">
+        <div class="container">
+
+             <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;"
+                 th:text="${movie.id == null} ? 'Add New Movie' : 'Edit Movie'">Movie Form</h2>
+
+             <!-- Hiển thị lỗi chung khi lưu (nếu có) -->
+              <div th:if="${saveError}" class="alert alert-danger" role="alert" th:text="${saveError}"></div>
+             <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
+
+             <!-- Bỏ thẻ <div class="row"> -->
+             <form th:action="@{/admin/movies/save}" th:object="${movie}" method="post" class="mt-4">
+                 <input type="hidden" th:field="*{id}" />
+
+                 <!-- Các trường input xếp chồng lên nhau -->
+                 <div class="mb-3">
+                     <label for="title" class="form-label">Title<span class="required-star">*</span></label>
+                     <input type="text" class="form-control" id="title" th:field="*{title}" required>
+                     <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                 </div>
+
+                 <div class="mb-3">
+                     <label for="description" class="form-label">Description</label>
+                     <textarea class="form-control" id="description" rows="4" th:field="*{description}"></textarea>
+                     <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                 </div>
+
+                 <div class="row"> <!-- Chia 2 cột cho Release Date và Duration -->
+                     <div class="col-md-6 mb-3">
+                         <label for="releaseDate" class="form-label">Release Date<span class="required-star">*</span></label>
+                         <input type="date" class="form-control" id="releaseDate" th:field="*{releaseDate}" required>
+                         <div class="text-danger" th:if="${#fields.hasErrors('releaseDate')}" th:errors="*{releaseDate}"></div>
+                     </div>
+                     <div class="col-md-6 mb-3">
+                         <label for="duration" class="form-label">Duration (minutes)<span class="required-star">*</span></label>
+                         <input type="number" class="form-control" id="duration" th:field="*{duration}" required min="1">
+                         <div class="text-danger" th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}"></div>
+                     </div>
+                 </div>
+
+                 <div class="mb-3">
+                    <label for="director" class="form-label">Director</label>
+                    <input type="text" class="form-control" id="director" th:field="*{director}">
+                     <div class="text-danger" th:if="${#fields.hasErrors('director')}" th:errors="*{director}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="cast" class="form-label">Cast</label>
+                    <input type="text" class="form-control" id="cast" th:field="*{cast}" placeholder="Enter main cast members, separated by comma">
+                </div>
+
+                <div class="mb-3">
+                    <label for="posterUrl" class="form-label">Poster URL<span class="required-star">*</span></label>
+                    <input type="url" class="form-control" id="posterUrl" th:field="*{posterUrl}" placeholder="https://example.com/poster.jpg" required>
+                    <div class="text-danger" th:if="${#fields.hasErrors('posterUrl')}" th:errors="*{posterUrl}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="trailerUrl" class="form-label">Trailer URL (YouTube Embed)<span class="required-star">*</span></label>
+                    <input type="url" class="form-control" id="trailerUrl" th:field="*{trailerUrl}" placeholder="https://www.youtube.com/embed/..." required>
+                    <div class="text-danger" th:if="${#fields.hasErrors('trailerUrl')}" th:errors="*{trailerUrl}"></div>
+                </div>
+                
+				<div class="mb-3">
+				    <label for="language" class="form-label">Language<span class="required-star">*</span></label>
+				    <input type="text" class="form-control" id="language" th:field="*{language}" required placeholder="e.g., English, Vietnamese">
+				    <div class="text-danger" th:if="${#fields.hasErrors('language')}" th:errors="*{language}"></div>
+				</div>
+
+               <div class="mb-3">
+                    <label for="genres" class="form-label">Genres (comma-separated)<span class="required-star">*</span></label>
+                    <input type="text" class="form-control" id="genres" th:field="*{genres}" required
+                           placeholder="Enter genres, separated by comma (e.g., Action, Comedy, Sci-Fi)">
+               </div>
+               <div class="mb-3">
+                   <label for="availableFormats" class="form-label">Available Formats (comma-separated)</label> <!-- Có thể bỏ required -->
+                   <input type="text" class="form-control" id="availableFormats" th:field="*{availableFormats}"
+                          placeholder="Enter formats, separated by comma (e.g., 2D, 3D, IMAX)">
+               </div>
+
+
+                 <!-- CSRF Token -->
+                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                 <!-- Nút bấm -->
+                 <div class="mt-4 text-center">
+                     <button type="submit" class="btn-save" th:text="${movie.id == null} ? 'Add Movie' : 'Update Movie'">Save</button>
+                     <a th:href="@{/admin/movies}" class="btn-cancel">Cancel</a>
+                 </div>
+
+             </form> <!-- //form -->
+
+        </div><!-- //container -->
+    </section>
+    <!-- ========== Phần Nội dung Chính End ========== -->
+
+    <!-- Footer (Giữ nguyên) -->
+    <footer class="footer-section">
+        <!-- ... Nội dung footer ... -->
+    </footer>
+
+    <!-- Scripts (Giữ nguyên) -->
+     <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
+     <!-- ... Các script khác ... -->
+     <script th:src="@{/js/main.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+             console.log("Admin movie form page loaded.");
+        });
+        /*]]>*/
+    </script>
+
+</body>
+</html>
