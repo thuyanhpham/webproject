@@ -49,7 +49,7 @@ public class MovieDetailController {
         // Giữ nguyên logic xử lý chi tiết phim
         log.info("Request received for movie details with ID: {}", id);
         try {
-            Movie movie = movieService.findMovieByIdWithDetails(id);
+            Movie movie = movieService.getMovieById(id);
             model.addAttribute("movie", movie);
 
              // Thêm thông tin rạp vào trang chi tiết phim nếu cần
@@ -58,7 +58,7 @@ public class MovieDetailController {
              //model.addAttribute("cinemaAddress", CINEMA_ADDRESS);
 
             log.info("Movie found: {}. Rendering detail page.", movie.getTitle());
-            return "moviedetail";
+            return "user/movie/moviedetail";
         } catch (ResourceNotFoundException e) {
             log.error("Movie not found for ID: {}", id, e);
             model.addAttribute("errorMessage", "Movie not found with ID: " + id);
@@ -86,7 +86,7 @@ public class MovieDetailController {
 
         try {
             // 1. Lấy thông tin chi tiết phim
-            Movie movie = movieService.findMovieByIdWithDetails(movieId);
+            Movie movie = movieService.getMovieById(movieId);
 
             // 2. Xác định ngày lọc
             LocalDate dateToFilter = (selectedDate != null) ? selectedDate : LocalDate.now();
@@ -119,7 +119,7 @@ public class MovieDetailController {
                      showtimes.size(), movie.getTitle(), dateToFilter);
 
             // 7. Trả về tên template
-            return "movieticketplan";
+            return "user/movie/movieticketplan";
 
         } catch (ResourceNotFoundException e) {
             log.error("Resource not found while getting showtimes for Movie ID: {}", movieId, e);

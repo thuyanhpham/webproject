@@ -16,6 +16,7 @@ import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
+import com.example.demo.cinema.security.CustomUserDetails;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -41,7 +42,7 @@ public class UserService implements UserDetailsService {
 		}
 		
 		
-		Role userRole = roleRepository.findByName("USER")
+		Role userRole = roleRepository.findByName("ROLE_USER")
 				.orElseThrow(() -> new RuntimeException("Không tìm thấy role USER"));
 		
 		User user = new User();
@@ -60,9 +61,7 @@ public class UserService implements UserDetailsService {
 		User user = userRepository.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy User"));
 		
-		return new org.springframework.security.core.userdetails.User(user.getUsername(),
-						user.getPassword(),
-						List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())));
+		return new CustomUserDetails(user);
 	}
 	
 	public Optional<User> findByUsername(String username) {

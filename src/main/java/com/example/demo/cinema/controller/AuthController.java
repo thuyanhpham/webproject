@@ -92,7 +92,7 @@ public class AuthController {
 	// API Quên mật khẩu
 	@GetMapping("/forgot-password")
 	public String showForgotPasswordForm() {
-		return "forgot-password";
+		return "user/forgot-password";
 	}
 
 	@PostMapping("/forgot-password")
@@ -104,7 +104,7 @@ public class AuthController {
 
 		if (!password.equals(confirmPassword)) {
 			redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp.");
-			return "redirect:/forgot-password";
+			return "redirect:/user/forgot-password";
 		}
 
 		String result = userService.updatePasswordByEmail(email, password);
@@ -113,7 +113,7 @@ public class AuthController {
 			return "redirect:/login";
 		} else {
 			redirectAttributes.addFlashAttribute("error", result);
-			return "redirect:/forgot-password";
+			return "redirect:/user/forgot-password";
 		}
 	}
 

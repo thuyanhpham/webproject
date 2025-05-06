@@ -22,6 +22,17 @@
     <!-- Favicon Path (Assuming favicon.png exists in static/images/) -->
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
+	<style>
+		.header-button.pr-0 { display: flex; align-items: center; }
+         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+         .header-user-greeting b { color: #fff; font-weight: 600; }
+         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+         .logout-button-styled {
+            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+         }
+         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+		
+	</style>
     <!--/* Page Title */-->
     <title th:text="${pageTitle ?: 'Boleto - Welcome'}">Boleto - Online Movie Ticket Booking</title>
 
@@ -88,12 +99,12 @@
 	                    <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
 	                </li>
 	 
-	                <!-- Nút Logout nếu đã đăng nhập -->
 	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-	                    <form th:action="@{/logout}" method="post" >
-	                        <a type="submit">Log out</a>
-	                    </form>
-	                </li>                     
+					    <form class="logout-button-form" th:action="@{/logout}" method="post">
+						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						    <button class="logout-button-styled" type="submit">LOG OUT</button>
+						</form>
+					</li>                    
                               
                 </ul>
                 <div class="header-bar d-lg-none">
@@ -103,7 +114,7 @@
 				</div>
             </div>
         </div>
-    </header>
+</header>
     <!-- ==========Header-Section========== -->
 
     <!-- ==========Banner-Section========== -->

@@ -657,7 +657,7 @@ body {
   padding: 0;
   margin: 0;
   font-size: 16px;
-  color: #dbe2fb;
+  color: #ffffff;
   line-height: 28px;
   overflow-x: hidden;
   font-family: "Open Sans", sans-serif;
@@ -3143,14 +3143,14 @@ input[type="submit"] {
 }
 
 .movie-list .movie-content .movie-tags a {
-  color: #dbe2fb;
+  color: #ffffff;
   margin-bottom: 5px;
 }
 
 .movie-list .movie-content .movie-tags a::after {
   content: "|";
   font-size: 14px;
-  color: #dbe2fb;
+  color: #ffffff;
   margin: 0 15px;
 }
 
@@ -3235,7 +3235,7 @@ input[type="submit"] {
       -ms-flex-pack: center;
           justify-content: center;
   border-radius: 50%;
-  background: #032055;
+  background: #ffffff;
 }
 
 .movie-list .movie-content .book-area .book-ticket .react-item .thumb img {

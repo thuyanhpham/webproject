@@ -129,8 +129,10 @@
                          <!-- <a href="#0" th:each="format : ${movie.availableFormats}" th:text="${format}">Format</a> -->
                     </div>
                     <!-- Dynamic primary genre -->
-                    <a href="#0" class="button" th:if="${!#lists.isEmpty(movie.genres)}" th:text="${movie.genres.iterator().next().name}">Genre</a>
-                    <a href="#0" class="button" th:unless="${!#lists.isEmpty(movie.genres)}">Genre</a>
+                    <div class="detail-item">
+					    <h5 class="sub-title">Genres</h5>
+					    <p th:text="${movie.genres} ?: 'N/A'"></p>
+					</div>
 
                     <div class="social-and-duration">
                         <div class="duration-area">
@@ -223,14 +225,10 @@
                 <!-- Sidebar -->
                 <div class="col-lg-3 col-sm-10 col-md-6 mb-50">
                     <!-- Available Formats -->
-                    <div class="widget-1 widget-tags">
-                        <ul>
-                            <li th:each="format : ${movie.availableFormats}">
-                                <a href="#0" th:text="${format}">Format</a>
-                            </li>
-                            <li th:if="${#lists.isEmpty(movie.availableFormats)}"><a href="#0">N/A</a></li>
-                        </ul>
-                    </div>
+                    <div class="detail-item">
+					    <h5 class="sub-title">Available Formats</h5>
+					    <p th:text="${movie.availableFormats} ?: 'N/A'"></p>
+					</div>
 
                     <!-- !!! OFFER WIDGET REMOVED HERE !!! -->
 

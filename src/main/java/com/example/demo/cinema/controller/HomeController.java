@@ -1,8 +1,7 @@
 package com.example.demo.cinema.controller;
 
-import com.example.demo.cinema.entity.Movie;
-import com.example.demo.cinema.service.MovieService;
-import com.example.demo.cinema.service.ShowtimeService; // *** Cần import ShowtimeService ***
+import java.security.Principal;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,72 +10,42 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.security.Principal;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import com.example.demo.cinema.entity.Movie;
+import com.example.demo.cinema.service.MovieService;
 
 @Controller
 public class HomeController {
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
-    // *** Sử dụng constructor injection cho cả 2 service ***
-    private final MovieService movieService;
-    private final ShowtimeService showtimeService;
-
     @Autowired
-    public HomeController(MovieService movieService, ShowtimeService showtimeService) {
-        this.movieService = movieService;
-        this.showtimeService = showtimeService;
-    }
+    private MovieService movieService;
 
-    // *** Map cả "/" và "/home" ***
-    @GetMapping({ "/home" })
-    public String userHomePage(Model model, Principal principal) {
-        log.info("Accessing user home page '/' or '/home'");
 
-        // *** Xử lý Principal (giữ nguyên) ***
+    @GetMapping("/home")
+    public String userHomePage(Model model, Principal principal) { // Dùng Principal để lấy thông tin user
+        log.info("Accessing user home page '/home'");
+
+        String username = "Guest"; // Giá trị mặc định nếu không đăng nhập (dù request này nên được bảo vệ)
         if (principal != null) {
-            String username = principal.getName();
+            username = principal.getName(); // Lấy username nếu đã đăng nhập
             log.info("User '{}' is logged in.", username);
             model.addAttribute("username", username);
         } else {
-            log.info("User is accessing anonymously.");
+            // Trường hợp này không nên xảy ra nếu /home được bảo vệ đúng cách
+            log.warn("Accessing /home without authentication!");
+             // Có thể chuyển hướng về login hoặc trả lỗi, nhưng Security nên chặn trước đó
+             // return "redirect:/login";
         }
 
-        try {
-            // *** 1. Lấy danh sách phim đã phân loại ***
-            List<Movie> nowShowing = movieService.findNowShowingMovies(); // Gọi phương thức đúng
-            List<Movie> comingSoon = movieService.findComingSoonMovies(); // Gọi phương thức đúng
+        // Lấy danh sách phim
+        List<Movie> movies = movieService.getAllMovies();
+        log.info("Fetched {} movies for /home page.", movies.size());
 
-            // *** Thêm vào Model với tên đúng mà template cần ***
-            model.addAttribute("nowShowingMovies", nowShowing != null ? nowShowing : Collections.emptyList());
-            model.addAttribute("comingSoonMovies", comingSoon != null ? comingSoon : Collections.emptyList());
-            log.info("Fetched movies: Now Showing ({}), Coming Soon ({})",
-                    nowShowing != null ? nowShowing.size() : 0,
-                    comingSoon != null ? comingSoon.size() : 0);
+        model.addAttribute("movies", movies);
+        model.addAttribute("bannerUrl", "/images/banner.jpg");
 
-            // *** 2. Lấy danh sách ngày cho dropdown ***
-            // *** Đảm bảo phương thức này tồn tại trong ShowtimeService ***
-            List<LocalDate> availableDates = showtimeService.findAllAvailableShowtimeDates();
-            model.addAttribute("availableDates", availableDates != null ? availableDates : Collections.emptyList());
-            log.info("Fetched search dropdown data: Dates ({})",
-                    availableDates != null ? availableDates.size() : 0);
-
-            // *** 3. Thêm các thông tin khác (Banner) ***
-            model.addAttribute("bannerUrl", "/images/banner01.jpg");
-
-        } catch (Exception e) {
-            // *** Xử lý lỗi cơ bản (giữ nguyên) ***
-            log.error("Error fetching data for home page", e);
-            model.addAttribute("pageError", "Could not load all page data. Please try again later.");
-            model.addAttribute("nowShowingMovies", Collections.emptyList());
-            model.addAttribute("comingSoonMovies", Collections.emptyList());
-            model.addAttribute("availableDates", Collections.emptyList());
-        }
-
-        // *** Trả về tên template "home" ***
-        return "home";
+        return "user/home";
     }
+
 }

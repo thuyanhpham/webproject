@@ -73,7 +73,7 @@ public class MovieController {
         model.addAttribute("requestURI", request.getRequestURI());
         // ======================================
 
-        return "movielist"; // Trả về tên file template (movielist.html)
+        return "user/movie/movielist"; // Trả về tên file template (movielist.html)
     }
 
 
