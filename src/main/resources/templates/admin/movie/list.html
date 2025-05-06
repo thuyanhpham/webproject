@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- ==================== CSS THEME (GIỮ NGUYÊN) ==================== -->
+    <!-- CSS Links (Giữ nguyên) -->
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/movielistcss/bootstrap.min.css}" />
@@ -20,38 +20,95 @@
     <link rel="stylesheet" th:href="@{/css/movielistcss/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <title>Admin - Movie Management</title>
+    <title>Admin - Movie Management</title> <!-- Sửa lại title nếu cần -->
 
     <!-- CSS TÙY CHỈNH CHO TRANG ADMIN LIST -->
-    <style>
-        body { background-color: #032055; color: #ccc; } /* Nền tối */
-        .admin-section { min-height: calc(100vh - 160px); } /* Đảm bảo nội dung đủ cao */
-        .admin-movie-table table { background-color: #0a1e44; border-radius: 8px; overflow: hidden; } /* Nền bảng */
-        .admin-movie-table th { background-color: #1a2c5c; color: #fff; border-color: #2d3450 !important; } /* Header bảng */
-        .admin-movie-table td { border-color: #2d3450 !important;color: #fff; vertical-align: middle; } /* Border ô */
-        .admin-movie-table tbody tr:nth-child(odd) { background-color: rgba(255, 255, 255, 0.03); } /* Màu xen kẽ */
-        .poster-thumbnail { max-width: 50px; height: auto; border-radius: 4px; } /* Ảnh nhỏ */
-        .action-buttons a, .action-buttons button { margin-right: 5px; padding: 4px 8px; font-size: 0.8rem; } /* Nút nhỏ hơn */
-        .btn-add-new {
-             display: inline-block; padding: 10px 20px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #fff; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: none; margin-bottom: 20px;
-        }
-        .btn-add-new:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
-        .btn-edit { background-color: #ffc107; color: #212529; border:none; }
-        .btn-delete { background-color: #dc3545; color: white; border:none; cursor: pointer; }
-        .btn-details { background-color: #17a2b8; color: white; border:none; }
+     <style>
+        body { background-color: #032055; color: #ccc; }
+        .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
+        .table { color: #ccc; border-color: #2d3450; margin-bottom: 1rem; width: 100%;} /* Thêm width 100% */
+        .table th { color: #e0e0e0; background-color: #11255a; border-bottom-width: 1px; border-color: #3a4164 !important; padding: 12px 15px; text-align: left; font-weight: 600;} /* Style header bảng */
+        .table td { border-color: #2d3450 !important; vertical-align: middle; padding: 10px 15px;} /* Style ô */
+        .table tbody tr:hover { background-color: rgba(255, 255, 255, 0.04); } /* Hover rõ hơn */
+        .poster-thumbnail { max-width: 55px; height: auto; border-radius: 3px; } /* Poster nhỏ */
+        .text-danger-msg { color: #ff4343 !important; }
+        .text-success-msg { color: #28a745 !important; }
+        .alert { margin-bottom: 20px; border-radius: 5px;} /* Style alert */
         .pagination-area { margin-top: 30px; }
-        .pagination-area a, .pagination-area span { background: #1a2c5c; color: #a0a3bd; border: 1px solid #2d3450; margin: 0 3px; padding: 6px 12px; border-radius: 4px; }
-        .pagination-area a.active { background: #31d7a9; color: #fff; border-color: #31d7a9; }
-        .pagination-area a.disabled { opacity: 0.5; pointer-events: none; }
-
-        /* Header admin */
+        .pagination .page-item .page-link { background-color: rgba(255, 255, 255, 0.05); border-color: #2d3450; color: #ccc; margin: 0 2px; border-radius: 4px; }
+        .pagination .page-item.active .page-link { background-color: #31d7a9; border-color: #31d7a9; color: #032055; font-weight: bold; }
+        .pagination .page-item.disabled .page-link { color: #6c757d; background-color: transparent; pointer-events: none; }
+        .pagination .page-item .page-link:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .header-section { background: #071240; }
         .header-section .menu > li > a.active { color: #31d7a9 !important; }
         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
-        .header-user-greeting b { color: #fff; font-weight: 600; }
+        .header-user-greeting b { color: #ffffff; font-weight: 600; }
         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
         .logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
-    </style>
+        .footer-section { background: #03173a; text-align: center; padding: 20px 0; margin-top: 40px; border-top: 1px solid #1a2c5c;} /* Footer */
+        .btn-add-new { display: inline-block; padding: 10px 25px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #001232; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; border: none; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+        .btn-add-new:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
+        .table-responsive { overflow-x: auto; } /* Cho phép cuộn ngang trên màn hình nhỏ */
+
+        /* === CSS SỬA CÁC NÚT ACTION TRONG BẢNG === */
+        td.action-buttons {
+            display: flex;         /* Sắp xếp các phần tử con (nút/form) theo hàng ngang */
+            align-items: center;    /* Căn giữa các nút theo chiều dọc trong ô */
+            gap: 6px;             /* Khoảng cách giữa các nút (điều chỉnh nếu cần) */
+            justify-content: flex-start; /* Căn các nút về bên trái */
+            vertical-align: middle !important; /* Đảm bảo căn giữa dọc hoạt động tốt */
+            padding-top: 8px;      /* Thêm padding để cân đối hơn */
+            padding-bottom: 8px;
+            min-width: 130px;      /* Đảm bảo đủ rộng cho 3 nút */
+            white-space: nowrap;   /* Ngăn các nút xuống dòng nếu ô quá hẹp */
+        }
+        td.action-buttons > a,
+        td.action-buttons > form {
+            margin: 0;             /* Bỏ margin mặc định */
+            padding: 0;
+            flex-shrink: 0;        /* Ngăn nút bị co lại */
+        }
+        td.action-buttons form {
+            display: inline-block; /* Hiển thị form như một khối inline */
+            line-height: 0;        /* Giúp căn chỉnh button bên trong */
+        }
+        td.action-buttons a,
+        td.action-buttons form button { /* Target cả link và button */
+            display: inline-flex;   /* Dùng flex để căn nội dung bên trong nút (icon) */
+            align-items: center;
+            justify-content: center;
+            padding: 7px 10px;      /* Padding bên trong nút */
+            font-size: 14px;        /* Kích thước icon/chữ */
+            line-height: 1;         /* Chiều cao dòng */
+            border-radius: 4px;     /* Bo góc */
+            text-decoration: none;  /* Bỏ gạch chân link */
+            border: none;           /* Bỏ border mặc định */
+            cursor: pointer;
+            text-align: center;
+            min-width: 36px;       /* Chiều rộng tối thiểu */
+            min-height: 32px;      /* Chiều cao tối thiểu */
+            box-sizing: border-box;
+            transition: opacity 0.2s ease;
+        }
+        td.action-buttons a:hover,
+        td.action-buttons form button:hover {
+            opacity: 0.85; /* Giảm độ sáng khi hover */
+        }
+        /* Màu nút */
+        td.action-buttons a[href*='/edit/'] { background-color: #ffc107; color: #212529; }
+        td.action-buttons form button { background-color: #dc3545; color: white; }
+        td.action-buttons a[href*='/details/'] { background-color: #17a2b8; color: white; }
+        /* Style Icon (nếu dùng) */
+        td.action-buttons a i,
+        td.action-buttons form button i {
+            font-size: 1em; /* Kích thước icon */
+            /* Nếu có cả text và icon, có thể thêm margin: */
+            /* margin-right: 5px; */
+        }
+        /* === KẾT THÚC CSS NÚT ACTION === */
+
+     </style>
 </head>
 
 <body>
@@ -60,138 +117,112 @@
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
-    <!-- Header Admin (Cần có biến currentURI từ Controller) -->
+    <!-- Header Admin (Giữ nguyên) -->
     <header class="header-section">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo">
-                    <a th:href="@{/admin}"> <img th:src="@{/images/logo.png}" alt="logo"> <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span> </a>
-                </div>
-                <ul class="menu">
-                    <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li>
-                    <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings') or #strings.startsWith(currentURI, '/admin/showtimes') or #strings.startsWith(currentURI, '/admin/genres'))} ? 'active' : ''">
-                        <a href="#">Management</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li>
-                            <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li>
-                            <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li>
-                            <li><a th:href="@{/admin/showtimes}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/showtimes')} ? 'active' : ''">Showtimes</a></li>
-                            <li><a th:href="@{/admin/genres}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/genres')} ? 'active' : ''">Genres</a></li>
-                        </ul>
-                    </li>
-                    <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li>
-                    <li><a th:href="@{/home}" target="_blank">View Site</a></li>
-                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span>
-                        <form class="logout-button-form" th:action="@{/logout}" method="post">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <button class="logout-button-styled" type="submit">LOG OUT</button>
-                        </form>
-                    </li>
-                </ul>
-                <div class="header-bar d-lg-none"><span></span><span></span><span></span></div>
-            </div>
-        </div>
+        <div class="container"> <div class="header-wrapper"> <div class="logo"> <a th:href="@{/admin}"> <img th:src="@{/images/logo.png}" alt="logo"> <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span> </a> </div> <ul class="menu"> <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li> <li class="menu-item-has-children active" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings') or #strings.startsWith(currentURI, '/admin/showtimes') or #strings.startsWith(currentURI, '/admin/genres'))} ? 'active' : ''"> <a href="#!">Management</a> <ul class="submenu"> <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li> <li><a th:href="@{/admin/movies}" class="active" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li> <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li> <li><a th:href="@{/admin/showtimes}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/showtimes')} ? 'active' : ''">Showtimes</a></li> <li><a th:href="@{/admin/genres}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/genres')} ? 'active' : ''">Genres</a></li> </ul> </li> <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li> <li><a th:href="@{/home}" target="_blank">View Site</a></li> <li class="header-button pr-0" sec:authorize="isAuthenticated()"> <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span> <form class="logout-button-form" th:action="@{/logout}" method="post"> <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <button class="logout-button-styled" type="submit">LOG OUT</button> </form> </li> </ul> <div class="header-bar d-lg-none"><span></span><span></span><span></span></div> </div> </div>
     </header>
+    <!-- ==========Header Admin Section========== -->
 
     <!-- Phần Nội dung Chính: Danh sách Phim Admin -->
     <section class="admin-section padding-top padding-bottom">
         <div class="container">
 
-             <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;">Movie Management</h2>
+            <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;">
+                Movie Management
+            </h2>
 
              <!-- Nút Thêm Mới -->
-             <div class="mb-4">
-                 <a th:href="@{/admin/movies/create}" class="btn-add-new"> <!-- Đã sửa lại link thành /create -->
-                     <i class="fas fa-plus"></i> Add New Movie
+             <div class="text-end mb-4"> <!-- Căn phải nút Add New -->
+                 <a th:href="@{/admin/movies/add}" class="btn-add-new">
+                     <i class="fas fa-plus mr-2"></i> Add New Movie <!-- Thêm icon -->
                  </a>
              </div>
 
-             <!-- Optional: Thông báo lỗi/thành công -->
-             <div th:if="${param.error}" class="alert alert-danger" role="alert" th:text="${param.error}"></div>
-             <div th:if="${param.success}" class="alert alert-success" role="alert" th:text="${param.success}"></div>
+             <!-- Hiển thị thông báo lỗi/thành công -->
+              <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <span th:text="${errorMessage}"></span>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button> <!-- Thêm btn-close-white -->
+              </div>
+              <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                  <span th:text="${successMessage}"></span>
+                   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button> <!-- Thêm btn-close-white -->
+              </div>
 
 
-             <!-- Bảng Danh Sách Phim -->
-             <div class="admin-movie-table table-responsive"> <!-- Thêm table-responsive -->
-                 <table class="table table-hover"> <!-- Bỏ table-bordered, thêm table-hover -->
-                     <thead>
-                         <tr>
-                             <th>ID</th>
-                             <th>Poster</th>
-                             <th>Title</th>
-                             <th>Release Date</th>
-                             <th>Duration</th>
-                             <th style="width: 150px;">Actions</th> <!-- Đặt chiều rộng cột Actions -->
-                         </tr>
-                     </thead>
-                     <tbody>
-                         <!-- Lặp qua danh sách phim từ moviesPage.content -->
-                         <tr th:if="${moviesPage != null and !moviesPage.empty}" th:each="movie : ${moviesPage.content}">
-                             <td th:text="${movie.id}">1</td>
-                             <td>
-                                 <img th:if="${movie.posterUrl != null}" th:src="${movie.posterUrl}" alt="Poster" class="poster-thumbnail"/>
-                                 <span th:unless="${movie.posterUrl != null}">N/A</span>
-                             </td>
-                             <td th:text="${movie.title}">Movie Title</td>
-                             <td th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : 'N/A'}">N/A</td>
-                             <td th:text="${movie.duration != null ? movie.duration + ' min' : 'N/A'}">N/A</td>
-                             <td class="action-buttons">
-                                 <!-- Nút Sửa -->
-                                 <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" class="btn btn-sm btn-edit" title="Edit">
-                                     <i class="fas fa-edit"></i>
-                                 </a>
-                                 <!-- Nút Xóa (Form POST) -->
-                                 <form th:action="@{/admin/movies/delete/{id}(id=${movie.id})}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this movie?');">
-                                     <!-- CSRF Token -->
-                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                     <!-- Sử dụng phương thức DELETE nếu cấu hình HiddenHttpMethodFilter -->
-                                     <!-- <input type="hidden" name="_method" value="DELETE" /> -->
-                                     <button type="submit" class="btn btn-sm btn-delete" title="Delete">
-                                         <i class="fas fa-trash-alt"></i>
-                                     </button>
-                                 </form>
-                                 <!-- Nút Xem Chi Tiết -->
-                                 <a th:href="@{/admin/movies/details/{id}(id=${movie.id})}" class="btn btn-sm btn-details" title="Details">
+            <!-- Bảng Danh sách Phim -->
+            <div class="admin-movie-table table-responsive">
+                <table class="table table-hover"> <!-- Bảng có style admin -->
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Poster</th>
+                            <th>Title</th>
+                            <th>Release Date</th>
+                            <th>Duration</th>
+                            <th>Language</th>
+                            <th>Status</th>
+                            <th style="min-width: 130px;">Actions</th> <!-- Đặt min-width -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Lặp qua danh sách phim -->
+                        <tr th:each="movie : ${moviesPage.content}">
+                            <td th:text="${movie.id}">1</td>
+                            <td>
+                                <img th:if="${movie.posterUrl}" th:src="${movie.posterUrl}" alt="Poster" class="poster-thumbnail">
+                                <span th:unless="${movie.posterUrl}">N/A</span>
+                            </td>
+                            <td th:text="${movie.title}">Movie Title</td>
+                            <td th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
+                            <td th:text="${movie.duration != null ? movie.duration + ' min' : 'N/A'}">120 min</td>
+                            <td th:text="${movie.language} ?: 'N/A'">English</td>
+                            <td th:text="${movie.status} ?: 'N/A'">Status</td>
+                            <!-- Ô chứa các nút Actions với class -->
+                            <td class="action-buttons">
+                                <!-- Nút Edit -->
+                                <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <!-- Nút Delete (Form) -->
+                                <form th:action="@{/admin/movies/delete/{id}(id=${movie.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this movie?');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                                <!-- Nút View Details -->
+                                <a th:href="@{/admin/movies/details/{id}(id=${movie.id})}" title="View Details">
                                      <i class="fas fa-eye"></i>
-                                 </a>
-                             </td>
-                         </tr>
-                         <!-- Hiển thị nếu không có phim nào -->
-                         <tr th:if="${moviesPage == null or moviesPage.empty}">
-                             <td colspan="7" class="text-center" style="padding: 20px;">No movies found.</td>
-                         </tr>
-                     </tbody>
-                 </table>
-             </div><!-- //admin-movie-table -->
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Hiển thị nếu không có phim nào -->
+                        <tr th:if="${moviesPage.empty}">
+                            <td colspan="8" class="text-center" style="padding: 20px;">No movies found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-             <!-- Pagination Controls -->
-             <div class="pagination-area text-center" th:if="${moviesPage != null and moviesPage.totalPages > 1}">
-                 <!-- Previous Link -->
-                 <a th:href="${moviesPage.hasPrevious()} ? @{/admin/movies(page=${currentPage - 1}, size=${pageSize}, sort=${sortParam})} : '#'"
-                    th:classappend="${moviesPage.isFirst()} ? 'disabled' : ''">
-                     <i class="fas fa-angle-double-left"></i><span>Prev</span>
-                 </a>
-
-                 <!-- Page Numbers -->
-                 <th:block th:each="pageNumber : ${#numbers.sequence(0, moviesPage.totalPages - 1)}">
-                     <!-- Chỉ hiển thị vài số trang xung quanh trang hiện tại -->
-                     <th:block th:if="${pageNumber == 0 or pageNumber == moviesPage.totalPages - 1 or (pageNumber >= currentPage - 2 and pageNumber <= currentPage + 2)}">
-                          <a th:href="@{/admin/movies(page=${pageNumber}, size=${pageSize}, sort=${sortParam})}"
-                             th:text="${pageNumber + 1}"
-                             th:classappend="${pageNumber == currentPage} ? 'active' : ''"></a>
+             <!-- Pagination Controls (Giữ nguyên) -->
+            <nav aria-label="Page navigation" th:if="${moviesPage.totalPages > 1}">
+                <ul class="pagination justify-content-center mt-4">
+                    <!-- Previous Page Link -->
+                    <li class="page-item" th:classappend="${moviesPage.first} ? 'disabled' : ''">
+                        <a class="page-link" th:href="@{/admin/movies(page=${moviesPage.number - 1}, size=${moviesPage.size}, sort=${sortField + ',' + sortDir}, query=${query})}">Previous</a>
+                    </li>
+                    <!-- Page Numbers -->
+                     <th:block th:each="i : ${#numbers.sequence(0, moviesPage.totalPages - 1)}">
+                         <li class="page-item" th:classappend="${i == moviesPage.number} ? 'active' : ''">
+                             <a class="page-link" th:href="@{/admin/movies(page=${i}, size=${moviesPage.size}, sort=${sortField + ',' + sortDir}, query=${query})}" th:text="${i + 1}">1</a>
+                         </li>
                      </th:block>
-                     <!-- Dấu ... nếu có nhiều trang bị ẩn đi -->
-                     <span th:if="${pageNumber == currentPage - 3 and currentPage > 3}">...</span>
-                     <span th:if="${pageNumber == currentPage + 3 and currentPage < moviesPage.totalPages - 4}">...</span>
-                 </th:block>
-
-                 <!-- Next Link -->
-                 <a th:href="${moviesPage.hasNext()} ? @{/admin/movies(page=${currentPage + 1}, size=${pageSize}, sort=${sortParam})} : '#'"
-                    th:classappend="${moviesPage.isLast()} ? 'disabled' : ''">
-                     <span>Next</span><i class="fas fa-angle-double-right"></i>
-                 </a>
-             </div><!-- //pagination-area -->
+                    <!-- Next Page Link -->
+                    <li class="page-item" th:classappend="${moviesPage.last} ? 'disabled' : ''">
+                        <a class="page-link" th:href="@{/admin/movies(page=${moviesPage.number + 1}, size=${moviesPage.size}, sort=${sortField + ',' + sortDir}, query=${query})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
 
         </div><!-- //container -->
     </section>
@@ -201,29 +232,25 @@
     <footer class="footer-section">
        <div class="container"> <div class="footer-top"> <div class="logo"> <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div> <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul> </div> <div class="footer-bottom"> <div class="footer-bottom-area"> <div class="left"> <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>. Admin Panel.</p></div><ul class="links"> <li><a href="#">About</a></li> <li><a href="#">Terms Of Use</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">FAQ</a></li> </ul></div></div> </div>
     </footer>
+    <!-- ==========Footer Section========== -->
 
     <!-- Scripts (Giữ nguyên) -->
-    <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
-    <script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
-    <script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
-    <script th:src="@{/js/movielistjs/plugins.js}"></script>
-    <script th:src="@{/js/movielistjs/popper.min.js}"></script>
-    <script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
-    <script th:src="@{/js/movielistjs/nice-select.js}"></script>
-    <script th:src="@{/js/movielistjs/odometer.min.js}"></script>
-    <script th:src="@{/js/movielistjs/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/movielistjs/viewport.jquery.js}"></script>
-    <script th:src="@{/js/movielistjs/wow.min.js}"></script>
-    <script th:src="@{/js/movielistjs/countdown.min.js}"></script>
-    <script th:src="@{/js/movielistjs/isotope.pkgd.min.js}"></script>
-    <script th:src="@{/js/movielistjs/contentInt.js}"></script>
-    <script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
-    <script th:src="@{/js/main.js}"></script>
+     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+     <script th:src="@{/js/bootstrap.min.js}"></script> <!-- Cần cho Alert dismissible -->
+     <script th:src="@{/js/main.js}"></script> <!-- Nếu có xử lý menu mobile -->
 
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function() {
              console.log("Admin movie list page loaded.");
+             // Xử lý preloader nếu có
+             $('.preloader').fadeOut(500, function() { $(this).remove(); });
+
+              // Thêm JS để đóng Alert của Bootstrap 5 (nếu cần)
+              var alertList = document.querySelectorAll('.alert');
+              alertList.forEach(function (alert) {
+                new bootstrap.Alert(alert);
+              });
         });
         /*]]>*/
     </script>

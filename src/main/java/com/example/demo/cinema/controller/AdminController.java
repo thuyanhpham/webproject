@@ -32,9 +32,9 @@ public class AdminController {
     public String showAdminDashboard(Model model, HttpServletRequest request) {
         log.info("Accessing Admin Dashboard");
         model.addAttribute("currentURI", request.getRequestURI());
+
         return "admin/dashboard";
     }
-
 
     @GetMapping("/movies")
     public String listMovies(Model model,
@@ -156,5 +156,6 @@ public class AdminController {
             return "redirect:/admin/movies";
         }
     }
-}
 
+
+}

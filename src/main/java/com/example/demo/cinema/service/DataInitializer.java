@@ -2,108 +2,180 @@ package com.example.demo.cinema.service;
 
 import com.example.demo.cinema.entity.Role;
 import com.example.demo.cinema.entity.User;
+// import com.example.demo.cinema.entity.Status; // Import nếu dùng Status Enum
 import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+
+// Import Logger
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder; // QUAN TRỌNG
+import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional; // Quan trọng: Import Transactional
 
-@Component
+import java.time.LocalDateTime; // Import nếu dùng
+import java.util.HashSet;       // Import nếu dùng
+import java.util.Optional;
+import java.util.Set;         // Import nếu dùng
+
+@Component // Đánh dấu là Spring Bean
+@Order(1)  // Ưu tiên chạy sớm nếu có nhiều CommandLineRunner
 public class DataInitializer implements CommandLineRunner {
 
+    // Khởi tạo Logger thủ công
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired // Constructor Injection
+    public DataInitializer(RoleRepository roleRepository,
+                           UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
-    @Transactional
+    @Transactional // <<< Đảm bảo toàn bộ run() chạy trong MỘT transaction >>>
     public void run(String... args) throws Exception {
-        log.info("Bắt đầu khởi tạo dữ liệu...");
+        log.info("Starting data initialization (Single Transaction)...");
+        try {
+            // --- BƯỚC 1: TẠO/LẤY ROLES VÀ SAVE_AND_FLUSH KHI CẦN ---
+            log.info("Checking and creating Roles...");
+            // Sử dụng phương thức helper đã sửa lại, đảm bảo flush khi tạo mới
+            Role adminRole = findOrCreateRoleAndFlush("ROLE_ADMIN");
+            Role userRole = findOrCreateRoleAndFlush("ROLE_USER");
 
-        // --- BƯỚC 1: TẠO/LẤY ROLES ---
-        log.info("Kiểm tra và tạo Roles...");
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                .orElseGet(() -> {
-                    log.info("Tạo Role: ROLE_ADMIN");
-                    Role newAdminRole = new Role();
-                    newAdminRole.setName("ROLE_ADMIN");
-                    Role savedRole = roleRepository.save(newAdminRole);
-                    entityManager.flush();
-                    log.info("===> Đã LƯU Role mới 'ROLE_ADMIN' với ID: {}", savedRole.getId());
-                    return savedRole;
-                });
+            // Kiểm tra Role ADMIN vì nó cần thiết cho bước sau
+            if (adminRole == null || adminRole.getId() == null) {
+                 throw new IllegalStateException("Could not create or find 'ROLE_ADMIN'. Halting initialization.");
+            }
+             // Kiểm tra Role USER (chỉ cảnh báo nếu không có)
+             if (userRole == null || userRole.getId() == null) {
+                 log.warn("Could not create or find 'ROLE_USER'. Skipping sample user creation if applicable.");
+             } else {
+                 // Tạo user thường nếu cần
+                 // createSampleUserIfNotExist(userRole, "sampleuser");
+             }
+             log.info("Roles available: ADMIN (ID={}), USER (ID={})", adminRole.getId(), userRole != null ? userRole.getId() : "N/A");
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseGet(() -> {
-                     log.info("Tạo Role: ROLE_USER");
-                     Role newUserRole = new Role();
-                     newUserRole.setName("ROLE_USER");
-                     Role savedRole = roleRepository.save(newUserRole);
-                     entityManager.flush();
-                     log.info("===> Đã LƯU Role mới 'ROLE_USER' với ID: {}", savedRole.getId());
-                     return savedRole;
-                 });
 
-        log.info("Đã tạo hoặc lấy xong Roles.");
+            // --- BƯỚC 2: TẠO ADMIN USER (NẾU CHƯA CÓ) ---
+            log.info("Checking and creating Admin User...");
+            String adminUsername = "thuyanhne"; // Username của bạn
+             // Truyền đối tượng Role đã được saveAndFlush (nếu mới tạo)
+            createAdminUserIfNotExist(adminRole, adminUsername);
 
-        // *** Đảm bảo adminRole hợp lệ trước khi tiếp tục ***
-        if (adminRole == null || adminRole.getId() == null) {
-            log.error("!!! LỖI NGHIÊM TRỌNG: Không thể lấy hoặc tạo Role 'ROLE_ADMIN'. Dừng khởi tạo User.");
-            throw new RuntimeException("Không thể khởi tạo Role 'ROLE_ADMIN' cần thiết.");
+            log.info("Data initialization completed successfully (Single Transaction).");
+
+        } catch (Exception e) {
+            log.error("!!! CRITICAL ERROR DURING DATA INITIALIZATION !!!", e);
+            // Ném lại lỗi để dừng ứng dụng nếu khởi tạo thất bại
+            throw new RuntimeException("Data initialization failed.", e);
         }
-         log.info("===> Role ADMIN sẽ được dùng có ID: {}", adminRole.getId());
+    }
 
+    /**
+     * Tìm Role theo tên. Nếu không thấy, tạo mới, lưu và flush ngay lập tức.
+     * Chạy trong transaction của phương thức gọi (run()).
+     * @param roleName Tên Role (ví dụ: ROLE_ADMIN)
+     * @return Đối tượng Role đã tồn tại hoặc vừa được tạo và flush, hoặc null nếu lỗi.
+     */
+    private Role findOrCreateRoleAndFlush(String roleName) {
+        String normalizedRoleName = roleName.toUpperCase();
+        Optional<Role> roleOpt = roleRepository.findByName(normalizedRoleName); // Dùng findByName
 
-        // --- BƯỚC 2: TẠO ADMIN USER (NẾU CHƯA CÓ) ---
-        log.info("Kiểm tra và tạo Admin User...");
-        String adminUsername = "thuyanhne";
+        if (roleOpt.isPresent()) {
+            log.info("Role '{}' already exists with ID: {}", normalizedRoleName, roleOpt.get().getId());
+            return roleOpt.get(); // Trả về đối tượng đã được quản lý
+        } else {
+            log.info("Creating new Role: {}", normalizedRoleName);
+            Role newRole = new Role();
+            newRole.setName(normalizedRoleName);
+            try {
+                // <<< SỬ DỤNG saveAndFlush ĐỂ GHI VÀ LẤY ID NGAY >>>
+                Role savedRole = roleRepository.saveAndFlush(newRole);
+                log.info("===> Saved and flushed Role '{}' with ID: {}", savedRole.getName(), savedRole.getId());
+                if(savedRole.getId() == null){
+                     log.error("!!! Error: ID for Role '{}' is still null after saveAndFlush!", savedRole.getName());
+                     return null;
+                }
+                return savedRole; // Trả về Role vừa tạo và flush
+            } catch (Exception e) {
+                log.error("!!! Error saving or flushing Role '{}': {}", normalizedRoleName, e.getMessage(), e);
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Tạo người dùng Admin mặc định nếu chưa tồn tại.
+     * Chạy trong transaction của phương thức gọi (run()).
+     * @param adminRole Đối tượng Role ADMIN đã được flush và có ID hợp lệ.
+     * @param adminUsername Tên đăng nhập của admin.
+     */
+    private void createAdminUserIfNotExist(Role adminRole, String adminUsername) {
+         if (adminRole == null || adminRole.getId() == null) {
+             log.error("!!! Skipping admin user '{}' creation because admin Role is invalid.", adminUsername);
+             return;
+         }
 
         if (userRepository.findByUsername(adminUsername).isEmpty()) {
-            log.info("Tạo admin user: {}", adminUsername);
+            log.info("Creating admin user: {}", adminUsername);
             User adminUser = new User();
             adminUser.setUsername(adminUsername);
-            // !!! QUAN TRỌNG: Mã hóa mật khẩu !!!
-            adminUser.setPassword(passwordEncoder.encode("246810"));
+            adminUser.setPassword(passwordEncoder.encode("246810")); // Đổi mật khẩu!
             adminUser.setEmail("thuyanhne@gmail.com");
-            adminUser.setFullname("Administrator");
-            // Set các thuộc tính khác nếu cần
-            // adminUser.setStatus(Status.ACTIVE); // Trạng thái hoạt động
-
-            // *** QUAN TRỌNG: Gán đúng Role ADMIN đã lấy/tạo ở trên ***
-            log.info("===> Gán Role (ID: {}) cho user '{}'", adminRole.getId(), adminUsername);
-            adminUser.setRole(adminRole);
+            adminUser.setFullname("Thuy Anh");       // Tên của bạn
+            adminUser.setRole(adminRole); // <<< Gán đối tượng Role đã được saveAndFlush
+            // adminUser.setStatus(Status.ACTIVE); // Nếu có enum Status
+            // createdAt/updatedAt dùng @PrePersist/@PreUpdate
 
             try {
-                 log.info("===> Chuẩn bị LƯU user '{}' với Role ID: {}", adminUser.getUsername(), (adminUser.getRole() != null ? adminUser.getRole().getId() : "NULL"));
-                 userRepository.save(adminUser);
-                 log.info("Lưu admin user '{}' thành công.", adminUsername);
+                log.debug("===> Preparing to save admin user '{}' referencing Role ID: {}", adminUser.getUsername(), adminRole.getId());
+                userRepository.save(adminUser); // Lưu User
+                log.info("Successfully saved admin user '{}'.", adminUsername);
             } catch (Exception e) {
-                 // Log lỗi và ném lại để transaction rollback
-                 log.error("!!! Lỗi khi lưu admin user '{}'. User data: {}. Error: {}", adminUsername, adminUser, e.getMessage(), e);
-                 throw e; // Ném lại lỗi
+                log.error("!!! Error saving admin user '{}': {}", adminUsername, e.getMessage(), e);
+                throw e; // Ném lại để rollback transaction chính của run()
             }
         } else {
-            log.info("Admin user '{}' đã tồn tại.", adminUsername);
+            log.info("Admin user '{}' already exists.", adminUsername);
         }
-
-        // Có thể thêm code tạo user thường ở đây nếu cần
-
-        log.info("Hoàn tất khởi tạo dữ liệu.");
     }
+
+     // Phương thức tạo user thường (ví dụ, có thể bỏ comment nếu cần)
+     /*
+     private void createSampleUserIfNotExist(Role userRole, String sampleUsername) {
+         if (userRole == null || userRole.getId() == null) {
+             log.warn("Skipping sample user '{}' creation because USER Role is invalid.", sampleUsername);
+             return;
+         }
+         if (userRepository.findByUsername(sampleUsername).isEmpty()) {
+             log.info("Creating sample user: {}", sampleUsername);
+             User sampleUser = new User();
+             sampleUser.setUsername(sampleUsername);
+             sampleUser.setPassword(passwordEncoder.encode("password")); // Mật khẩu mặc định
+             sampleUser.setEmail("sample@example.com");
+             sampleUser.setFullname("Sample User");
+             sampleUser.setRole(userRole);
+             try {
+                 userRepository.save(sampleUser);
+                 log.info("Successfully saved sample user '{}'.", sampleUsername);
+             } catch (Exception e) {
+                 log.error("!!! Error saving sample user '{}': {}", sampleUsername, e.getMessage(), e);
+                 throw e;
+             }
+         } else {
+             log.info("Sample user '{}' already exists.", sampleUsername);
+         }
+     }
+     */
 }

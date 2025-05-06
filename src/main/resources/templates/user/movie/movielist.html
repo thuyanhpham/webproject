@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<!-- Thêm namespace Thymeleaf -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- ==================== CSS Paths (All inside movielistcss) ==================== -->
+    <!-- Đảm bảo các file này tồn tại trong static/css/movielistcss/ -->
+   <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/animate.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/css.css}" />
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/fontawesome.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/magnific-popup.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/nice-select.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/odometer.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/owl.carousel.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/movielistcss/owl.theme.default.min.css}" />
+
+    <!-- Favicon Path (Assuming favicon.png exists in static/images/) -->
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title>Boleto - Movie List</title>
+
+</head>
+
+<body>
+    <!-- ==========Preloader========== -->
+    <div class="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <!-- ==========Preloader========== -->
+    <!-- ==========Overlay========== -->
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop">
+        <i class="fas fa-angle-up"></i> <!-- Icon Font Awesome, cần webfonts -->
+    </a>
+    <!-- ==========Overlay========== -->
+
+       <!-- ==========Header-Section========== -->
+    <header class="header-section">
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="logo">
+                    <a th:href="@{/}">
+                        <img th:src="@{/images/logo.png}" alt="logo"> 
+                    </a>
+                </div>
+                <ul class="menu">
+                     <li class="menu-item-has-children" >
+                        <a th:href="@{/home}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/home')} ? 'active' : ''">Home</a>                   
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
+                        <ul class="submenu"> 
+                            <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
+                            <li><a th:href="@{/movielist}">Movie Details</a></li>  
+                            <li><a th:href="@{/movielist}">Movie Ticket Plan</a></li>
+                            <li><a th:href="@{/movielist}">Movie Seat Plan</a></li>
+                            <li><a th:href="@{/movielist}">Movie Checkout</a></li>
+                            
+                        </ul>
+                    </li>
+                
+                     
+                      <li class="menu-item-has-children">
+                         <a href="#">pages</a>
+                         <ul class="submenu">
+                             <li><a th:href="@{/about}">About Us</a></li>
+                             <li><a th:href="@{/apps-download}">Apps Download</a></li>
+                             <li><a th:href="@{/sign-in}">Sign In</a></li>
+                             <li><a th:href="@{/sign-up}">Sign Up</a></li>
+                             <li><a th:href="@{/404}">404</a></li>
+                         </ul>
+                     </li>
+	                     <!-- Hiển thị lời chào nếu đã đăng nhập -->
+	                <li class="menu-item" sec:authorize="isAuthenticated()">
+	                    <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
+	                </li>
+	 
+	                <!-- Nút Logout nếu đã đăng nhập -->
+	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
+	                    <form th:action="@{/logout}" method="post" >
+	                        <a type="submit">Log out</a>
+	                    </form>
+	                </li>                     
+                              
+                </ul>
+                <div class="header-bar d-lg-none">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+            </div>
+        </div>
+    </header>
+    <!-- ==========Header-Section========== -->
+
+    <!-- ==========Banner-Section========== -->
+    <section class="banner-section">
+        <!-- Ảnh nền từ static/images/ -->
+        <div class="banner-bg bg_img bg-fixed" th:attr="data-background=@{/images/banner02.jpg}" th:style="'background-image: url(\'' + @{/images/banner02.jpg} + '\');'"></div>
+        <div class="container">
+            <div class="banner-content">
+                <h1 class="title bold">get <span class="color-theme">movie</span> tickets</h1>
+                <p>Buy movie tickets in advance, find movie times watch trailer, read movie reviews and much more</p>
+            </div>
+        </div>
+    </section>
+    <!-- ==========Banner-Section========== -->
+
+    <!-- ==========Ticket-Search========== -->
+    <section class="search-ticket-section padding-top pt-lg-0">
+        <div class="container">
+             <!-- Ảnh nền từ static/images/ (Đảm bảo file tồn tại) -->
+            <div class="search-tab bg_img" th:attr="data-background=@{/images/ticket-bg01.jpg}" th:style="'background-image: url(\'' + @{/images/ticket-bg01.jpg} + '\');'">
+                <div class="row align-items-center mb--20">
+                    <div class="col-lg-6 mb-20"><div class="search-ticket-header"><h6 class="category">welcome to Boleto </h6><h3 class="title">what are you looking for</h3></div></div>
+                    <div class="col-lg-6 mb-20">
+                        <ul class="tab-menu ticket-tab-menu">
+                             <!-- Ảnh từ static/images/ -->
+                            <li class="active"><div class="tab-thumb"><img th:src="@{/images/ticket-tab01.png}" alt="ticket"></div><span>movie</span></li>
+             
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-area">
+                    <!-- Tab tìm kiếm phim -->
+                    <div class="tab-item active">
+                        <form class="ticket-search-form" th:action="@{/movielist}" method="get">
+                            <div class="form-group large"><input type="text" name="query" placeholder="Search for Movies" th:value="${queryParam}"><button type="submit"><i class="fas fa-search"></i></button></div>
+                             <!-- Ảnh từ static/images/ -->
+                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city: Hà Nội</span></div>
+                            <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select  name="date" class="select-bar" style=" border-radius: 6px; width: 150px; height: 40px; " ><option value="2020-10-23">23/10/2020</option>
+                            <option value="2020-10-23">23/10/2020</option></select></div>
+                            
+                             <input type="hidden" name="size" th:value="${pageSize}">
+                             <input type="hidden" name="sort" th:value="${sortParam}">
+                        </form>
+                    </div>
+                 
+                 
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ==========Ticket-Search========== -->
+
+    <!-- ==========Movie-Section========== -->
+    <section class="movie-section padding-top padding-bottom">
+        <div class="container">
+            <div class="row flex-wrap-reverse justify-content-center">
+                <!-- Sidebar -->
+                <div class="col-sm-10 col-md-8 col-lg-3">
+                     <!-- Ảnh từ static/images/ -->
+                    <div class="widget-1 widget-banner"><div class="widget-1-body"><a href="#"><img th:src="@{/images/banner01.jpg}" alt="banner"></a></div></div>
+                    <!-- Bộ lọc giữ nguyên cấu trúc -->
+                    <div class="widget-1 widget-check"><div class="widget-header"><h5 class="m-title">Filter By</h5> <a href="#" class="clear-check">Clear All</a></div><div class="widget-1-body"><h6 class="subtitle">Language</h6><div class="check-area"><div class="form-group"><input type="checkbox" name="lang" id="lang1"><label for="lang1">Tamil</label></div><div class="form-group"><input type="checkbox" name="lang" id="lang4"><label for="lang4">English</label></div></div></div></div>
+					
+                    <!-- Ảnh từ static/images/ -->
+                    <div class="widget-1 widget-banner"><div class="widget-1-body"><a href="#"><img th:src="@{/images/banner02.jpg}" alt="banner"></a></div></div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9 mb-50 mb-lg-0">
+                    <div class="filter-tab tab">
+                        <!-- Thanh Filter/Sort -->
+                        <div class="filter-area"><div class="filter-main"><div class="left">
+                            <div class="item"><span class="show">Show :</span><select class="select-bar" name="sizeSelector"><option value="12" th:selected="${pageSize == 12}">12</option><option value="15" th:selected="${pageSize == 15}">15</option><option value="18" th:selected="${pageSize == 18}">18</option></select></div>
+                            <div class="item"><span class="show">Sort By :</span><select class="select-bar" name="sortSelector"><option value="title,asc" th:selected="${sortParam == 'title,asc'}">Now showing</option><option value="title,desc" th:selected="${sortParam == 'title,desc'}">Exclusive</option><option value="releaseDate,desc" th:selected="${sortParam == 'releaseDate,desc'}">Trending</option><option value="rating,desc" th:selected="${sortParam == 'rating,desc'}">Most view</option></select></div>
+                        </div><ul class="grid-button tab-menu"><li><i class="fas fa-th"></i></li><li class="active"><i class="fas fa-bars"></i></li></ul></div></div>
+
+                        <!-- Khu vực hiển thị phim -->
+                        <div class="tab-area">
+                             <!-- Tab Item Grid View -->
+                            <div class="tab-item">
+                                <div class="row mb-10 justify-content-center">
+                                    <th:block th:if="${moviesPage != null and !moviesPage.empty}">
+                                        <div class="col-sm-6 col-lg-4" th:each="movie : ${moviesPage.content}">
+                                            <div class="movie-grid">
+                                                 <!-- Ảnh poster từ Controller -->
+                                                <div class="movie-thumb c-thumb"><a th:href="@{/movie/{id}(id=${movie.id})}"><img th:src="${movie.posterUrl}" alt="movie poster" style="height: 370px; object-fit: cover;"></a></div>
+                                                <div class="movie-content bg-one">
+                                                    <h5 class="title m-0"><a th:href="@{/movie/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
+                                                    <ul class="movie-rating-percent">
+                                                         <!-- Ảnh từ static/images/ -->
+                                                        <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="rating icon"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
+                                                        <li><div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div><span class="content">...%</span></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                    <div class="col-12 text-center" th:if="${moviesPage == null or moviesPage.empty}"><p>No movies found.</p></div>
+                                </div>
+                            </div>
+                             <!-- Tab Item List View (active) -->
+                            <div class="tab-item active">
+                                <div class="movie-area mb-10">
+                                    <th:block th:if="${moviesPage != null and !moviesPage.empty}">
+                                        <div class="movie-list" th:each="movie : ${moviesPage.content}">
+                                             <!-- Ảnh poster từ Controller -->
+                                            <div class="movie-thumb c-thumb"><a th:href="@{/movie/{id}(id=${movie.id})}" class="w-100 bg_img h-100" th:attr="data-background=${movie.posterUrl}" th:style="'background-image: url(\'' + ${movie.posterUrl} + '\');'"><img class="d-sm-none" th:src="${movie.posterUrl}" alt="movie poster"></a></div>
+                                            <div class="movie-content bg-one">
+                                                <h5 class="title"><a th:href="@{/movie/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
+                                                <p class="duration" th:if="${movie.duration != null}" th:text="${(movie.duration / 60) + 'h ' + (movie.duration % 60) + 'm'}"></p>
+                                                <div class="movie-tags">
+												    <th:block th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
+												        <a href="javascript:void(0);" th:each="genreName : ${#strings.arraySplit(movie.genres, ',')}" th:text="${#strings.trim(genreName)}" class="mr-1 mb-1"
+												           style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">
+												        </a>
+												    </th:block>
+												    <span th:unless="${movie.genres != null and !#strings.isEmpty(movie.genres)}" style="font-style: italic; color: #888;">No Genres</span>
+												</div>
+                                                
+                                                <ul class="movie-rating-percent">
+                                                     <!-- Ảnh từ static/images/ -->
+                                                    <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
+                                                    <li><div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div><span class="content">...%</span></li>
+                                                </ul>
+                                                <div class="book-area"><div class="book-ticket">
+                                                     <!-- Ảnh từ static/images/ -->
+                                                    <div class="react-item"><a href="#"><div class="thumb"><img th:src="@{/images/heart.png}" alt="icons"></div></a></div>
+                                                    <div class="react-item mr-auto"><a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id})}"><div class="thumb"><img th:src="@{/images/book.png}" alt="icons"></div><span>book ticket</span></a></div>
+                                                    <div class="react-item"><a th:href="${movie.trailerUrl}" class="popup-video"><div class="thumb"><img th:src="@{/images/play-button.png}" alt="icons"></div><span>watch trailer</span></a></div>
+                                                </div></div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                    <div class="col-12 text-center" th:if="${moviesPage == null or moviesPage.empty}"><p>No movies found.</p></div>
+                                </div>
+                            </div>
+                        </div><!-- //tab-area -->
+
+                        <!-- Pagination -->
+                        <div class="pagination-area text-center" th:if="${moviesPage != null and moviesPage.totalPages > 1}">
+                            <a th:href="${moviesPage.hasPrevious()} ? @{/movielist(page=${moviesPage.number - 1}, size=${pageSize}, sort=${sortParam}, query=${queryParam})} : '#'" th:classappend="${moviesPage.isFirst()} ? 'disabled' : ''"><i class="fas fa-angle-double-left"></i><span>Prev</span></a>
+                            <th:block th:each="pageNumber : ${#numbers.sequence(0, moviesPage.totalPages - 1)}">
+                                <th:block th:if="${pageNumber == 0 or pageNumber == moviesPage.totalPages - 1 or (pageNumber >= moviesPage.number - 2 and pageNumber <= moviesPage.number + 2)}">
+                                     <a th:href="@{/movielist(page=${pageNumber}, size=${pageSize}, sort=${sortParam}, query=${queryParam})}" th:text="${pageNumber + 1}" th:classappend="${pageNumber == moviesPage.number} ? 'active' : ''"></a>
+                                </th:block>
+                                <span th:if="${pageNumber == moviesPage.number - 3 and moviesPage.number > 3}">...</span>
+                                <span th:if="${pageNumber == moviesPage.number + 3 and moviesPage.number < moviesPage.totalPages - 4}">...</span>
+                            </th:block>
+                            <a th:href="${moviesPage.hasNext()} ? @{/movielist(page=${moviesPage.number + 1}, size=${pageSize}, sort=${sortParam}, query=${queryParam})} : '#'" th:classappend="${moviesPage.isLast()} ? 'disabled' : ''"><span>Next</span><i class="fas fa-angle-double-right"></i></a>
+                        </div>
+
+                    </div><!-- //filter-tab -->
+                </div><!-- //col-lg-9 -->
+            </div><!-- //row -->
+        </div><!-- //container -->
+    </section>
+    <!-- ==========Movie-Section========== -->
+
+    <!-- ==========Newslater-Section========== -->
+    <footer class="footer-section">
+      
+        <div class="container">
+            <div class="footer-top">
+                 <!-- Ảnh từ static/images/ -->
+                <div class="logo"><a th:href="@{/}"><img th:src="@{/images/footer-logo.png}" alt="footer logo"></a></div>
+                 <!-- Social icons giữ nguyên -->
+                 <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul>
+            </div>
+            <div class="footer-bottom"><div class="footer-bottom-area"><div class="left"><p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>.All Rights Reserved By <a href="#">Boleto </a></p></div><ul class="links"><li><a th:href="@{/about}">About</a></li><li><a th:href="@{/terms}">Terms Of Use</a></li><li><a th:href="@{/privacy}">Privacy Policy</a></li><li><a th:href="@{/faq}">FAQ</a></li><li><a th:href="@{/feedback}">Feedback</a></li></ul></div></div>
+        </div>
+    </footer>
+    <!-- ==========Newslater-Section========== -->
+
+    <!-- ==================== SCRIPTS Paths (All inside movielistjs) ==================== -->
+  <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
+		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
+		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
+
+		<script th:src="@{/js/movielistjs/plugins.js}"></script>
+		<script th:src="@{/js/movielistjs/popper.min.js}"></script>
+		<script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
+		<script th:src="@{/js/movielistjs/nice-select.js}"></script>
+		<script th:src="@{/js/movielistjs/odometer.min.js}"></script>
+		<script th:src="@{/js/movielistjs/owl.carousel.min.js}"></script>
+		<script th:src="@{/js/movielistjs/viewport.jquery.js}"></script>
+		<script th:src="@{/js/movielistjs/wow.min.js}"></script>
+		<script th:src="@{/js/movielistjs/countdown.min.js}"></script>
+		<script th:src="@{/js/movielistjs/isotope.pkgd.min.js}"></script>
+		<script th:src="@{/js/movielistjs/contentInt.js}"></script>
+		<script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
+		<script th:src="@{/js/main.js}"></script>
+
+    <!-- Inline script để xử lý tương tác -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+             // Khởi tạo NiceSelect
+            // if ($.fn.niceSelect) { $('.select-bar').niceSelect(); }
+
+             const currentQuery = /*[[${queryParam}]]*/ null;
+
+             // Xử lý thay đổi select sort/size
+             $('select[name="sizeSelector"], select[name="sortSelector"]').on('change', function() {
+                 var query = $('input[name="query"]').val() || (currentQuery != null ? currentQuery : '');
+                 var sort = $('select[name="sortSelector"]').val();
+                 var size = $('select[name="sizeSelector"]').val();
+                 var targetUrl = /*[[@{/movielist}]]*/ '/movielist' ;
+                 window.location.href = targetUrl + '?query=' + encodeURIComponent(query) + '&sort=' + sort + '&size=' + size + '&page=0';
+            });
+
+             // Khởi tạo Popup Video
+             $('.popup-video').magnificPopup({type: 'iframe', mainClass: 'mfp-fade', removalDelay: 160, preloader: false, fixedContentPos: false});
+
+            // Xử lý Tab Grid/List
+            $('.filter-tab .grid-button.tab-menu li').on('click', function(e) {
+                e.preventDefault(); var index = $(this).index();
+                $(this).addClass('active').siblings().removeClass('active');
+                $('.filter-tab .tab-area .tab-item').eq(index).addClass('active').siblings().removeClass('active');
+            });
+
+            // Xử lý Tab Search
+            $('.search-tab .ticket-tab-menu li').on('click', function(e) {
+                 e.preventDefault(); var index = $(this).index();
+                $(this).addClass('active').siblings().removeClass('active');
+                $('.search-tab .tab-area .tab-item').eq(index).addClass('active').siblings().removeClass('active');
+             });
+
+             // Các khởi tạo JS khác nếu main.js không xử lý hết
+             // Ví dụ: WOW
+             // if (typeof WOW === 'function') { new WOW().init(); }
+
+             // Ví dụ: ScrollToTop
+              /*
+             $(window).on('scroll', function () { ... });
+             $('.scrollToTop').on('click', function () { ... });
+             */
+        });
+        /*]]>*/
+    </script>
+
+</body>
+</html>

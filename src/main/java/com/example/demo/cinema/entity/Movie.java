@@ -307,6 +307,7 @@ public class Movie {
 		this.photoUrls = photoUrls;
 	}
 
+
     public void addCrewMember(CrewMember crewMember, String jobTitle) {
          MovieCrew movieCrew = new MovieCrew(this, crewMember, jobTitle);
          this.movieCrews.add(movieCrew);

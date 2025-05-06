@@ -1,66 +1,37 @@
-package com.example.demo.cinema.entity;
+package com.example.demo.cinema.entity; // Thay package nếu cần
 
-import java.util.Objects;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*; // Hoặc javax...
+// Import các annotation khác nếu cần
 
 @Entity
-@Table(name = "roles")
+@Table(name = "roles") // Đảm bảo tên bảng đúng
 public class Role {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(nullable = false, unique = true)
-	private String name;
-	
-	public Role() {
-		
-	}
-	
-	public Role(String name) {
-		this.name = name;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Dùng IDENTITY cho MySQL Auto Increment
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(nullable = false, unique = true) // Tên role phải là duy nhất
+    private String name;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    // Constructors, Getters, Setters, equals/hashCode (Dựa trên ID là tốt nhất)
 
-	public String getName() {
-		return name;
-	}
+    public Role() { }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return this.name;
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Role role = (Role) o;
-		return Objects.equals(name, role.name);
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
-	}
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role role)) return false;
+        return id != null && id.equals(role.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode(); // An toàn nhất cho JPA
+    }
 }
-

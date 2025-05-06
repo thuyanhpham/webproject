@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,12 +21,12 @@ import com.example.demo.cinema.security.CustomUserDetails;
 @Service
 public class UserService implements UserDetailsService {
 
+	@Autowired
 	private UserRepository userRepository;
 	private PasswordEncoder passwordEncoder;
 	private RoleRepository roleRepository;
 	
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
-		this.userRepository = userRepository;
+	public UserService(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
 	}
@@ -41,7 +42,7 @@ public class UserService implements UserDetailsService {
 		}
 		
 		
-		Role userRole = roleRepository.findByName("USER")
+		Role userRole = roleRepository.findByName("ROLE_USER")
 				.orElseThrow(() -> new RuntimeException("Không tìm thấy role USER"));
 		
 		User user = new User();
@@ -50,7 +51,6 @@ public class UserService implements UserDetailsService {
 		user.setPassword(passwordEncoder.encode(password));
 		user.setFullname(fullname);
 		user.setRole(userRole);
-		user.setStatus(Status.ACTIVE);
 		userRepository.save(user);
 		return "Đăng ký thành công!";
 	}

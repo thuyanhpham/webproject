@@ -1,24 +1,28 @@
 package com.example.demo.cinema.repository;
 
-import com.example.demo.cinema.entity.Movie;
-
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor; // Thêm nếu cần query động phức tạp
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> { 
+import com.example.demo.cinema.entity.Movie;
+import java.util.Optional;
 
-	@Modifying
-	@Query("DELETE FROM Movie m WHERE m.id = :movieId")
-   
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import java.time.LocalDate;
+import java.util.List;
+
+@Repository
+public interface MovieRepository extends JpaRepository<Movie, Long> {
+
+    // --- Các phương thức cần cho HomeController và MovieService ---
+
+    List<Movie> findByReleaseDateLessThanEqualOrderByReleaseDateDesc(LocalDate today);
+
+    List<Movie> findByReleaseDateGreaterThanOrderByReleaseDateAsc(LocalDate today);
+
 	void deleteMovieById(@Param("movieId") Long movieId);
 	
 	@Modifying

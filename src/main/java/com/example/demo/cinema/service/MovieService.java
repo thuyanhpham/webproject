@@ -1,12 +1,9 @@
 package com.example.demo.cinema.service;
 import com.example.demo.cinema.entity.Movie;
-
-import com.example.demo.cinema.exception.ResourceNotFoundException;
-import com.example.demo.cinema.repository.MovieRepository;
-import com.example.demo.cinema.repository.ShowtimeRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.example.demo.cinema.exception.ResourceNotFoundException;
+import com.example.demo.cinema.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +21,15 @@ public class MovieService {
 	private static final Logger log = LoggerFactory.getLogger(MovieService.class);
 
     private final MovieRepository movieRepository;
-    private final ShowtimeRepository showtimeRepository;
 
     @Autowired
-    public MovieService(MovieRepository movieRepository, ShowtimeRepository showtimeRepository) {
+    public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
-        this.showtimeRepository = showtimeRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Movie> getAllMovies() {
+        return movieRepository.findAll();
     }
 
     @Transactional(readOnly = true)
@@ -120,9 +121,14 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public List<Movie> getAllMovies() {
-        return movieRepository.findAll();
+    public List<Movie> findNowShowingMovies() {
+        LocalDate today = LocalDate.now();
+        return movieRepository.findByReleaseDateLessThanEqualOrderByReleaseDateDesc(today);
     }
 
-}
-
+    @Transactional(readOnly = true)
+    public List<Movie> findComingSoonMovies() {
+        LocalDate today = LocalDate.now();
+        return movieRepository.findByReleaseDateGreaterThanOrderByReleaseDateAsc(today);
+    }
+ }
