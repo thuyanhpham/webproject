@@ -1,118 +1,165 @@
 package com.example.demo.cinema.entity;
 
-import jakarta.persistence.*; 
-import java.math.BigDecimal; 
-import java.time.LocalDate; 
-import java.time.LocalTime;  
-import java.time.LocalDateTime; 
-import java.util.Objects; 
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Entity 
-@Table(name = "showtimes") 
+@Entity
+@Table(name = "showtimes")
 public class Showtime {
 
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // Mối quan hệ ManyToOne: Nhiều Suất chiếu thuộc về một Phim
-    @ManyToOne(fetch = FetchType.LAZY) // Chỉ tải Movie khi cần, tránh load thừa
-    @JoinColumn(name = "movie_id", nullable = false) // Tên cột khóa ngoại, không được null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    @Column(name = "show_date", nullable = false) // Cột ngày chiếu, không được null
+    @Column(name = "show_date", nullable = false)
     private LocalDate showDate;
 
-    @Column(name = "start_time", nullable = false) // Cột giờ bắt đầu, không được null
+    @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false, length = 50) // Cột định dạng/trải nghiệm, không được null
-    private String experience; // Ví dụ: "2D", "3D", "IMAX", "English-2D"
+    @Column(nullable = false, length = 50)
+    private String experience;
 
-    @Column(name = "screen_name", length = 100) // Tên phòng chiếu (ví dụ: "Screen 1"), có thể null nếu chỉ có 1 phòng
-    private String screenName;
+    // Liên kết với entity Room
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false) // Tên cột khóa ngoại, không được null
+    private Room room;
 
-    @Column(precision = 10, scale = 2) // Giá vé, ví dụ: 120000.00
+    @Column(precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "created_at", nullable = false, updatable = false) // Thời gian tạo, không cập nhật
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false) // Thời gian cập nhật cuối
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     // ----- Lifecycle Callbacks -----
-    @PrePersist // Chạy trước khi lưu lần đầu
+    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate // Chạy trước khi cập nhật
+    @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 
     // ----- Constructors -----
-    public Showtime() {
-        // Constructor mặc định cần thiết cho JPA
-    }
+    public Showtime() { }
 
-    // Constructor với các trường cơ bản (tùy chọn)
-    public Showtime(Movie movie, LocalDate showDate, LocalTime startTime, String experience) {
+    public Showtime(Movie movie, LocalDate showDate, LocalTime startTime, String experience, Room room) {
         this.movie = movie;
         this.showDate = showDate;
         this.startTime = startTime;
         this.experience = experience;
+        this.room = room;
     }
 
-    // ----- Getters and Setters -----
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Movie getMovie() { return movie; }
-    public void setMovie(Movie movie) { this.movie = movie; }
-    public LocalDate getShowDate() { return showDate; }
-    public void setShowDate(LocalDate showDate) { this.showDate = showDate; }
-    public LocalTime getStartTime() { return startTime; }
-    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
-    public String getExperience() { return experience; }
-    public void setExperience(String experience) { this.experience = experience; }
-    public String getScreenName() { return screenName; }
-    public void setScreenName(String screenName) { this.screenName = screenName; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public Long getId() {
+		return id;
+	}
 
-    // ----- equals() and hashCode() -----
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Movie getMovie() {
+		return movie;
+	}
+
+	public void setMovie(Movie movie) {
+		this.movie = movie;
+	}
+
+	public LocalDate getShowDate() {
+		return showDate;
+	}
+
+	public void setShowDate(LocalDate showDate) {
+		this.showDate = showDate;
+	}
+
+	public LocalTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LocalTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getExperience() {
+		return experience;
+	}
+
+	public void setExperience(String experience) {
+		this.experience = experience;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	// ----- equals() and hashCode() -----
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        // Quan trọng: Dùng instanceof thay vì getClass() != o.getClass() để tương thích với proxy của JPA
         if (!(o instanceof Showtime showtime)) return false;
-        // Chỉ so sánh ID nếu cả hai đều không null (đã được persist)
         return id != null && Objects.equals(id, showtime.id);
     }
 
     @Override
     public int hashCode() {
-        // Dùng getClass().hashCode() để nhất quán với equals khi dùng proxy
-        // Hoặc return Objects.hash(id) nếu id được đảm bảo không null khi thêm vào Set/Map
         return getClass().hashCode();
     }
 
-    // ----- toString() (Tùy chọn, hữu ích cho debug) -----
     @Override
     public String toString() {
         return "Showtime{" +
                "id=" + id +
-               ", movie=" + (movie != null ? movie.getTitle() : "null") + // Tránh NullPointerException
+               ", movie=" + (movie != null ? movie.getTitle() : "null") +
                ", showDate=" + showDate +
                ", startTime=" + startTime +
                ", experience='" + experience + '\'' +
-               ", screenName='" + screenName + '\'' +
+               ", room=" + (room != null ? room.getName() : "null") +
                '}';
     }
 }

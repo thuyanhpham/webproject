@@ -1,7 +1,6 @@
 package com.example.demo.cinema.controller;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
-import com.example.demo.cinema.repository.MovieRepository;
 import com.example.demo.cinema.service.MovieService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -24,9 +23,6 @@ public class AdminController {
 
     @Autowired
     private MovieService movieService;
-    
-    @Autowired
-    private MovieRepository movieRepository;
 
     @GetMapping
     public String showAdminDashboard(Model model, HttpServletRequest request) {

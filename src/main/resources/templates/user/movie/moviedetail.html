@@ -21,6 +21,17 @@
 
     <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
 
+	<style>
+		.header-button.pr-0 { display: flex; align-items: center; }
+         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+         .header-user-greeting b { color: #fff; font-weight: 600; }
+         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+         .logout-button-styled {
+            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+         }
+         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+		
+	</style>
     <!-- Dynamic page title -->
     <title th:text="${movie != null ? movie.title + ' - Movie Details' : 'Boleto - Movie Details'}">Boleto - Online Ticket Booking Website HTML Template</title>
 
@@ -87,10 +98,11 @@
 	 
 	                <!-- Nút Logout nếu đã đăng nhập -->
 	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-	                    <form th:action="@{/logout}" method="post" >
-	                        <a type="submit">Log out</a>
-	                    </form>
-	                </li>                     
+					    <form class="logout-button-form" th:action="@{/logout}" method="post">
+						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						    <button class="logout-button-styled" type="submit">LOG OUT</button>
+						</form>
+					</li>                      
                               
                 </ul>
                 <div class="header-bar d-lg-none">
@@ -129,9 +141,26 @@
                          <!-- <a href="#0" th:each="format : ${movie.availableFormats}" th:text="${format}">Format</a> -->
                     </div>
                     <!-- Dynamic primary genre -->
-                    <div class="detail-item">
+					<div class="detail-item">
 					    <h5 class="sub-title">Genres</h5>
-					    <p th:text="${movie.genres} ?: 'N/A'"></p>
+					    <p th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
+					        <th:block th:each="genreName, iterStat : ${#strings.arraySplit(movie.genres, ',')}">
+					            <span th:text="${#strings.trim(genreName)}">Genre</span><th:if="${not iterStat.last}">, </th:if>
+					        </th:block>
+					    </p>
+					    <p th:unless="${movie.genres != null and !#strings.isEmpty(movie.genres)}">N/A</p>
+					</div>
+
+					<div class="detail-item">
+					    <h5 class="sub-title">Available Formats</h5>
+					    <th:block th:if="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">
+					        <p>
+					            <span th:each="formatName, iterStat : ${#strings.arraySplit(movie.availableFormats, ',')}">
+					                <span th:text="${#strings.trim(formatName)}">Format</span><th:if="${not iterStat.last}">, </th:if>
+					            </span>
+					        </p>
+					    </th:block>
+					    <span th:unless="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">N/A</span>
 					</div>
 
                     <div class="social-and-duration">
@@ -289,27 +318,22 @@
                                         </div>
                                         <div class="casting-slider owl-carousel owl-loaded owl-drag">
                                             <div class="owl-stage-outer"><div class="owl-stage">
-                                                <!-- Loop through movieCasts -->
-                                                <div class="owl-item" style="width: 136.875px; margin-right: 100px;" th:each="movieCast : ${movie.movieCasts}">
-                                                    <div class="cast-item">
-                                                        <div class="cast-thumb">
-                                                            <a th:href="@{/actor/{id}(id=${movieCast.castMember.id})}">
-                                                                <img th:src="${movieCast.castMember.imageUrl != null ? movieCast.castMember.imageUrl : '/images/cast-placeholder.jpg'}" alt="cast photo">
-                                                            </a>
-                                                        </div>
-                                                        <div class="cast-content">
-                                                            <h6 class="cast-title">
-                                                                <a th:href="@{/actor/{id}(id=${movieCast.castMember.id})}" th:text="${movieCast.castMember.name}">Actor Name</a>
-                                                            </h6>
-                                                            <span class="cate">actor</span>
-                                                            <p th:text="|As ${movieCast.characterName}|">As Character Name</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Fallback if no cast -->
-                                                <div class="owl-item" th:if="${#lists.isEmpty(movie.movieCasts)}">
-                                                    <p>No cast information available.</p>
-                                                </div>
+                                                <th:block th:if="${movie.cast != null and !#strings.isEmpty(movie.cast)}">
+												    <div class="owl-item" th:each="actorName : ${#strings.arraySplit(movie.cast, ',')}">
+												        <div class="cast-item">
+												            <div class="cast-thumb">
+												                <a href="javascript:void(0);"><img th:src="@{/images/cast-placeholder.jpg}" alt="cast photo"></a>
+												            </div>
+												            <div class="cast-content">
+												                <h6 class="cast-title"><a href="javascript:void(0);" th:text="${#strings.trim(actorName)}">Actor Name</a></h6>
+												                <span class="cate">actor</span>
+												            </div>
+												        </div>
+												    </div>
+												</th:block>
+												<div class="owl-item" th:if="${movie.cast == null or #strings.isEmpty(movie.cast)}">
+												    <p style="padding: 20px; text-align: center;">No cast information available.</p>
+												</div>
                                             </div></div>
                                             <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
                                         </div>

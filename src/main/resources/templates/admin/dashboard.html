@@ -107,14 +107,12 @@
                 </div>
                 <ul class="menu">
                     <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li>
-                    <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings') or #strings.startsWith(currentURI, '/admin/showtimes') or #strings.startsWith(currentURI, '/admin/genres'))} ? 'active' : ''">
+                    <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings'))} ? 'active' : ''">
                         <a href="#">Management</a>
                         <ul class="submenu">
                              <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li>
                             <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li>
                             <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li>
-                            <li><a th:href="@{/admin/showtimes}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/showtimes')} ? 'active' : ''">Showtimes</a></li>
-                            <li><a th:href="@{/admin/genres}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/genres')} ? 'active' : ''">Genres</a></li>
                         </ul>
                     </li>
                     <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li>
@@ -202,8 +200,6 @@
                  <div style="text-align: center;">
                      <a th:href="@{/admin/movies/create}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
                      <a th:href="@{/admin/users/create}" class="custom-button"><i class="fas fa-user-plus"></i> Add User</a>
-                     <a th:href="@{/admin/showtimes/create}" class="custom-button"><i class="fas fa-clock"></i> Add Showtime</a>
-                     <a th:href="@{/admin/cinemas/create}" class="custom-button"><i class="fas fa-building"></i> Add Cinema</a>
                  </div>
             </div>
         </div>

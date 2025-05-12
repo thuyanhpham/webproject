@@ -51,14 +51,13 @@
             border: none;
             text-transform: uppercase;
             letter-spacing: 1px;
-            cursor: pointer; /* Thêm cursor cho thẻ a */
-            text-align: center; /* Đảm bảo text căn giữa */
-            /* margin-right: 10px; */ /* Bỏ margin-right nếu dùng gap */
+            cursor: pointer;
+            text-align: center;/
         }
-        .admin-actions form { /* Đảm bảo form không tạo khoảng cách thừa */
+        .admin-actions form {
             margin: 0;
             padding: 0;
-            display: inline-flex; /* Giúp form khớp với flex layout */
+            display: inline-flex;
         }
         .btn-edit { background: #ffc107; color: #111; }
         .btn-delete { background: #dc3545; color: #fff; }
@@ -88,7 +87,37 @@
 
     <!-- Header Admin (Copy từ form.html) -->
     <header class="header-section">
-       <div class="container"> <div class="header-wrapper"> <div class="logo"> <a th:href="@{/admin}"> <img th:src="@{/images/logo.png}" alt="logo"> <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span> </a> </div> <ul class="menu"> <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li> <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings') or #strings.startsWith(currentURI, '/admin/showtimes') or #strings.startsWith(currentURI, '/admin/genres'))} ? 'active' : ''"> <a href="#!">Management</a> <ul class="submenu"> <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li> <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li> <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li> <li><a th:href="@{/admin/showtimes}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/showtimes')} ? 'active' : ''">Showtimes</a></li> <li><a th:href="@{/admin/genres}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/genres')} ? 'active' : ''">Genres</a></li> </ul> </li> <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li> <li><a th:href="@{/home}" target="_blank">View Site</a></li> <li class="header-button pr-0" sec:authorize="isAuthenticated()"> <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span> <form class="logout-button-form" th:action="@{/logout}" method="post"> <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <button class="logout-button-styled" type="submit">LOG OUT</button> </form> </li> </ul> <div class="header-bar d-lg-none"><span></span><span></span><span></span></div> </div> </div>
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="logo">
+                    <a th:href="@{/admin}">
+                        <img th:src="@{/images/logo.png}" alt="logo">
+                         <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span>
+                    </a>
+                </div>
+                <ul class="menu">
+                    <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li>
+                    <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings'))} ? 'active' : ''">
+                        <a href="#">Management</a>
+                        <ul class="submenu">
+                             <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li>
+                            <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li>
+                            <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li>
+                        </ul>
+                    </li>
+                    <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li>
+                    <li><a th:href="@{/home}" target="_blank">View Site</a></li>
+                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
+                        <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span>
+						<form class="logout-button-form" th:action="@{/logout}" method="post">
+						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						    <button class="logout-button-styled" type="submit">LOG OUT</button>
+						</form>
+                    </li>
+                </ul>
+                <div class="header-bar d-lg-none"><span></span><span></span><span></span></div>
+            </div>
+        </div>
     </header>
 
     <!-- Phần Nội dung Chính: Chi Tiết Phim -->
@@ -117,6 +146,7 @@
                                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                  <button type="submit" class="btn-action btn-delete">Delete</button>
                              </form>
+                             <a th:href="@{/admin/showtimes/movie/{movieId}(movieId=${movie.id})}" class="btn-action" style="background-color: #007bff; color: white;">Manage Showtimes</a>
                              <a th:href="@{/admin/movies}" class="btn-action btn-back">Back to List</a>
                         </div>
                     </div>
@@ -189,7 +219,6 @@
                              <span class="detail-label">Updated At:</span>
                              <span class="detail-value" th:text="${movie.updatedAt != null ? #temporals.format(movie.updatedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></span>
                          </div>
-                         <!-- Bỏ phần Available Formats vì đã xóa khỏi Entity -->
 
                     </div> <!-- //col-md-8 -->
                 </div> <!-- //row -->
