@@ -33,17 +33,33 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Movie> findMovies(Pageable pageable, String query) {
-        if (StringUtils.hasText(query)) {
-            return movieRepository.findByTitleContainingIgnoreCase(query, pageable);
-        } else {
-            return movieRepository.findAll(pageable);
-        }
+    public Page<Movie> getAllMoviesPaginated(Pageable pageable) {
+        log.info("Service: Getting all movies paginated. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<Movie> result = movieRepository.findAll(pageable);
+        log.info("Service: Found {} movies in total for getAllMoviesPaginated.", result.getTotalElements());
+        return result;
     }
 
     @Transactional(readOnly = true)
+    public Page<Movie> searchMovies(String searchTerm, Pageable pageable) {
+        log.info("Service: Searching movies with term '{}'. Page: {}, Size: {}", searchTerm, pageable.getPageNumber(), pageable.getPageSize());
+        Page<Movie> result = movieRepository.findByTitleContainingIgnoreCase(searchTerm, pageable);
+        log.info("Service: Found {} movies for search term '{}'.", result.getTotalElements(), searchTerm);
+        return result;
+    }
+    
+    @Transactional(readOnly = true)
     public Optional<Movie> findMovieByIdOptional(Long id) {
         return movieRepository.findById(id);
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<Movie> findMovies(Pageable pageable, String searchTerm) {
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            return movieRepository.findByTitleContainingIgnoreCase(searchTerm.trim(), pageable);
+        } else {
+            return movieRepository.findAll(pageable);
+        }
     }
 
     @Transactional(readOnly = true)

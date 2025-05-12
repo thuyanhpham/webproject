@@ -35,8 +35,6 @@ public class MovieController {
                                 @RequestParam(required = false, defaultValue = "title,asc") String sort,
                                 HttpServletRequest request // <<<--- 1. Inject HttpServletRequest
                                ) {
-
-        // --- Phần xử lý Sort và Pageable giữ nguyên ---
         Sort sortObj = Sort.unsorted();
         if (sort != null && !sort.isEmpty()) {
             try {
@@ -45,41 +43,24 @@ public class MovieController {
                     Sort.Direction direction = sortParams[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
                     sortObj = Sort.by(direction, sortParams[0]);
                 } else if (sortParams.length == 1) {
-                    // Mặc định ASC nếu chỉ có tên trường
                     sortObj = Sort.by(Sort.Direction.ASC, sortParams[0]);
                 }
             } catch (Exception e) {
                 System.err.println("Invalid sort parameter format: " + sort);
-                // xem xét trả về lỗi hoặc dùng sort mặc định
             }
         }
 
         Pageable pageable = PageRequest.of(page, size, sortObj);
-
-        // --- Phần gọi Service và thêm dữ liệu phim vào model giữ nguyên ---
     
         Page<Movie> moviePage = movieService.findMovies(pageable, query );
 
         model.addAttribute("moviesPage", moviePage);
-        model.addAttribute("movies", moviePage.getContent()); // Bạn có thể giữ lại nếu template cũ dùng
-
-        // --- Thêm các tham số phân trang/sắp xếp/tìm kiếm vào model ---
-        model.addAttribute("currentPage", page); // Đảm bảo template dùng đúng tên này
+        model.addAttribute("movies", moviePage.getContent());
+        model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
         model.addAttribute("sortParam", sort);
         model.addAttribute("queryParam", query);
-
-        // ====> 2. Thêm requestURI vào model <====
         model.addAttribute("requestURI", request.getRequestURI());
-        // ======================================
-
-        return "user/movie/movielist"; // Trả về tên file template (movielist.html)
+        return "user/movie/movielist"; 
     }
-
-
-//    @GetMapping("/")
-//    public String homePage() {
-//         // Chuyển hướng về trang danh sách phim làm trang chủ
-//         return "redirect:/movielist";
-//    }
 }

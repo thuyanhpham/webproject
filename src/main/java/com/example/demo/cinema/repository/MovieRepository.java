@@ -38,5 +38,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
            "LEFT JOIN FETCH m.reviews r LEFT JOIN FETCH r.user ru " + // Lấy reviews và user của review đó
            "WHERE m.id = :id")
     Optional<Movie> findByIdWithDetails(@Param("id") Long id);
+    
+    @Query("SELECT DISTINCT m FROM Movie m JOIN m.showtimes s WHERE s.showDate = :searchDate")
+    Page<Movie> findMoviesByShowDate(@Param("searchDate") LocalDate searchDate, Pageable pageable);
 
 }

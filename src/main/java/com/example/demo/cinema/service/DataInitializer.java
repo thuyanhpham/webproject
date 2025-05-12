@@ -1,9 +1,11 @@
 package com.example.demo.cinema.service;
 
 import com.example.demo.cinema.entity.Role;
+import com.example.demo.cinema.entity.Room;
 import com.example.demo.cinema.entity.User;
 // import com.example.demo.cinema.entity.Status; // Import nếu dùng Status Enum
 import com.example.demo.cinema.repository.RoleRepository;
+import com.example.demo.cinema.repository.RoomRepository;
 import com.example.demo.cinema.repository.UserRepository;
 
 // Import Logger
@@ -32,14 +34,17 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoomRepository roomRepository;
 
     @Autowired // Constructor Injection
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           RoomRepository roomRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -75,6 +80,15 @@ public class DataInitializer implements CommandLineRunner {
 
             log.info("Data initialization completed successfully (Single Transaction).");
 
+            // --- TẠO ROOMS ---
+            log.info("Checking and creating Rooms...");
+            findOrCreateRoom("Phòng 1", 100);
+            findOrCreateRoom("Phòng 2", 120);
+            findOrCreateRoom("Phòng 3", 148);
+            findOrCreateRoom("Phòng 4", 89);
+            findOrCreateRoom("Phòng 5", 83);
+            findOrCreateRoom("Phòng 6 (Inactive)", 80, false);
+            log.info("Room createion/check finished.");
         } catch (Exception e) {
             log.error("!!! CRITICAL ERROR DURING DATA INITIALIZATION !!!", e);
             // Ném lại lỗi để dừng ứng dụng nếu khởi tạo thất bại
@@ -82,12 +96,33 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    /**
-     * Tìm Role theo tên. Nếu không thấy, tạo mới, lưu và flush ngay lập tức.
-     * Chạy trong transaction của phương thức gọi (run()).
-     * @param roleName Tên Role (ví dụ: ROLE_ADMIN)
-     * @return Đối tượng Role đã tồn tại hoặc vừa được tạo và flush, hoặc null nếu lỗi.
-     */
+    private Room findOrCreateRoom(String roomName, int capacity) {
+    	return findOrCreateRoom(roomName, capacity, true);
+    }
+    
+    private Room findOrCreateRoom(String roomName, int capacity, boolean isActive) {
+    	Optional<Room> roomOpt = roomRepository.findByName(roomName);
+    	if (roomOpt.isPresent()) {
+    		log.info("Room '{}' already exists.", roomName);
+    		return roomOpt.get();
+    	} else {
+    		log.info("Creating new Room: {}", roomName);
+    		Room newRoom = new Room();
+    		newRoom.setName(roomName);
+    		newRoom.setCapacity(capacity);
+    		newRoom.setActive(isActive);
+    		
+    		try {
+    			Room savedRoom = roomRepository.save(newRoom);
+    			log.info("===> Saved Room '{}' with ID: {}", savedRoom.getName(), savedRoom.getId());
+    			return savedRoom;
+    		} catch (Exception e) {
+    			log.error("!!! Error saving Room '{}': {}", roomName, e.getMessage(), e);
+    			return null;
+    		}
+    	}
+    }
+    
     private Role findOrCreateRoleAndFlush(String roleName) {
         String normalizedRoleName = roleName.toUpperCase();
         Optional<Role> roleOpt = roleRepository.findByName(normalizedRoleName); // Dùng findByName
@@ -115,12 +150,6 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    /**
-     * Tạo người dùng Admin mặc định nếu chưa tồn tại.
-     * Chạy trong transaction của phương thức gọi (run()).
-     * @param adminRole Đối tượng Role ADMIN đã được flush và có ID hợp lệ.
-     * @param adminUsername Tên đăng nhập của admin.
-     */
     private void createAdminUserIfNotExist(Role adminRole, String adminUsername) {
          if (adminRole == null || adminRole.getId() == null) {
              log.error("!!! Skipping admin user '{}' creation because admin Role is invalid.", adminUsername);
@@ -131,12 +160,10 @@ public class DataInitializer implements CommandLineRunner {
             log.info("Creating admin user: {}", adminUsername);
             User adminUser = new User();
             adminUser.setUsername(adminUsername);
-            adminUser.setPassword(passwordEncoder.encode("246810")); // Đổi mật khẩu!
+            adminUser.setPassword(passwordEncoder.encode("246810"));
             adminUser.setEmail("thuyanhne@gmail.com");
-            adminUser.setFullname("Thuy Anh");       // Tên của bạn
-            adminUser.setRole(adminRole); // <<< Gán đối tượng Role đã được saveAndFlush
-            // adminUser.setStatus(Status.ACTIVE); // Nếu có enum Status
-            // createdAt/updatedAt dùng @PrePersist/@PreUpdate
+            adminUser.setFullname("Thuy Anh");
+            adminUser.setRole(adminRole); 
 
             try {
                 log.debug("===> Preparing to save admin user '{}' referencing Role ID: {}", adminUser.getUsername(), adminRole.getId());
@@ -144,38 +171,10 @@ public class DataInitializer implements CommandLineRunner {
                 log.info("Successfully saved admin user '{}'.", adminUsername);
             } catch (Exception e) {
                 log.error("!!! Error saving admin user '{}': {}", adminUsername, e.getMessage(), e);
-                throw e; // Ném lại để rollback transaction chính của run()
+                throw e; 
             }
         } else {
             log.info("Admin user '{}' already exists.", adminUsername);
         }
     }
-
-     // Phương thức tạo user thường (ví dụ, có thể bỏ comment nếu cần)
-     /*
-     private void createSampleUserIfNotExist(Role userRole, String sampleUsername) {
-         if (userRole == null || userRole.getId() == null) {
-             log.warn("Skipping sample user '{}' creation because USER Role is invalid.", sampleUsername);
-             return;
-         }
-         if (userRepository.findByUsername(sampleUsername).isEmpty()) {
-             log.info("Creating sample user: {}", sampleUsername);
-             User sampleUser = new User();
-             sampleUser.setUsername(sampleUsername);
-             sampleUser.setPassword(passwordEncoder.encode("password")); // Mật khẩu mặc định
-             sampleUser.setEmail("sample@example.com");
-             sampleUser.setFullname("Sample User");
-             sampleUser.setRole(userRole);
-             try {
-                 userRepository.save(sampleUser);
-                 log.info("Successfully saved sample user '{}'.", sampleUsername);
-             } catch (Exception e) {
-                 log.error("!!! Error saving sample user '{}': {}", sampleUsername, e.getMessage(), e);
-                 throw e;
-             }
-         } else {
-             log.info("Sample user '{}' already exists.", sampleUsername);
-         }
-     }
-     */
 }
