@@ -163,26 +163,26 @@ public class MovieDetailController {
 
         if (currentUser == null) {
             redirectAttributes.addFlashAttribute("reviewErrorMessage", "You must be logged in to submit a review.");
-            log.warn("Attempt to submit review by unauthenticated user for movie ID: {}", movieId);
+            
             return "redirect:/login?redirect=/movies/detail/" + movieId; // Chuyển đến trang login
         }
 
         String username = currentUser.getUsername();
-        log.debug("User {} attempting to submit review for movie ID: {}", username, movieId);
+        
 
         try {
             // Gọi ReviewService để tạo và lưu review
             reviewService.createReview(username, movieId, rating, title, content);
             redirectAttributes.addFlashAttribute("reviewSuccessMessage", "Your review has been submitted successfully!");
-            log.info("Review submitted successfully by user {} for movie ID {}", username, movieId);
+            
         } catch (DataIntegrityViolationException e) { // Bắt lỗi nếu user đã review (nếu có unique constraint)
-            log.warn("User {} already reviewed movie ID {}: {}", username, movieId, e.getMessage());
+           
             redirectAttributes.addFlashAttribute("reviewErrorMessage", "You have already reviewed this movie.");
         } catch (ResourceNotFoundException e) {
-            log.error("Error submitting review: Resource not found - {}", e.getMessage());
+            
             redirectAttributes.addFlashAttribute("reviewErrorMessage", e.getMessage());
         } catch (Exception e) {
-            log.error("General error submitting review for movie ID {} by user {}: {}", movieId, username, e.getMessage(), e);
+           
             redirectAttributes.addFlashAttribute("reviewErrorMessage", "An error occurred while submitting your review. Please try again.");
         }
         // Thêm #reviews-section để trình duyệt tự động cuộn đến phần review sau khi redirect
