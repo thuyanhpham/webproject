@@ -133,8 +133,12 @@
     <section class="admin-section padding-top padding-bottom">
         <div class="container">
 
-             <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;"
-                 th:utext="${showtime.id == null ? 'Add New Showtime' : 'Edit Showtime'} + (${movieTitle != null ? ' for '' + movieTitle + ''' : ''})">Showtime Form</h2>
+             <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;">
+			    <span th:text="${showtime.id == null ? 'Add New Showtime' : 'Edit Showtime'}"></span>
+			    <span th:if="${movie?.title != null and !#strings.isEmpty(movie.title)}"
+			          th:text="' for \'' + ${movie.title} + '\''">
+			    </span>
+			</h2>
 
              <!-- Hiển thị lỗi chung (nếu có) -->
              <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">

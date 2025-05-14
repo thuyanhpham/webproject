@@ -54,7 +54,7 @@ public class AdminController {
         return "admin/movie/list";
     }
 
-    @GetMapping("/movies/create")
+    @GetMapping("/movies/add")
     public String showCreateMovieForm(Model model, HttpServletRequest request) {
         log.info("Showing create movie form");
         model.addAttribute("movie", new Movie());
