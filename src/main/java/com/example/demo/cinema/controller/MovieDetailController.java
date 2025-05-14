@@ -1,9 +1,12 @@
 package com.example.demo.cinema.controller;
 
 import com.example.demo.cinema.entity.Movie;
+import com.example.demo.cinema.entity.Review;
 import com.example.demo.cinema.entity.Showtime;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
+import com.example.demo.cinema.repository.ReviewRepository;
 import com.example.demo.cinema.service.MovieService;
+import com.example.demo.cinema.service.ReviewService;
 import com.example.demo.cinema.service.ShowtimeService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,18 +14,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.util.List;
@@ -37,14 +45,17 @@ public class MovieDetailController {
 
     private final MovieService movieService;
     private final ShowtimeService showtimeService;
+    private final ReviewService reviewService;
 
     private static final String CINEMA_NAME = "Boleto Cinema VN";
     private static final String CINEMA_CITY = "Ha Noi City";
-
+    private static final int REVIEWS_PER_PAGE = 5;
+    
     @Autowired
-    public MovieDetailController(MovieService movieService, ShowtimeService showtimeService) {
+    public MovieDetailController(MovieService movieService, ShowtimeService showtimeService,ReviewService reviewService) {
         this.movieService = movieService;
         this.showtimeService = showtimeService;
+        this.reviewService = reviewService; 
     }
     @GetMapping
     public String listAllMoviesForUser(Model model,
@@ -53,7 +64,7 @@ public class MovieDetailController {
                                        @RequestParam(name = "size", defaultValue = "9") int size,
                                        @RequestParam(name = "search", required = false) String searchTerm,
                                        @RequestParam(name = "sort", defaultValue = "title,asc") String sortParamValue) { 
-        log.info("Request for user movie list. Page: {}, Size: {}, Search: '{}', Sort: {}", page, size, searchTerm, sortParamValue);
+        
         try {
             String[] sortParamsArray = sortParamValue.split(",");
             String sortField = sortParamsArray[0];
@@ -66,18 +77,17 @@ public class MovieDetailController {
             Page<Movie> moviesPageResult;
 
             if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                log.debug("Searching movies with term: {}", searchTerm.trim());
+             
                 moviesPageResult = movieService.searchMovies(searchTerm.trim(), pageable);
                 model.addAttribute("searchTerm", searchTerm.trim());
             } else {
-                log.debug("Fetching all movies paginated.");
+           
                 moviesPageResult = movieService.getAllMoviesPaginated(pageable);
                 model.addAttribute("searchTerm", "");
             }
             
             if (moviesPageResult != null) {
-                log.info("Controller: moviesPage content: Is empty? {}, Total elements: {}, Total pages: {}",
-                        moviesPageResult.isEmpty(), moviesPageResult.getTotalElements(), moviesPageResult.getTotalPages());
+              
                 if (!moviesPageResult.isEmpty()) {
                     moviesPageResult.getContent().forEach(movie ->
                             log.info("Controller: Fetched movie from service: ID={}, Title={}, Status={}",
@@ -116,14 +126,20 @@ public class MovieDetailController {
 
     @GetMapping("/detail/{id}")
     public String showMovieDetails(@PathVariable Long id, Model model) {
-        log.info("Request received for movie details with ID: {}", id);
+       
         try {
             Movie movie = movieService.getMovieById(id);
             model.addAttribute("movie", movie);
             model.addAttribute("cinemaName", CINEMA_NAME);
             model.addAttribute("cinemaCity", CINEMA_CITY);
-
-            log.info("Movie found: {}. Rendering detail page.", movie.getTitle());
+            model.addAttribute("pageTitle", movie.getTitle() + " - Details"); 
+   
+            Pageable firstPageable = PageRequest.of(0, REVIEWS_PER_PAGE, Sort.by("timestamp").descending());
+            Page<Review> reviewPage = reviewService.getReviewsForMovie(id, firstPageable);
+            
+            model.addAttribute("reviewsForDisplay", reviewPage.getContent());
+            model.addAttribute("reviewPage", reviewPage);
+            
             return "user/movie/moviedetail";
         } catch (ResourceNotFoundException e) {
             log.error("Movie not found for ID: {}", id, e);
@@ -135,6 +151,61 @@ public class MovieDetailController {
             return "error/500";
         }
     }
+    
+    // --- PHƯƠNG THỨC XỬ LÝ SUBMIT REVIEW MỚI ---
+    @PostMapping("/{movieId}/reviews/submit")
+    public String submitReview(@PathVariable("movieId") Long movieId,
+                               @RequestParam("rating") Integer rating,
+                               @RequestParam(name = "title", required = false) String title,
+                               @RequestParam("content") String content,
+                               @AuthenticationPrincipal UserDetails currentUser, // Lấy user đang đăng nhập
+                               RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            redirectAttributes.addFlashAttribute("reviewErrorMessage", "You must be logged in to submit a review.");
+            log.warn("Attempt to submit review by unauthenticated user for movie ID: {}", movieId);
+            return "redirect:/login?redirect=/movies/detail/" + movieId; // Chuyển đến trang login
+        }
+
+        String username = currentUser.getUsername();
+        log.debug("User {} attempting to submit review for movie ID: {}", username, movieId);
+
+        try {
+            // Gọi ReviewService để tạo và lưu review
+            reviewService.createReview(username, movieId, rating, title, content);
+            redirectAttributes.addFlashAttribute("reviewSuccessMessage", "Your review has been submitted successfully!");
+            log.info("Review submitted successfully by user {} for movie ID {}", username, movieId);
+        } catch (DataIntegrityViolationException e) { // Bắt lỗi nếu user đã review (nếu có unique constraint)
+            log.warn("User {} already reviewed movie ID {}: {}", username, movieId, e.getMessage());
+            redirectAttributes.addFlashAttribute("reviewErrorMessage", "You have already reviewed this movie.");
+        } catch (ResourceNotFoundException e) {
+            log.error("Error submitting review: Resource not found - {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("reviewErrorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("General error submitting review for movie ID {} by user {}: {}", movieId, username, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("reviewErrorMessage", "An error occurred while submitting your review. Please try again.");
+        }
+        // Thêm #reviews-section để trình duyệt tự động cuộn đến phần review sau khi redirect
+        return "redirect:/movies/detail/" + movieId + "#reviews-section";
+    }
+    
+ // --- API ENDPOINT CHO "LOAD MORE" REVIEWS (SẼ DÙNG VỚI JAVASCRIPT) ---
+    @GetMapping("/api/{id}/reviews") // Phân biệt với URL trang HTML bằng "/api/"
+    @ResponseBody // QUAN TRỌNG: Báo cho Spring biết trả về dữ liệu (JSON), không phải tên template
+    public Page<Review> getMovieReviewsPageApi(
+            @PathVariable("id") Long movieId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            // Lấy size từ REVIEWS_PER_PAGE hoặc cho client tự định nghĩa
+            @RequestParam(name = "size", defaultValue = "" + REVIEWS_PER_PAGE, required = false) int size) {
+
+        log.debug("API: Requesting reviews for movie ID: {}, page: {}, size: {}", movieId, page, size);
+        // Sắp xếp theo timestamp giảm dần (mới nhất trước)
+        Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
+        Page<Review> reviewPageData = reviewService.getReviewsForMovie(movieId, pageable); // Gọi ReviewService
+        log.debug("API: Found {} reviews for movie ID: {} on page: {}. Total pages: {}",
+                reviewPageData.getNumberOfElements(), movieId, page, reviewPageData.getTotalPages());
+        return reviewPageData; // Spring Boot (với Jackson) sẽ tự động chuyển Page<Review> thành JSON
+    }
 
     @GetMapping("/{movieId}/showtimes")
     public String showMovieTicketPlan(
@@ -145,7 +216,7 @@ public class MovieDetailController {
             HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
 
-        log.info("Request received for showtimes - Movie ID: {}, Date: {}, Experience: {}", movieId, selectedDate, selectedExperience);
+ 
 
         try {
             Movie movie = movieService.getMovieById(movieId);
@@ -164,8 +235,7 @@ public class MovieDetailController {
             model.addAttribute("pageTitle", movie.getTitle() + " - Showtimes");
 
 
-            log.info("Found {} showtimes for movie '{}' at {} on {}. Rendering ticket plan page.",
-                     showtimes.size(), movie.getTitle(), dateToFilter);
+           
 
             return "user/movie/movieticketplan";
 

@@ -70,7 +70,7 @@ public class AuthController {
 		user.setEmail(email);
 		user.setStatus(Status.ACTIVE);
 
-		Long defaultRoleId = 1L;
+		Long defaultRoleId = 2L;
 		Role role = roleRepository.findById(defaultRoleId).orElse(null);
 		if (role == null) {
 			redirectAttributes.addFlashAttribute("error", "Không tìm thấy role mặc định trong hệ thống.");

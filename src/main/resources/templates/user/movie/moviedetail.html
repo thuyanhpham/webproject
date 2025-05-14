@@ -20,6 +20,8 @@
     <link rel="stylesheet" th:href="@{/css/movielistcss/owl.theme.default.min.css}" />
 
     <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
+    
+    <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
 
 	<style>
 		.header-button.pr-0 { display: flex; align-items: center; }
@@ -297,7 +299,7 @@
                         <div class="tab summery-review">
                             <ul class="tab-menu">
                                 <li class="active"> summery </li>
-                                <li> user review <span th:text="${movie.reviews != null ? #lists.size(movie.reviews) : 0}">0</span> </li>
+                                <li> user review <span th:text="${reviewPage != null ? reviewPage.totalElements : 0}">0</span> </li>
                             </ul>
                             <div class="tab-area">
                                 <!-- Summary Tab -->
@@ -375,50 +377,150 @@
                                     </div>
                                 </div>
                                 <!-- User Review Tab -->
-                                <div class="tab-item">
-                                    <!-- Loop through reviews -->
-                                    <div class="movie-review-item" th:each="review : ${movie.reviews}">
-                                        <div class="author">
-                                            <div class="thumb">
-                                                <!-- TODO: Add avatarUrl to User entity and fallback image -->
-                                                <a href="#0"> <img th:src="${review.user.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}" alt="user avatar"> </a>
-                                            </div>
-                                            <div class="movie-review-info">
-                                                <span class="reply-date" th:if="${review.timestamp != null}" th:text="${#temporals.format(review.timestamp, 'dd MMM yyyy HH:mm')}">Review Date</span>
-                                                <h6 class="subtitle"><a href="#0" th:text="${review.user.fullname != null ? review.user.fullname : review.user.username}">User Name</a></h6>
-                                                <span th:if="${review.verified}"><i class="fas fa-check"></i> verified review</span>
-                                            </div>
-                                        </div>
-                                        <div class="movie-review-content">
-                                            <div class="review">
-                                                <!-- TODO: Implement dynamic star display based on review.rating -->
-                                                <i class="flaticon-favorite-heart-button" th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
-                                            </div>
-                                            <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
-                                            <p th:text="${review.content}">Review content...</p>
-                                            <div class="review-meta">
-                                                <!-- TODO: Add functionality for like/dislike/report -->
-                                                <a href="#0"> <i class="flaticon-hand"></i><span th:text="${review.likes}">0</span> </a>
-                                                <a href="#0" class="dislike"> <i class="flaticon-dont-like-symbol"></i><span th:text="${review.dislikes}">0</span> </a>
-                                                <a href="#0"> Report Abuse </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Fallback if no reviews -->
-                                    <div class="movie-review-item" th:if="${#lists.isEmpty(movie.reviews)}">
-                                        <p>No reviews yet.</p>
-                                    </div>
-                                    <!-- Load more button (needs pagination logic) -->
-                                    <div class="load-more text-center" th:if="${false}"> <!-- Replace 'false' with condition like 'hasMoreReviews' -->
-                                        <a href="#0" class="custom-button transparent">load more</a>
-                                    </div>
-                                </div>
+			                    <div class="tab-item">
+							    <!-- Kiểm tra xem movie có tồn tại không (đề phòng) -->
+							    <div th:if="${movie != null}">
+							
+							        <!-- Loop through reviews using the new list for the initial page -->
+							        <!-- Thay đổi: Sử dụng reviewsForDisplay thay vì movie.reviews -->
+							        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}">
+							            <div class="author">
+							                <div class="thumb">
+							                    <!-- Sử dụng safe navigation (?.) để tránh lỗi nếu user null -->
+							                    <a href="#0">
+							                        <img th:src="${review.user?.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}" alt="user avatar">
+							                    </a>
+							                </div>
+							                <div class="movie-review-info">
+							                    <span class="reply-date" th:if="${review.timestamp != null}" th:text="${#temporals.format(review.timestamp, 'dd MMM yyyy HH:mm')}">Review Date</span>
+							                    <!-- Sử dụng safe navigation (?.) -->
+							                    <h6 class="subtitle"><a href="#0" th:text="${review.user?.fullname != null ? review.user.fullname : review.user?.username}">User Name</a></h6>
+							                    <span th:if="${review.verified != null and review.verified}"><i class="fas fa-check"></i> verified review</span>
+							                </div>
+							            </div>
+							            <div class="movie-review-content">
+							                <div class="review">
+							                    <!-- Xử lý rating null -->
+							                    <i class="flaticon-favorite-heart-button" th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
+							                    <!-- (Tùy chọn) Hiển thị sao rỗng nếu cần -->
+							                    <!-- <i class="far fa-star" th:each="star : ${#numbers.sequence(1, 5 - (review.rating != null ? review.rating : 0))}" style="color: #ccc;"></i> -->
+							                </div>
+							                <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
+							                <p th:text="${review.content}">Review content...</p>
+							                <div class="review-meta">
+							                    <!-- Xử lý likes/dislikes null -->
+							                    <a href="#0"> <i class="flaticon-hand"></i><span th:text="${review.likes != null ? review.likes : 0}">0</span> </a>
+							                    <a href="#0" class="dislike"> <i class="flaticon-dont-like-symbol"></i><span th:text="${review.dislikes != null ? review.dislikes : 0}">0</span> </a>
+							                    <a href="#0"> Report Abuse </a>
+							                </div>
+							            </div>
+							        </div>
+							
+							        <!-- Fallback if no reviews FOR THIS INITIAL PAGE -->
+							        <!-- Thay đổi: Kiểm tra reviewsForDisplay -->
+							        <!-- Thêm ID để JavaScript có thể ẩn/hiện nếu cần -->
+							        <div id="no-reviews-message" class="movie-review-item" th:if="${#lists.isEmpty(reviewsForDisplay)}">
+							            <p>No reviews yet.</p>
+							        </div>
+							
+							        <!-- Container để JavaScript thêm các review tải sau vào đây -->
+							        <div id="more-reviews-container"></div>
+							
+							        <!-- Load more button -->
+							        <!-- Thay đổi: Điều kiện dựa vào reviewPage.hasNext() -->
+							        <!-- Thêm ID và data attributes để JavaScript sử dụng -->
+							        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
+							            <a href="javascript:void(0);" class="custom-button transparent"
+							               id="load-more-reviews-btn"
+							               th:attr="data-movie-id=${movie.id}, data-next-page=${reviewPage.number + 1}, data-page-size=${reviewPage.size}">
+							                load more
+							            </a>
+							        </div>
+							
+							    </div> <!-- end th:if="${movie != null}" -->
+							
+							    <!-- Fallback nếu đối tượng movie không tồn tại -->
+							    <div th:if="${movie == null}">
+							        <p>Movie information not available.</p>
+							    </div>
+							    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}"> <!-- Thêm id để có thể cuộn tới -->
+							        <!-- Chỉ hiển thị form nếu người dùng đã đăng nhập -->
+							        <div th:if="${#authorization.expression('isAuthenticated()')}">
+							            <h4>Leave a Review for <span th:text="${movie.title}">Movie Title</span></h4>
+							
+							            <!-- Thông báo thành công/lỗi khi gửi review (từ RedirectAttributes) -->
+							            <div th:if="${param.reviewSuccess}" class="alert alert-success" role="alert"
+							                 th:text="${param.reviewSuccess[0] == 'true' ? 'Your review has been submitted successfully!' : ''}">
+							            </div>
+							            <div th:if="${param.reviewError}" class="alert alert-danger" role="alert"
+							                 th:text="${param.reviewError[0]}">
+							            </div>
+							            <!-- Hoặc dùng các biến flash attribute trực tiếp nếu bạn đặt tên khác -->
+							            <div th:if="${reviewSuccessMessage}" class="alert alert-success" role="alert" th:text="${reviewSuccessMessage}"></div>
+							            <div th:if="${reviewErrorMessage}" class="alert alert-danger" role="alert" th:text="${reviewErrorMessage}"></div>
+							
+							
+							            <form id="reviewForm" th:action="@{/movies/{movieId}/reviews/submit(movieId=${movie.id})}" method="post" class="comment-form mt-3">
+							                <!-- Trường movieId đã có trong URL action, không cần input hidden nữa nếu URL đúng -->
+							
+							                <div class="form-group row">
+							                    <label for="rating" class="col-sm-3 col-form-label">Your Rating <span class="text-danger">*</span>:</label>
+							                    <div class="col-sm-9">
+							                        <!-- Ví dụ dùng select, bạn có thể làm đẹp hơn bằng JS (Star Rating Component) -->
+							                        <select class="form-control" id="rating" name="rating" required>
+							                            <option value="" disabled selected>-- Select Rating --</option>
+							                            <option value="5">★★★★★ (Excellent)</option>
+							                            <option value="4">★★★★☆ (Good)</option>
+							                            <option value="3">★★★☆☆ (Average)</option>
+							                            <option value="2">★★☆☆☆ (Fair)</option>
+							                            <option value="1">★☆☆☆☆ (Poor)</option>
+							                        </select>
+							                    </div>
+							                </div>
+							
+							                <div class="form-group row">
+							                    <label for="reviewTitle" class="col-sm-3 col-form-label">Review Title:</label>
+							                    <div class="col-sm-9">
+							                        <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="e.g., Amazing movie!"
+							                               th:value="${submittedTitle}"> <!-- Giữ lại giá trị nếu có lỗi server-side validation -->
+							                    </div>
+							                </div>
+							
+							                <div class="form-group row">
+							                    <label for="reviewContent" class="col-sm-3 col-form-label">Your Review <span class="text-danger">*</span>:</label>
+							                    <div class="col-sm-9">
+							                        <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your thoughts..." required
+							                                  th:text="${submittedContent}"></textarea> <!-- Giữ lại giá trị -->
+							                    </div>
+							                </div>
+							
+							                <div class="form-group row">
+							                    <div class="col-sm-9 offset-sm-3">
+							                        <button type="submit" class="custom-button btn-primary">Submit Review</button>
+							                    </div>
+							                </div>
+							            </form>
+							        </div>
+							
+							        <!-- Thông báo nếu người dùng chưa đăng nhập -->
+							        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="text-center">
+							            <p class="lead">Want to share your thoughts on this movie?</p>
+							            <a th:href="@{/login(redirectUrl=${#httpServletRequest.requestURI})}" class="custom-button">Login to Write a Review</a>
+							            <!-- (redirectUrl là tùy chọn, để đưa người dùng quay lại sau khi login) -->
+							        </div>
+							    </div> <!-- end .leave-review-section -->
+							
+							</div> <!-- end .tab-item -->
+
+									
+							    
+							</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+       
     </section>
     <!-- ==========Movie-Section========== -->
 
@@ -469,11 +571,12 @@
     <!-- ==========Footer Section========== -->
 
   	<script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
+  		<script th:src="@{/js/movielistjs/popper.min.js}"></script>
 		<script th:src="@{/js/movielistjs/bootstrap.min.js}"></script>
 		<script th:src="@{/js/movielistjs/modernizr-3.6.0.min.js}"></script>
 
 		<script th:src="@{/js/movielistjs/plugins.js}"></script>
-		<script th:src="@{/js/movielistjs/popper.min.js}"></script>
+	
 		<script th:src="@{/js/movielistjs/magnific-popup.min.js}"></script>
 		<script th:src="@{/js/movielistjs/nice-select.js}"></script>
 		<script th:src="@{/js/movielistjs/odometer.min.js}"></script>
@@ -485,5 +588,130 @@
 		<script th:src="@{/js/movielistjs/contentInt.js}"></script>
 		<script th:src="@{/js/movielistjs/chunk-7ac80a40.js}"></script>
 		<script th:src="@{/js/main.js}"></script>
+		
+	<script th:inline="javascript">
+								/*<![CDATA[*/
+						    	document.addEventListener('DOMContentLoaded', function() {
+						        // --- PHẦN VALIDATE FORM REVIEW ---
+						        const reviewForm = document.getElementById('reviewForm');
+						        if (reviewForm) {
+						            reviewForm.addEventListener('submit', function(event) {
+						                const ratingSelect = document.getElementById('rating'); // Đổi tên biến cho rõ ràng
+						                const contentTextarea = document.getElementById('reviewContent'); // Đổi tên biến
+						                let isValid = true; // Biến cờ để theo dõi tính hợp lệ
+						
+						                // Xóa các thông báo lỗi cũ trước khi validate lại
+						                clearErrorMessages(this); // 'this' ở đây là form
+						
+						                if (!ratingSelect.value) { // Kiểm tra giá trị của select
+						                    isValid = false;
+						                    displayErrorMessage(ratingSelect, 'Please select a rating.');
+						                }
+						
+						                if (!contentTextarea.value.trim()) {
+						                    isValid = false;
+						                    displayErrorMessage(contentTextarea, 'Please write your review content.');
+						                } else if (contentTextarea.value.trim().length < 10) { // Ví dụ: kiểm tra độ dài tối thiểu
+						                    isValid = false;
+						                    displayErrorMessage(contentTextarea, 'Review content must be at least 10 characters long.');
+						                }
+						                // Thêm các xác thực khác nếu cần (ví dụ: title)
+						
+						                if (!isValid) {
+						                    event.preventDefault(); // Ngăn form gửi đi nếu không hợp lệ
+						                }
+						                // Nếu hợp lệ, form sẽ được submit theo cách truyền thống
+						            });
+						        }
+						
+						        // --- HÀM HELPER CHO HIỂN THỊ LỖI (như đã gợi ý ở câu trả lời trước) ---
+						        function displayErrorMessage(inputElement, message) {
+						            const errorDiv = document.createElement('div');
+						            errorDiv.className = 'text-danger small mt-1 validation-error-message';
+						            errorDiv.textContent = message;
+						            // Chèn sau parent của inputElement nếu inputElement là con trực tiếp,
+						            // hoặc tìm một container phù hợp để chèn thông báo lỗi.
+						            // Ví dụ đơn giản: chèn sau chính inputElement (cần CSS để định vị đúng)
+						            inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
+						            inputElement.classList.add('is-invalid'); // Cho Bootstrap styling (nếu dùng)
+						        }
+						
+						        function clearErrorMessages(formElement) {
+						            const errorMessages = formElement.querySelectorAll('.validation-error-message');
+						            errorMessages.forEach(function(msg) {
+						                msg.remove();
+						            });
+						            const invalidInputs = formElement.querySelectorAll('.is-invalid');
+						            invalidInputs.forEach(function(input) {
+						                input.classList.remove('is-invalid');
+						            });
+						        }
+						
+						
+						
+						        // --- PHẦN SCRIPT CHO "LOAD MORE" SẼ VIẾT SAU ---
+						        // const loadMoreButton = document.getElementById('load-more-reviews-btn');
+						        // const reviewsContainer = document.getElementById('more-reviews-container');
+						        // const noReviewsMessage = document.getElementById('no-reviews-message');
+						
+						        // if (loadMoreButton) {
+						        //     loadMoreButton.addEventListener('click', function (event) {
+						        //         event.preventDefault();
+						        //         const movieId = this.dataset.movieId;
+						        //         let nextPage = parseInt(this.dataset.nextPage);
+						        //         const pageSize = parseInt(this.dataset.pageSize);
+						
+						        //         this.textContent = 'Loading...';
+						        //         this.disabled = true;
+						
+						        //         fetch(`/movies/api/${movieId}/reviews?page=${nextPage}&size=${pageSize}`)
+						        //             .then(response => {
+						        //                 if (!response.ok) {
+						        //                     throw new Error('Network response was not ok: ' + response.statusText);
+						        //                 }
+						        //                 return response.json();
+						        //             })
+						        //             .then(pageData => {
+						        //                 if (pageData && pageData.content && pageData.content.length > 0) {
+						        //                     pageData.content.forEach(review => {
+						        //                         const reviewElement = createReviewElement(review); // Bạn cần tự viết hàm này
+						        //                         reviewsContainer.appendChild(reviewElement);
+						        //                     });
+						        //                     nextPage++;
+						        //                     this.dataset.nextPage = nextPage;
+						        //                 }
+						        //                 if (!pageData.last) {
+						        //                     this.textContent = 'Load More';
+						        //                     this.disabled = false;
+						        //                 } else {
+						        //                     this.textContent = 'No More Reviews';
+						        //                     this.style.display = 'none';
+						        //                 }
+						        //             })
+						        //             .catch(error => {
+						        //                 console.error('Error fetching more reviews:', error);
+						        //                 this.textContent = 'Error - Retry';
+						        //                 this.disabled = false;
+						        //             });
+						        //     });
+						        // }
+						
+						        // function createReviewElement(review) {
+						        //     // Hàm này sẽ tạo HTML cho một review item, bạn cần tự định nghĩa dựa trên cấu trúc HTML của bạn
+						        //     // Ví dụ:
+						        //     // const div = document.createElement('div');
+						        //     // div.className = 'movie-review-item';
+						        //     // div.innerHTML = `... HTML của review ...`;
+						        //     // return div;
+						        //     console.warn("createReviewElement function needs to be implemented!");
+						        //     return document.createElement('div'); // Placeholder
+						        // }
+						        // --- KẾT THÚC PHẦN LOAD MORE ---
+						
+						    });
+						    	/*]]>*/
+						</script>
+								
+
 </body>
 </html>
