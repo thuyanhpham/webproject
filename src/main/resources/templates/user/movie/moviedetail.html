@@ -3,6 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- Thymeleaf links for static resources -->
@@ -22,8 +24,7 @@
 
     <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
     
-    <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
-
+    
 	<style>
 		.header-button.pr-0 { display: flex; align-items: center; }
          .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
@@ -377,141 +378,123 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- User Review Tab -->
-			                    <div class="tab-item">
-							    <!-- Kiểm tra xem movie có tồn tại không (đề phòng) -->
-							    <div th:if="${movie != null}">
-							
-							        <!-- Loop through reviews using the new list for the initial page -->
-							        <!-- Thay đổi: Sử dụng reviewsForDisplay thay vì movie.reviews -->
-							        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}">
-							            <div class="author">
-							                <div class="thumb">
-							                    <!-- Sử dụng safe navigation (?.) để tránh lỗi nếu user null -->
-							                    <a href="#0">
-							                        <img th:src="${review.user?.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}" alt="user avatar">
-							                    </a>
-							                </div>
-							                <div class="movie-review-info">
-							                    <span class="reply-date" th:if="${review.timestamp != null}" th:text="${#temporals.format(review.timestamp, 'dd MMM yyyy HH:mm')}">Review Date</span>
-							                    <!-- Sử dụng safe navigation (?.) -->
-							                    <h6 class="subtitle"><a href="#0" th:text="${review.user?.fullname != null ? review.user.fullname : review.user?.username}">User Name</a></h6>
-							                    <span th:if="${review.verified != null and review.verified}"><i class="fas fa-check"></i> verified review</span>
-							                </div>
-							            </div>
-							            <div class="movie-review-content">
-							                <div class="review">
-							                    <!-- Xử lý rating null -->
-							                    <i class="flaticon-favorite-heart-button" th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
-							                    <!-- (Tùy chọn) Hiển thị sao rỗng nếu cần -->
-							                    <!-- <i class="far fa-star" th:each="star : ${#numbers.sequence(1, 5 - (review.rating != null ? review.rating : 0))}" style="color: #ccc;"></i> -->
-							                </div>
-							                <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
-							                <p th:text="${review.content}">Review content...</p>
-							                <div class="review-meta">
-							                    <!-- Xử lý likes/dislikes null -->
-							                    <a href="#0"> <i class="flaticon-hand"></i><span th:text="${review.likes != null ? review.likes : 0}">0</span> </a>
-							                    <a href="#0" class="dislike"> <i class="flaticon-dont-like-symbol"></i><span th:text="${review.dislikes != null ? review.dislikes : 0}">0</span> </a>
-							                    <a href="#0"> Report Abuse </a>
-							                </div>
-							            </div>
-							        </div>
-							
-							        <!-- Fallback if no reviews FOR THIS INITIAL PAGE -->
-							        <!-- Thay đổi: Kiểm tra reviewsForDisplay -->
-							        <!-- Thêm ID để JavaScript có thể ẩn/hiện nếu cần -->
-							        <div id="no-reviews-message" class="movie-review-item" th:if="${#lists.isEmpty(reviewsForDisplay)}">
-							            <p>No reviews yet.</p>
-							        </div>
-							
-							        <!-- Container để JavaScript thêm các review tải sau vào đây -->
-							        <div id="more-reviews-container"></div>
-							
-							        <!-- Load more button -->
-							        <!-- Thay đổi: Điều kiện dựa vào reviewPage.hasNext() -->
-							        <!-- Thêm ID và data attributes để JavaScript sử dụng -->
-							        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
-							            <a href="javascript:void(0);" class="custom-button transparent"
-							               id="load-more-reviews-btn"
-							               th:attr="data-movie-id=${movie.id}, data-next-page=${reviewPage.number + 1}, data-page-size=${reviewPage.size}">
-							                load more
-							            </a>
-							        </div>
-							
-							    </div> <!-- end th:if="${movie != null}" -->
-							
-							    <!-- Fallback nếu đối tượng movie không tồn tại -->
-							    <div th:if="${movie == null}">
-							        <p>Movie information not available.</p>
-							    </div>
-							    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}"> <!-- Thêm id để có thể cuộn tới -->
-							        <!-- Chỉ hiển thị form nếu người dùng đã đăng nhập -->
-							        <div th:if="${#authorization.expression('isAuthenticated()')}">
-							            <h4>Leave a Review for <span th:text="${movie.title}">Movie Title</span></h4>
-							
-							            <!-- Thông báo thành công/lỗi khi gửi review (từ RedirectAttributes) -->
-							            <div th:if="${param.reviewSuccess}" class="alert alert-success" role="alert"
-							                 th:text="${param.reviewSuccess[0] == 'true' ? 'Your review has been submitted successfully!' : ''}">
-							            </div>
-							            <div th:if="${param.reviewError}" class="alert alert-danger" role="alert"
-							                 th:text="${param.reviewError[0]}">
-							            </div>
-							            <!-- Hoặc dùng các biến flash attribute trực tiếp nếu bạn đặt tên khác -->
-							            <div th:if="${reviewSuccessMessage}" class="alert alert-success" role="alert" th:text="${reviewSuccessMessage}"></div>
-							            <div th:if="${reviewErrorMessage}" class="alert alert-danger" role="alert" th:text="${reviewErrorMessage}"></div>
-							
-							
-							            <form id="reviewForm" th:action="@{/movies/{movieId}/reviews/submit(movieId=${movie.id})}" method="post" class="comment-form mt-3">
-							                <!-- Trường movieId đã có trong URL action, không cần input hidden nữa nếu URL đúng -->
-							
-							                <div class="form-group row">
-							                    <label for="rating" class="col-sm-3 col-form-label">Your Rating <span class="text-danger">*</span>:</label>
-							                    <div class="col-sm-9">
-							                        <!-- Ví dụ dùng select, bạn có thể làm đẹp hơn bằng JS (Star Rating Component) -->
-							                        <select class="form-control" id="rating" name="rating" required>
-							                            <option value="" disabled selected>-- Select Rating --</option>
-							                            <option value="5">★★★★★ (Excellent)</option>
-							                            <option value="4">★★★★☆ (Good)</option>
-							                            <option value="3">★★★☆☆ (Average)</option>
-							                            <option value="2">★★☆☆☆ (Fair)</option>
-							                            <option value="1">★☆☆☆☆ (Poor)</option>
-							                        </select>
-							                    </div>
-							                </div>
-							
-							                <div class="form-group row">
-							                    <label for="reviewTitle" class="col-sm-3 col-form-label">Review Title:</label>
-							                    <div class="col-sm-9">
-							                        <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="e.g., Amazing movie!"
-							                               th:value="${submittedTitle}"> <!-- Giữ lại giá trị nếu có lỗi server-side validation -->
-							                    </div>
-							                </div>
-							
-							                <div class="form-group row">
-							                    <label for="reviewContent" class="col-sm-3 col-form-label">Your Review <span class="text-danger">*</span>:</label>
-							                    <div class="col-sm-9">
-							                        <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your thoughts..." required
-							                                  th:text="${submittedContent}"></textarea> <!-- Giữ lại giá trị -->
-							                    </div>
-							                </div>
-							
-							                <div class="form-group row">
-							                    <div class="col-sm-9 offset-sm-3">
-							                        <button type="submit" class="custom-button btn-primary">Submit Review</button>
-							                    </div>
-							                </div>
-							            </form>
-							        </div>
-							
-							        <!-- Thông báo nếu người dùng chưa đăng nhập -->
-							        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="text-center">
-							            <p class="lead">Want to share your thoughts on this movie?</p>
-							            <a th:href="@{/login(redirectUrl=${#httpServletRequest.requestURI})}" class="custom-button">Login to Write a Review</a>
-							            <!-- (redirectUrl là tùy chọn, để đưa người dùng quay lại sau khi login) -->
-							        </div>
-							    </div> <!-- end .leave-review-section -->
-							
-							</div> <!-- end .tab-item -->
+ 								<div class="tab-item" id="user-review-content-area">
+						    <div th:if="${movie != null}">
+						
+						        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}" th:attr="data-review-id=${review.id}">
+						            <div class="author">
+						                <div class="thumb">
+						                    <a href="#0">
+						                        <img th:src="${review.user?.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}"
+						                             alt="user avatar" class="review-user-avatar">
+						                    </a>
+						                </div>
+						                <div class="movie-review-info">
+						                    <span class="reply-date" th:if="${review.timestamp != null}"
+						                          th:text="${#temporals.format(review.timestamp, 'dd MMM yy HH:mm')}">Review Date</span>
+						                    <h6 class="subtitle">
+						                        <a href="#0"
+						                           th:text="${review.user?.fullname != null ? review.user.fullname : review.user?.username}">User Name</a>
+						                    </h6>
+						                    <span th:if="${review.verified != null and review.verified}">
+						                        <i class="fas fa-check"></i> verified review
+						                    </span>
+						                </div>
+						            </div>
+						            <div class="movie-review-content">
+						                <div class="review">
+						                    <i class="flaticon-favorite-heart-button"
+						                       th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
+						                </div>
+						                <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
+						                <p th:text="${review.content}">Review content...</p>
+						                
+						                <div class="review-meta">
+						                    <a href="javascript:void(0);" class="review-like-btn" th:attr="data-review-id=${review.id}">
+						                        <i class="flaticon-hand"></i><span class="like-count" th:text="${review.likes != null ? review.likes : 0}">0</span>
+						                    </a>
+						                    <a href="javascript:void(0);" class="review-dislike-btn dislike" th:attr="data-review-id=${review.id}">
+						                        <i class="flaticon-dont-like-symbol"></i><span class="dislike-count" th:text="${review.dislikes != null ? review.dislikes : 0}">0</span>
+						                    </a>
+						                    <a href="javascript:void(0);" class="review-report-btn" 
+						                       th:attr="data-review-id=${review.id}, data-review-user=${review.user?.fullname != null ? review.user.fullname : review.user?.username}">
+						                       Report Abuse
+						                    </a>
+						                </div>
+						               
+						            </div>
+						        </div>
+						
+						        <div id="no-reviews-message" class="movie-review-item" th:if="${#lists.isEmpty(reviewsForDisplay)}">
+						            <p>No reviews yet.</p>
+						        </div>
+						
+						        <div id="more-reviews-container">
+						            </div>
+						
+						        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
+						            <a href="javascript:void(0);" class="custom-button transparent"
+						               id="load-more-reviews-btn"
+						               th:attr="data-movie-id=${movie.id}, data-next-page=${reviewPage.number + 1}, data-page-size=${reviewPage.size}">
+						                load more
+						            </a>
+						        </div>
+						       
+						    </div> <div th:if="${movie == null}">
+						        <p>Movie information not available.</p>
+						    </div>
+						    
+						    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}">
+						        <div th:if="${#authorization.expression('isAuthenticated()')}">
+						            <h4>Leave a Review for <span th:text="${movie.title}">Movie Title</span></h4>
+						            <div th:if="${param.reviewSuccess}" class="alert alert-success" role="alert"
+						                 th:text="${param.reviewSuccess[0] == 'true' ? 'Your review has been submitted successfully!' : ''}">
+						            </div>
+						            <div th:if="${param.reviewError}" class="alert alert-danger" role="alert"
+						                 th:text="${param.reviewError[0]}">
+						            </div>
+						            <div th:if="${reviewSuccessMessage}" class="alert alert-success" role="alert" th:text="${reviewSuccessMessage}"></div>
+						            <div th:if="${reviewErrorMessage}" class="alert alert-danger" role="alert" th:text="${reviewErrorMessage}"></div>
+						            <form id="reviewForm" th:action="@{/movies/{movieId}/reviews/submit(movieId=${movie.id})}" method="post" class="comment-form mt-3">
+						                <div class="form-group row">
+						                    <label for="rating" class="col-sm-3 col-form-label">Your Rating <span class="text-danger">*</span>:</label>
+						                    <div class="col-sm-9">
+						                        <select class="form-control" id="rating" name="rating" required>
+						                            <option value="" disabled selected>-- Select Rating --</option>
+						                            <option value="5">★★★★★ (Excellent)</option>
+						                            <option value="4">★★★★☆ (Good)</option>
+						                            <option value="3">★★★☆☆ (Average)</option>
+						                            <option value="2">★★☆☆☆ (Fair)</option>
+						                            <option value="1">★☆☆☆☆ (Poor)</option>
+						                        </select>
+						                    </div>
+						                </div>
+						                <div class="form-group row">
+						                    <label for="reviewTitle" class="col-sm-3 col-form-label">Review Title:</label>
+						                    <div class="col-sm-9">
+						                        <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="e.g., Amazing movie!"
+						                               th:value="${submittedTitle}">
+						                    </div>
+						                </div>
+						                <div class="form-group row">
+						                    <label for="reviewContent" class="col-sm-3 col-form-label">Your Review <span class="text-danger">*</span>:</label>
+						                    <div class="col-sm-9">
+						                        <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your thoughts..." required
+						                                  th:text="${submittedContent}"></textarea>
+						                    </div>
+						                </div>
+						                <div class="form-group row">
+						                    <div class="col-sm-9 offset-sm-3">
+						                        <button type="submit" class="custom-button btn-primary">Submit Review</button>
+						                    </div>
+						                </div>
+						            </form>
+						        </div>
+						        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="text-center">
+						            <p class="lead">Want to share your thoughts on this movie?</p>
+						            <a th:href="@{/login(redirectUrl=${#httpServletRequest.requestURI})}" class="custom-button">Login to Write a Review</a>
+						        </div>
+						    </div> </div> 
 
 									
 							    
@@ -572,7 +555,7 @@
     <!-- ==========Footer Section========== -->
 
   	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-  		<script th:src="@{/js/popper.min.js}"></script>
+  		
 		<script th:src="@{/js/bootstrap.min.js}"></script>
 		<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
 
@@ -582,7 +565,7 @@
 		<script th:src="@{/js/nice-select.js}"></script>
 		<script th:src="@{/js/odometer.min.js}"></script>
 		<script th:src="@{/js/owl.carousel.min.js}"></script>
-		<script th:src="@{/js/viewport.jquery.js}"></script>
+		<script th:src="@{/js/viewport.js}"></script>
 		<script th:src="@{/js/wow.min.js}"></script>
 		<script th:src="@{/js/countdown.min.js}"></script>
 		<script th:src="@{/js/isotope.pkgd.min.js}"></script>
@@ -590,128 +573,408 @@
 		<script th:src="@{/js/chunk-7ac80a40.js}"></script>
 		<script th:src="@{/js/main.js}"></script>
 		
-	<script th:inline="javascript">
-								/*<![CDATA[*/
-						    	document.addEventListener('DOMContentLoaded', function() {
-						        // --- PHẦN VALIDATE FORM REVIEW ---
-						        const reviewForm = document.getElementById('reviewForm');
-						        if (reviewForm) {
-						            reviewForm.addEventListener('submit', function(event) {
-						                const ratingSelect = document.getElementById('rating'); // Đổi tên biến cho rõ ràng
-						                const contentTextarea = document.getElementById('reviewContent'); // Đổi tên biến
-						                let isValid = true; // Biến cờ để theo dõi tính hợp lệ
-						
-						                // Xóa các thông báo lỗi cũ trước khi validate lại
-						                clearErrorMessages(this); // 'this' ở đây là form
-						
-						                if (!ratingSelect.value) { // Kiểm tra giá trị của select
-						                    isValid = false;
-						                    displayErrorMessage(ratingSelect, 'Please select a rating.');
-						                }
-						
-						                if (!contentTextarea.value.trim()) {
-						                    isValid = false;
-						                    displayErrorMessage(contentTextarea, 'Please write your review content.');
-						                } else if (contentTextarea.value.trim().length < 10) { // Ví dụ: kiểm tra độ dài tối thiểu
-						                    isValid = false;
-						                    displayErrorMessage(contentTextarea, 'Review content must be at least 10 characters long.');
-						                }
-						                // Thêm các xác thực khác nếu cần (ví dụ: title)
-						
-						                if (!isValid) {
-						                    event.preventDefault(); // Ngăn form gửi đi nếu không hợp lệ
-						                }
-						                // Nếu hợp lệ, form sẽ được submit theo cách truyền thống
-						            });
-						        }
-						
-						        // --- HÀM HELPER CHO HIỂN THỊ LỖI (như đã gợi ý ở câu trả lời trước) ---
-						        function displayErrorMessage(inputElement, message) {
-						            const errorDiv = document.createElement('div');
-						            errorDiv.className = 'text-danger small mt-1 validation-error-message';
-						            errorDiv.textContent = message;
-						            // Chèn sau parent của inputElement nếu inputElement là con trực tiếp,
-						            // hoặc tìm một container phù hợp để chèn thông báo lỗi.
-						            // Ví dụ đơn giản: chèn sau chính inputElement (cần CSS để định vị đúng)
-						            inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
-						            inputElement.classList.add('is-invalid'); // Cho Bootstrap styling (nếu dùng)
-						        }
-						
-						        function clearErrorMessages(formElement) {
-						            const errorMessages = formElement.querySelectorAll('.validation-error-message');
-						            errorMessages.forEach(function(msg) {
-						                msg.remove();
-						            });
-						            const invalidInputs = formElement.querySelectorAll('.is-invalid');
-						            invalidInputs.forEach(function(input) {
-						                input.classList.remove('is-invalid');
-						            });
-						        }
-						
-						
-						
-						        // --- PHẦN SCRIPT CHO "LOAD MORE" SẼ VIẾT SAU ---
-						        // const loadMoreButton = document.getElementById('load-more-reviews-btn');
-						        // const reviewsContainer = document.getElementById('more-reviews-container');
-						        // const noReviewsMessage = document.getElementById('no-reviews-message');
-						
-						        // if (loadMoreButton) {
-						        //     loadMoreButton.addEventListener('click', function (event) {
-						        //         event.preventDefault();
-						        //         const movieId = this.dataset.movieId;
-						        //         let nextPage = parseInt(this.dataset.nextPage);
-						        //         const pageSize = parseInt(this.dataset.pageSize);
-						
-						        //         this.textContent = 'Loading...';
-						        //         this.disabled = true;
-						
-						        //         fetch(`/movies/api/${movieId}/reviews?page=${nextPage}&size=${pageSize}`)
-						        //             .then(response => {
-						        //                 if (!response.ok) {
-						        //                     throw new Error('Network response was not ok: ' + response.statusText);
-						        //                 }
-						        //                 return response.json();
-						        //             })
-						        //             .then(pageData => {
-						        //                 if (pageData && pageData.content && pageData.content.length > 0) {
-						        //                     pageData.content.forEach(review => {
-						        //                         const reviewElement = createReviewElement(review); // Bạn cần tự viết hàm này
-						        //                         reviewsContainer.appendChild(reviewElement);
-						        //                     });
-						        //                     nextPage++;
-						        //                     this.dataset.nextPage = nextPage;
-						        //                 }
-						        //                 if (!pageData.last) {
-						        //                     this.textContent = 'Load More';
-						        //                     this.disabled = false;
-						        //                 } else {
-						        //                     this.textContent = 'No More Reviews';
-						        //                     this.style.display = 'none';
-						        //                 }
-						        //             })
-						        //             .catch(error => {
-						        //                 console.error('Error fetching more reviews:', error);
-						        //                 this.textContent = 'Error - Retry';
-						        //                 this.disabled = false;
-						        //             });
-						        //     });
-						        // }
-						
-						        // function createReviewElement(review) {
-						        //     // Hàm này sẽ tạo HTML cho một review item, bạn cần tự định nghĩa dựa trên cấu trúc HTML của bạn
-						        //     // Ví dụ:
-						        //     // const div = document.createElement('div');
-						        //     // div.className = 'movie-review-item';
-						        //     // div.innerHTML = `... HTML của review ...`;
-						        //     // return div;
-						        //     console.warn("createReviewElement function needs to be implemented!");
-						        //     return document.createElement('div'); // Placeholder
-						        // }
-						        // --- KẾT THÚC PHẦN LOAD MORE ---
-						
-						    });
-						    	/*]]>*/
-						</script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+document.addEventListener('DOMContentLoaded', function() {
+    // --- PHẦN VALIDATE FORM REVIEW ---
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function(event) {
+            const ratingSelect = document.getElementById('rating');
+            const contentTextarea = document.getElementById('reviewContent');
+            let isValid = true;
+            clearErrorMessages(this);
+            if (!ratingSelect.value) {
+                isValid = false;
+                displayErrorMessage(ratingSelect, 'Please select a rating.');
+            }
+            if (!contentTextarea.value.trim()) {
+                isValid = false;
+                displayErrorMessage(contentTextarea, 'Please write your review content.');
+            } else if (contentTextarea.value.trim().length < 10) {
+                isValid = false;
+                displayErrorMessage(contentTextarea, 'Review content must be at least 10 characters long.');
+            }
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    }
+
+    function displayErrorMessage(inputElement, message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'text-danger small mt-1 validation-error-message';
+        errorDiv.textContent = message;
+        inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
+        inputElement.classList.add('is-invalid');
+    }
+
+    function clearErrorMessages(formElement) {
+        formElement.querySelectorAll('.validation-error-message').forEach(msg => msg.remove());
+        formElement.querySelectorAll('.is-invalid').forEach(input => input.classList.remove('is-invalid'));
+    }
+
+    // --- HÀM TẠO HTML CHO MỘT REVIEW ITEM (CẬP NHẬT CHO REPORT ABUSE) ---
+    function createReviewElement(review) {
+        const reviewItemDiv = document.createElement('div');
+        reviewItemDiv.className = 'movie-review-item';
+        reviewItemDiv.dataset.reviewId = review.id;
+
+        const authorDiv = document.createElement('div');
+        authorDiv.className = 'author';
+        const thumbDiv = document.createElement('div');
+        thumbDiv.className = 'thumb';
+        const authorLink = document.createElement('a');
+        authorLink.href = '#0';
+        const avatarImg = document.createElement('img');
+        avatarImg.src = (review.user && review.user.avatarUrl) ? review.user.avatarUrl : '/images/user-placeholder.jpg';
+        avatarImg.alt = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) + "'s avatar" : 'user avatar';
+        avatarImg.classList.add('review-user-avatar');
+        authorLink.appendChild(avatarImg);
+        thumbDiv.appendChild(authorLink);
+        authorDiv.appendChild(thumbDiv);
+
+        const movieReviewInfoDiv = document.createElement('div');
+        movieReviewInfoDiv.className = 'movie-review-info';
+        if (review.timestamp) {
+            const replyDateSpan = document.createElement('span');
+            replyDateSpan.className = 'reply-date';
+            try {
+                const dateObject = new Date(review.timestamp);
+                if (isNaN(dateObject.getTime())) throw new Error("Invalid date");
+                const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+                replyDateSpan.textContent = dateObject.toLocaleDateString('en-GB', options).replace(',', '');
+            } catch (e) { replyDateSpan.textContent = "Ngày không hợp lệ"; }
+            movieReviewInfoDiv.appendChild(replyDateSpan);
+        }
+        const subtitleH6 = document.createElement('h6');
+        subtitleH6.className = 'subtitle';
+        const userNameLink = document.createElement('a');
+        userNameLink.href = '#0';
+        let displayName = 'Người dùng ẩn danh';
+        if (review.user) displayName = review.user.fullname || review.user.username || 'Người dùng ẩn danh';
+        userNameLink.textContent = displayName;
+        subtitleH6.appendChild(userNameLink);
+        movieReviewInfoDiv.appendChild(subtitleH6);
+        if (review.verified === true) {
+            const verifiedSpan = document.createElement('span');
+            verifiedSpan.innerHTML = '<i class="fas fa-check"></i> verified review';
+            movieReviewInfoDiv.appendChild(verifiedSpan);
+        }
+        authorDiv.appendChild(movieReviewInfoDiv);
+        reviewItemDiv.appendChild(authorDiv);
+
+        const movieReviewContentDiv = document.createElement('div');
+        movieReviewContentDiv.className = 'movie-review-content';
+        const reviewStarsDiv = document.createElement('div');
+        reviewStarsDiv.className = 'review';
+        const ratingValue = review.rating || 0;
+        for (let i = 1; i <= ratingValue; i++) {
+            const starIcon = document.createElement('i');
+            starIcon.className = 'flaticon-favorite-heart-button';
+            reviewStarsDiv.appendChild(starIcon);
+        }
+        movieReviewContentDiv.appendChild(reviewStarsDiv);
+        if (review.title) {
+            const contTitleH6 = document.createElement('h6');
+            contTitleH6.className = 'cont-title';
+            contTitleH6.textContent = review.title;
+            movieReviewContentDiv.appendChild(contTitleH6);
+        }
+        const contentP = document.createElement('p');
+        contentP.textContent = review.content || '';
+        movieReviewContentDiv.appendChild(contentP);
+
+        const reviewMetaDiv = document.createElement('div');
+        reviewMetaDiv.className = 'review-meta';
+        // Nút Like
+        const likesLink = document.createElement('a');
+        likesLink.href = 'javascript:void(0);';
+        likesLink.className = 'review-like-btn';
+        likesLink.dataset.reviewId = review.id;
+        likesLink.innerHTML = `<i class="flaticon-hand"></i><span class="like-count"> ${review.likes || 0}</span>`;
+        reviewMetaDiv.appendChild(likesLink);
+        // Nút Dislike
+        const dislikesLink = document.createElement('a');
+        dislikesLink.href = 'javascript:void(0);';
+        dislikesLink.className = 'review-dislike-btn dislike';
+        dislikesLink.dataset.reviewId = review.id;
+        dislikesLink.innerHTML = `<i class="flaticon-dont-like-symbol"></i><span class="dislike-count"> ${review.dislikes || 0}</span>`;
+        reviewMetaDiv.appendChild(dislikesLink);
+        // Nút Report Abuse - CẬP NHẬT
+        const reportLink = document.createElement('a');
+        reportLink.href = 'javascript:void(0);';
+        reportLink.className = 'review-report-btn'; // Class để JavaScript nhận diện
+        reportLink.dataset.reviewId = review.id;    // Thêm data-review-id
+        const reviewUserDisplayName = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) : 'this user';
+        reportLink.dataset.reviewUser = reviewUserDisplayName; // Thêm data-review-user để dùng trong confirm dialog
+        reportLink.textContent = ' Report Abuse ';
+        reviewMetaDiv.appendChild(reportLink);
+
+        movieReviewContentDiv.appendChild(reviewMetaDiv);
+        reviewItemDiv.appendChild(movieReviewContentDiv);
+
+        return reviewItemDiv;
+    }
+
+    // --- PHẦN SCRIPT CHO "LOAD MORE" REVIEWS ---
+    const loadMoreButton = document.getElementById('load-more-reviews-btn');
+    const reviewsContainer = document.getElementById('more-reviews-container');
+    const noReviewsMessage = document.getElementById('no-reviews-message');
+
+    if (loadMoreButton && reviewsContainer) {
+         loadMoreButton.addEventListener('click', function (event) {
+             event.preventDefault();
+             const movieId = this.dataset.movieId;
+             let nextPage = parseInt(this.dataset.nextPage);
+             const pageSize = parseInt(this.dataset.pageSize);
+             this.textContent = 'Loading...';
+             this.disabled = true;
+
+             fetch(`/movies/api/${movieId}/reviews?page=${nextPage}&size=${pageSize}`)
+                 .then(response => {
+                     if (!response.ok) {
+                         return response.text().then(text => { throw new Error(`Lỗi mạng: ${response.status} ${response.statusText}. Phản hồi từ server: ${text}`); });
+                     }
+                     return response.json();
+                 })
+                 .then(pageData => {
+                     if (pageData && pageData.content && pageData.content.length > 0) {
+                         pageData.content.forEach(review => {
+                             const reviewElement = createReviewElement(review);
+                             reviewsContainer.appendChild(reviewElement);
+                         });
+                         nextPage++;
+                         this.dataset.nextPage = nextPage;
+                         if (noReviewsMessage && noReviewsMessage.style.display !== 'none') {
+                            //  noReviewsMessage.style.display = 'none';
+                         }
+                     }
+                     if (!pageData.last) {
+                         this.textContent = 'Load More';
+                         this.disabled = false;
+                     } else {
+                         this.textContent = 'No More Reviews';
+                         this.disabled = true;
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error fetching more reviews:', error);
+                     this.textContent = 'Error - Retry';
+                     this.disabled = false;
+                 });
+         });
+    } else {
+        if (!loadMoreButton) console.warn("Load more button ('load-more-reviews-btn') not found.");
+        if (!reviewsContainer) console.warn("Container for more reviews ('more-reviews-container') not found.");
+    }
+
+    // --- PHẦN SCRIPT XỬ LÝ LIKE/DISLIKE ---
+    async function handleReviewVote(reviewId, action, buttonElement) {
+        console.log(`[handleReviewVote] Called for reviewId: ${reviewId}, action: ${action}`);
+        if(buttonElement) buttonElement.disabled = true;
+
+        const csrfTokenElement = document.querySelector('meta[name="_csrf"]');
+        const csrfHeaderNameElement = document.querySelector('meta[name="_csrf_header"]');
+        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+        const csrfHeaderName = csrfHeaderNameElement ? csrfHeaderNameElement.getAttribute('content') : null;
+        const headers = { 'Content-Type': 'application/json' };
+        if (csrfToken && csrfHeaderName) {
+            headers[csrfHeaderName] = csrfToken;
+            console.log(`[handleReviewVote] CSRF Token added: ${csrfHeaderName}`);
+        } else {
+            console.warn("[handleReviewVote] CSRF token or header name not found. POST request might be blocked if CSRF is enabled.");
+        }
+
+        try {
+            const apiUrl = `/movies/api/reviews/${reviewId}/${action}`;
+            console.log(`[handleReviewVote] Fetching: ${apiUrl}`);
+            const response = await fetch(apiUrl, { method: 'POST', headers: headers });
+            console.log(`[handleReviewVote] Response status: ${response.status}`);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`[handleReviewVote] API Error Response Text: ${errorText}`);
+                let errorMessage = `Lỗi HTTP ${response.status}. Không thể ${action} đánh giá.`;
+                try {
+                    const errorData = JSON.parse(errorText);
+                    if (errorData && errorData.error) { errorMessage = errorData.error; }
+                } catch (e) { if(errorText) errorMessage = errorText; }
+                throw new Error(errorMessage);
+            }
+
+            const updatedReviewDTO = await response.json();
+            console.log("[handleReviewVote] Updated Review DTO from server:", updatedReviewDTO);
+
+            const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
+            console.log(`[handleReviewVote] Attempting to find review item with selector: .movie-review-item[data-review-id="${reviewId}"]`);
+            console.log("[handleReviewVote] Found reviewItemElement for UI update:", reviewItemElement);
+
+            if (reviewItemElement) {
+                const likeCountElement = reviewItemElement.querySelector('.like-count');
+                const dislikeCountElement = reviewItemElement.querySelector('.dislike-count');
+                console.log("[handleReviewVote] Found likeCountElement:", likeCountElement);
+                console.log("[handleReviewVote] Found dislikeCountElement:", dislikeCountElement);
+
+                if (likeCountElement && updatedReviewDTO.likes !== null && updatedReviewDTO.likes !== undefined) {
+                    likeCountElement.textContent = ` ${updatedReviewDTO.likes}`;
+                    console.log(`[handleReviewVote] Updated like count to: ${updatedReviewDTO.likes}`);
+                } else {
+                    console.warn("[handleReviewVote] likeCountElement not found or updatedReviewDTO.likes is null/undefined.");
+                }
+
+                if (dislikeCountElement && updatedReviewDTO.dislikes !== null && updatedReviewDTO.dislikes !== undefined) {
+                    dislikeCountElement.textContent = ` ${updatedReviewDTO.dislikes}`;
+                    console.log(`[handleReviewVote] Updated dislike count to: ${updatedReviewDTO.dislikes}`);
+                } else {
+                    console.warn("[handleReviewVote] dislikeCountElement not found or updatedReviewDTO.dislikes is null/undefined.");
+                }
+            } else {
+                console.warn(`[handleReviewVote] Could not find review item element for reviewId: ${reviewId} to update counts.`);
+            }
+        } catch (error) {
+            console.error(`[handleReviewVote] Lỗi trong quá trình ${action} cho review ${reviewId}:`, error);
+            alert(`Không thể ${action} đánh giá. ${error.message}`);
+        } finally {
+             if(buttonElement) buttonElement.disabled = false;
+        }
+    }
+
+    // --- HÀM MỚI XỬ LÝ REPORT ABUSE ---
+    async function handleReviewReport(reviewId, userNameOfReviewedUser, buttonElement) {
+        console.log(`[handleReviewReport] Called for reviewId: ${reviewId}, user of review: ${userNameOfReviewedUser}`);
+
+        const confirmationMessage = `Bạn có chắc chắn muốn báo cáo bình luận của người dùng "${userNameOfReviewedUser}" không?`;
+        if (!confirm(confirmationMessage)) {
+            console.log("[handleReviewReport] User cancelled report.");
+            return; // Người dùng hủy
+        }
+
+        if(buttonElement) {
+            buttonElement.disabled = true;
+            buttonElement.textContent = 'Đang báo cáo...';
+        }
+
+        const csrfTokenElement = document.querySelector('meta[name="_csrf"]');
+        const csrfHeaderNameElement = document.querySelector('meta[name="_csrf_header"]');
+        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+        const csrfHeaderName = csrfHeaderNameElement ? csrfHeaderNameElement.getAttribute('content') : null;
+        const headers = { 'Content-Type': 'application/json' };
+        if (csrfToken && csrfHeaderName) {
+            headers[csrfHeaderName] = csrfToken;
+            console.log(`[handleReviewReport] CSRF Token added: ${csrfHeaderName}`);
+        } else {
+            console.warn("[handleReviewReport] CSRF token or header name not found.");
+        }
+
+        try {
+            const apiUrl = `/movies/api/reviews/${reviewId}/report`;
+            console.log(`[handleReviewReport] Fetching: ${apiUrl}`);
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: headers,
+            });
+            console.log(`[handleReviewReport] Response status: ${response.status}`);
+
+            const resultData = await response.json(); // API report của bạn trả về Map<String, Object>
+            console.log("[handleReviewReport] Report Result from server:", resultData);
+
+            if (!response.ok) {
+                 // Sử dụng message từ resultData.error nếu có, nếu không thì dùng thông báo chung
+                throw new Error(resultData.error || `Lỗi HTTP ${response.status}. Không thể báo cáo đánh giá.`);
+            }
+
+            alert(resultData.message || "Thao tác thành công."); // Hiển thị thông báo từ server
+
+            if (resultData.deleted === true) {
+                console.log(`[handleReviewReport] Review ID: ${reviewId} was deleted.`);
+                const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
+                if (reviewItemElement) {
+                    reviewItemElement.remove(); // Xóa review khỏi giao diện
+                    console.log(`[handleReviewReport] Review element for ID: ${reviewId} removed from UI.`);
+                } else {
+                     console.warn(`[handleReviewReport] Could not find review item element for reviewId: ${reviewId} to remove from UI.`);
+                }
+            } else {
+                // Nếu review không bị xóa, có thể cập nhật trạng thái nút report
+                if(buttonElement) {
+                    buttonElement.textContent = 'Đã báo cáo';
+                    // Giữ nút bị vô hiệu hóa để người dùng không report lại liên tục
+                    // buttonElement.disabled = true; // Bỏ comment dòng này nếu muốn vô hiệu hóa vĩnh viễn sau khi report
+                }
+            }
+
+        } catch (error) {
+            console.error(`[handleReviewReport] Lỗi khi báo cáo review ${reviewId}:`, error);
+            alert(`Không thể báo cáo đánh giá. ${error.message}`);
+            if(buttonElement) { // Reset nút nếu có lỗi
+                buttonElement.textContent = 'Report Abuse';
+                buttonElement.disabled = false;
+            }
+        }
+        // Không tự động enable lại nút ở đây nếu bạn muốn người dùng chỉ report 1 lần
+        // và trạng thái "Đã báo cáo" được duy trì.
+        // Nếu muốn cho phép thử lại sau lỗi, thì `buttonElement.disabled = false;` có thể đặt trong `finally`
+    }
+
+
+    // Gắn sự kiện click vào container cha của tất cả reviews
+    const reviewsWrapper = document.getElementById('user-review-content-area');
+    console.log("reviewsWrapper (nơi gắn event listener):", reviewsWrapper);
+
+    if (reviewsWrapper) {
+        reviewsWrapper.addEventListener('click', function(event) {
+            const target = event.target;
+            let actionButton = null;    // Cho like/dislike
+            let reportButton = null;    // Cho report
+            let actionType = '';
+
+            // Kiểm tra nút like
+            if (target.matches('.review-like-btn') || target.closest('.review-like-btn')) {
+                actionButton = target.closest('.review-like-btn');
+                actionType = 'like';
+            }
+            // Kiểm tra nút dislike
+            else if (target.matches('.review-dislike-btn') || target.closest('.review-dislike-btn')) {
+                actionButton = target.closest('.review-dislike-btn');
+                actionType = 'dislike';
+            }
+            // Kiểm tra nút report abuse
+            else if (target.matches('.review-report-btn') || target.closest('.review-report-btn')) {
+                reportButton = target.closest('.review-report-btn');
+            }
+
+            // Xử lý cho like/dislike
+            if (actionButton && actionType) {
+                event.preventDefault();
+                const reviewId = actionButton.dataset.reviewId;
+                if (reviewId) {
+                    handleReviewVote(reviewId, actionType, actionButton);
+                } else {
+                    console.error("Không tìm thấy Review ID trên nút like/dislike:", actionButton);
+                }
+            }
+            // Xử lý cho report abuse
+            else if (reportButton) {
+                event.preventDefault();
+                const reviewId = reportButton.dataset.reviewId;
+                const reviewUser = reportButton.dataset.reviewUser || "người dùng này"; // Lấy tên user từ data attribute
+                if (reviewId) {
+                    handleReviewReport(reviewId, reviewUser, reportButton);
+                } else {
+                    console.error("Không tìm thấy Review ID trên nút report:", reportButton);
+                }
+            }
+        });
+    } else {
+        console.warn("Không tìm thấy container cha cho reviews (mong đợi #user-review-content-area) để gắn sự kiện.");
+    }
+});
+/*]]>*/
+</script>
+
+		
+
 								
 
 </body>

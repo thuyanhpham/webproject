@@ -2,7 +2,9 @@ package com.example.demo.cinema.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
@@ -12,51 +14,61 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Mối quan hệ tới User (người viết review)
-    @ManyToOne(fetch = FetchType.LAZY) // Chỉ tải User khi thực sự cần (ví dụ: review.getUser().getName())
-    @JoinColumn(name = "user_id", nullable = false) // Khóa ngoại trong bảng reviews
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Mối quan hệ tới Movie (phim được review)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false) // Khóa ngoại trong bảng reviews
+    @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
     @Column(nullable = false)
-    private Integer rating; // Giả sử là điểm số sao (1-5)
+    private Integer rating;
 
-    @Column(length = 255) // Tiêu đề review (có thể null)
+    @Column(length = 255)
     private String title;
 
-    @Lob // Cho nội dung review dài
+    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false, updatable = false) // Thời gian tạo review
+    @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;
 
     @Column(nullable = false)
-    private Integer likes = 0; // Số lượt thích, mặc định là 0
+    private Integer likes = 0;
 
     @Column(nullable = false)
-    private Integer dislikes = 0; // Số lượt không thích, mặc định là 0
+    private Integer dislikes = 0;
 
     @Column(nullable = false)
-    private Boolean verified = false; // Đánh dấu review đã được xác minh (ví dụ: user đã xem phim)
+    private Boolean verified = false;
+
+    
+    @Column(name = "report_count", nullable = false)
+    private Integer reportCount = 0; 
+    
+    
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ReviewVote> votes = new HashSet<>();
+
+   
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ReviewReport> reports = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
         timestamp = LocalDateTime.now();
-        // Đảm bảo likes/dislikes/verified có giá trị mặc định nếu là null
         if (this.likes == null) this.likes = 0;
         if (this.dislikes == null) this.dislikes = 0;
         if (this.verified == null) this.verified = false;
+        if (this.reportCount == null) this.reportCount = 0; 
     }
 
-    // Constructors
+    
     public Review() {}
 
-    // Getters and Setters
+   
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public User getUser() { return user; }
@@ -78,7 +90,56 @@ public class Review {
     public Boolean getVerified() { return verified; }
     public void setVerified(Boolean verified) { this.verified = verified; }
 
-    // equals() and hashCode() based on id
+    public Set<ReviewVote> getVotes() { return votes; }
+    public void setVotes(Set<ReviewVote> votes) { this.votes = votes; }
+
+    
+    public Integer getReportCount() {
+        return reportCount;
+    }
+
+    public void setReportCount(Integer reportCount) {
+        this.reportCount = reportCount;
+    }
+
+    public Set<ReviewReport> getReports() {
+        return reports;
+    }
+
+    public void setReports(Set<ReviewReport> reports) {
+        this.reports = reports;
+    }
+
+    
+    public void addVote(ReviewVote vote) {
+        if (vote != null) {
+            this.votes.add(vote);
+            vote.setReview(this);
+        }
+    }
+
+    public void removeVote(ReviewVote vote) {
+        if (vote != null) {
+            this.votes.remove(vote);
+            vote.setReview(null);
+        }
+    }
+
+    
+    public void addReport(ReviewReport report) {
+        if (report != null) {
+            this.reports.add(report);
+            report.setReview(this);
+        }
+    }
+
+    public void removeReport(ReviewReport report) {
+        if (report != null) {
+            this.reports.remove(report);
+            report.setReview(null);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -89,6 +150,6 @@ public class Review {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode(); // Hoặc Objects.hash(id) nếu id luôn khác null sau khi persist
+        return getClass().hashCode();
     }
 }
