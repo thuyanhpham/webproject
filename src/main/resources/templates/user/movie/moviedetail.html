@@ -6,12 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- Thymeleaf links for static resources -->
-   <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
@@ -19,10 +18,6 @@
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
-
-    <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
-    
-    <script th:src="@{/js/movielistjs/jquery-3.3.1.min.js}"></script>
 
 	<style>
 		.header-button.pr-0 { display: flex; align-items: center; }
@@ -53,7 +48,7 @@
     <!-- ==========Preloader========== -->
     <!-- ==========Overlay========== -->
     <div class="overlay"></div>
-    <a href="#0" class="scrollToTop"> <!-- Keep href="#0" for JS functionality -->
+    <a href="#0" class="scrollToTop">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- ==========Overlay========== -->
@@ -73,17 +68,8 @@
                     </li>
                     <li class="menu-item-has-children">
                         <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
-                        <ul class="submenu"> 
-                            <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
-                            <li><a th:href="@{/movielist}">Movie Details</a></li>  
-                            <li><a th:href="@{/movielist}">Movie Ticket Plan</a></li>
-                            <li><a th:href="@{/movielist}">Movie Seat Plan</a></li>
-                            <li><a th:href="@{/movielist}">Movie Checkout</a></li>
-                            
-                        </ul>
                     </li>
-                
-                     
+
                       <li class="menu-item-has-children">
                          <a href="#">pages</a>
                          <ul class="submenu">
@@ -94,12 +80,10 @@
                              <li><a th:href="@{/404}">404</a></li>
                          </ul>
                      </li>
-	                     <!-- Hiển thị lời chào nếu đã đăng nhập -->
 	                <li class="menu-item" sec:authorize="isAuthenticated()">
 	                    <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
 	                </li>
 	 
-	                <!-- Nút Logout nếu đã đăng nhập -->
 	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
 					    <form class="logout-button-form" th:action="@{/logout}" method="post">
 						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -119,31 +103,22 @@
     <!-- ==========Header-Section========== -->
     
     <!-- ==========Banner-Section========== -->
-    <!-- Use dynamic background image from movie.bannerUrl -->
-    <section class="details-banner bg_img"
-             th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/banner03.jpg} + ');'"
-             th:attr="data-background=${movie != null and movie.bannerUrl != null ? movie.bannerUrl : './assets/images/banner/banner03.jpg'}">
+    <section class="details-banner"
+             th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/images/banner02.jpg} + ');'"
+             th:attr="data-background=${movie != null and movie.bannerUrl != null ? movie.bannerUrl : './images/banner02.jpg'}">
         <div class="container">
-            <!-- Only render if movie object exists -->
             <div class="details-banner-wrapper" th:if="${movie != null}">
                 <div class="details-banner-thumb">
-                    <!-- Dynamic poster image -->
                     <img th:src="${movie.posterUrl != null ? movie.posterUrl : '/images/placeholder.jpg'}" alt="movie poster">
-                    <!-- Dynamic trailer link -->
                     <a th:href="${movie.trailerUrl}" class="video-popup" target="_blank">
                         <img th:src="@{/images/video-button.png}" alt="play trailer">
                     </a>
                 </div>
                 <div class="details-banner-content offset-lg-3">
-                    <!-- Dynamic title -->
                     <h3 class="title" th:text="${movie.title}">Movie Title</h3>
                     <div class="tags">
-                        <!-- Dynamic language -->
                         <a href="#0" th:text="${movie.language}">Language</a>
-                        <!-- Add more tags if needed, e.g., from availableFormats -->
-                         <!-- <a href="#0" th:each="format : ${movie.availableFormats}" th:text="${format}">Format</a> -->
                     </div>
-                    <!-- Dynamic primary genre -->
 					<div class="detail-item">
 					    <h5 class="sub-title">Genres</h5>
 					    <p th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
@@ -170,17 +145,13 @@
                         <div class="duration-area">
                             <div class="item">
                                 <i class="fas fa-calendar-alt"></i>
-                                <!-- Dynamic release date formatted -->
                                 <span th:if="${movie.releaseDate != null}" th:text="${#temporals.format(movie.releaseDate, 'dd MMM, yyyy')}">Release Date</span>
                             </div>
                             <div class="item">
                                 <i class="far fa-clock"></i>
-                                <!-- Dynamic duration (needs formatting) -->
-                                <!-- TODO: Format duration nicely (e.g., '2h 50m') in Service/Entity -->
                                 <span th:text="${movie.duration != null ? movie.duration + ' mins' : 'N/A'}">Duration</span>
                             </div>
                         </div>
-                        <!-- Social share links (keep static or make dynamic if needed) -->
                         <ul class="social-share">
                             <li><a href="#0"><i class="fab fa-facebook-f"></i></a></li>
                             <li><a href="#0"><i class="fab fa-twitter"></i></a></li>
@@ -191,7 +162,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Fallback if movie is not found -->
             <div class="details-banner-wrapper" th:unless="${movie != null}">
                  <h3 style="color: white; text-align: center; padding: 50px;">Movie Not Found!</h3>
             </div>
@@ -204,7 +174,6 @@
         <div class="container">
             <div class="book-wrapper offset-lg-3">
                 <div class="left-side">
-                    <!-- Tomatometer/Audience Score - Keep static or use different fields if available -->
                     <div class="item">
                         <div class="item-header">
                             <div class="thumb"><img th:src="@{/images/tomato2.png}" alt="rating icon"></div>
@@ -219,12 +188,10 @@
                         </div>
                         <p>audience Score</p>
                     </div>
-                    <!-- User Rating -->
                     <div class="item">
                         <div class="item-header">
                             <h5 class="title" th:text="${movie.rating != null ? #numbers.formatDecimal(movie.rating, 1, 1) : 'N/A'}">4.5</h5>
                             <div class="rated">
-                                <!-- TODO: Implement dynamic star display based on movie.rating -->
                                 <i class="fas fa-heart"></i>
                                 <i class="fas fa-heart"></i>
                                 <i class="fas fa-heart"></i>
@@ -234,7 +201,6 @@
                         </div>
                         <p>Users Rating</p>
                     </div>
-                    <!-- Rate It section (User interaction) -->
                     <div class="item">
                         <div class="item-header">
                             <div class="rated rate-it"> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> </div>
@@ -243,7 +209,6 @@
                         <p><a href="#0">Rate It</a></p>
                     </div>
                 </div>
-                <!-- Dynamic book tickets link -->
                 <a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id})}" class="custom-button">book tickets</a>
             </div>
         </div>
@@ -254,33 +219,18 @@
     <section class="movie-details-section padding-top padding-bottom" th:if="${movie != null}">
         <div class="container">
             <div class="row justify-content-center flex-wrap-reverse mb--50">
-                <!-- Sidebar -->
                 <div class="col-lg-3 col-sm-10 col-md-6 mb-50">
-                    <!-- Available Formats -->
                     <div class="detail-item">
 					    <h5 class="sub-title">Available Formats</h5>
 					    <p th:text="${movie.availableFormats} ?: 'N/A'"></p>
 					</div>
-
-                    <!-- !!! OFFER WIDGET REMOVED HERE !!! -->
-
-                    <!-- Static Banner Widget -->
-                    <div class="widget-1 widget-banner">
-                        <div class="widget-1-body">
-                            <a href="#0">
-                                <img th:src="@{/images/banner01.jpg}" alt="banner">
-                            </a>
-                        </div>
-                    </div>
                 </div>
                 <!-- Main Content -->
                 <div class="col-lg-9 mb-50">
                     <div class="movie-details">
-                        <!-- Photos Carousel -->
                         <h3 class="title">photos</h3>
                         <div class="details-photos owl-carousel owl-loaded owl-drag">
                             <div class="owl-stage-outer"><div class="owl-stage">
-                                <!-- Loop through photoUrls -->
                                 <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:each="photoUrl : ${movie.photoUrls}">
                                     <div class="thumb">
                                         <a th:href="${photoUrl}" class="img-pop">
@@ -288,29 +238,24 @@
                                         </a>
                                     </div>
                                 </div>
-                                <!-- Fallback if no photos -->
                                 <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:if="${#lists.isEmpty(movie.photoUrls)}">
-                                     <div class="thumb"><img th:src="@{/images/movie-details01.jpg}" alt="movie photo placeholder"></div>
+                                     <div class="thumb"><img th:src="@{/images/movie01.jpg}" alt="movie photo placeholder"></div>
                                 </div>
                             </div></div>
                             <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
                         </div>
 
-                        <!-- Summary and Review Tabs -->
                         <div class="tab summery-review">
                             <ul class="tab-menu">
                                 <li class="active"> summery </li>
                                 <li> user review <span th:text="${reviewPage != null ? reviewPage.totalElements : 0}">0</span> </li>
                             </ul>
                             <div class="tab-area">
-                                <!-- Summary Tab -->
                                 <div class="tab-item active">
-                                    <!-- Synopsis -->
                                     <div class="item">
                                         <h5 class="sub-title">Synopsis</h5>
                                         <p th:text="${movie.description}">Movie description goes here.</p>
                                     </div>
-                                    <!-- Cast Slider -->
                                     <div class="item">
                                         <div class="header">
                                             <h5 class="sub-title">cast</h5>
@@ -341,7 +286,6 @@
                                             <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
                                         </div>
                                     </div>
-                                    <!-- Crew Slider -->
                                     <div class="item">
                                         <div class="header">
                                             <h5 class="sub-title">crew</h5>
@@ -352,7 +296,6 @@
                                         </div>
                                         <div class="casting-slider-two owl-carousel owl-loaded owl-drag">
                                             <div class="owl-stage-outer"><div class="owl-stage">
-                                                <!-- Loop through movieCrews -->
                                                 <div class="owl-item" style="width: 136.875px; margin-right: 100px;" th:each="movieCrew : ${movie.movieCrews}">
                                                     <div class="cast-item">
                                                         <div class="cast-thumb">
@@ -368,7 +311,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                 <!-- Fallback if no crew -->
                                                 <div class="owl-item" th:if="${#lists.isEmpty(movie.movieCrews)}">
                                                      <p>No crew information available.</p>
                                                 </div>
@@ -377,59 +319,38 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- User Review Tab -->
 			                    <div class="tab-item">
-							    <!-- Kiểm tra xem movie có tồn tại không (đề phòng) -->
 							    <div th:if="${movie != null}">
-							
-							        <!-- Loop through reviews using the new list for the initial page -->
-							        <!-- Thay đổi: Sử dụng reviewsForDisplay thay vì movie.reviews -->
 							        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}">
 							            <div class="author">
 							                <div class="thumb">
-							                    <!-- Sử dụng safe navigation (?.) để tránh lỗi nếu user null -->
 							                    <a href="#0">
 							                        <img th:src="${review.user?.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}" alt="user avatar">
 							                    </a>
 							                </div>
 							                <div class="movie-review-info">
 							                    <span class="reply-date" th:if="${review.timestamp != null}" th:text="${#temporals.format(review.timestamp, 'dd MMM yyyy HH:mm')}">Review Date</span>
-							                    <!-- Sử dụng safe navigation (?.) -->
 							                    <h6 class="subtitle"><a href="#0" th:text="${review.user?.fullname != null ? review.user.fullname : review.user?.username}">User Name</a></h6>
 							                    <span th:if="${review.verified != null and review.verified}"><i class="fas fa-check"></i> verified review</span>
 							                </div>
 							            </div>
 							            <div class="movie-review-content">
 							                <div class="review">
-							                    <!-- Xử lý rating null -->
 							                    <i class="flaticon-favorite-heart-button" th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
-							                    <!-- (Tùy chọn) Hiển thị sao rỗng nếu cần -->
-							                    <!-- <i class="far fa-star" th:each="star : ${#numbers.sequence(1, 5 - (review.rating != null ? review.rating : 0))}" style="color: #ccc;"></i> -->
 							                </div>
 							                <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
 							                <p th:text="${review.content}">Review content...</p>
 							                <div class="review-meta">
-							                    <!-- Xử lý likes/dislikes null -->
 							                    <a href="#0"> <i class="flaticon-hand"></i><span th:text="${review.likes != null ? review.likes : 0}">0</span> </a>
 							                    <a href="#0" class="dislike"> <i class="flaticon-dont-like-symbol"></i><span th:text="${review.dislikes != null ? review.dislikes : 0}">0</span> </a>
 							                    <a href="#0"> Report Abuse </a>
 							                </div>
 							            </div>
 							        </div>
-							
-							        <!-- Fallback if no reviews FOR THIS INITIAL PAGE -->
-							        <!-- Thay đổi: Kiểm tra reviewsForDisplay -->
-							        <!-- Thêm ID để JavaScript có thể ẩn/hiện nếu cần -->
 							        <div id="no-reviews-message" class="movie-review-item" th:if="${#lists.isEmpty(reviewsForDisplay)}">
 							            <p>No reviews yet.</p>
 							        </div>
-							
-							        <!-- Container để JavaScript thêm các review tải sau vào đây -->
 							        <div id="more-reviews-container"></div>
-							
-							        <!-- Load more button -->
-							        <!-- Thay đổi: Điều kiện dựa vào reviewPage.hasNext() -->
-							        <!-- Thêm ID và data attributes để JavaScript sử dụng -->
 							        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
 							            <a href="javascript:void(0);" class="custom-button transparent"
 							               id="load-more-reviews-btn"
@@ -438,36 +359,28 @@
 							            </a>
 							        </div>
 							
-							    </div> <!-- end th:if="${movie != null}" -->
-							
-							    <!-- Fallback nếu đối tượng movie không tồn tại -->
+							    </div> 
 							    <div th:if="${movie == null}">
 							        <p>Movie information not available.</p>
 							    </div>
-							    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}"> <!-- Thêm id để có thể cuộn tới -->
-							        <!-- Chỉ hiển thị form nếu người dùng đã đăng nhập -->
+							    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}"> 
 							        <div th:if="${#authorization.expression('isAuthenticated()')}">
 							            <h4>Leave a Review for <span th:text="${movie.title}">Movie Title</span></h4>
-							
-							            <!-- Thông báo thành công/lỗi khi gửi review (từ RedirectAttributes) -->
 							            <div th:if="${param.reviewSuccess}" class="alert alert-success" role="alert"
 							                 th:text="${param.reviewSuccess[0] == 'true' ? 'Your review has been submitted successfully!' : ''}">
 							            </div>
 							            <div th:if="${param.reviewError}" class="alert alert-danger" role="alert"
 							                 th:text="${param.reviewError[0]}">
 							            </div>
-							            <!-- Hoặc dùng các biến flash attribute trực tiếp nếu bạn đặt tên khác -->
 							            <div th:if="${reviewSuccessMessage}" class="alert alert-success" role="alert" th:text="${reviewSuccessMessage}"></div>
 							            <div th:if="${reviewErrorMessage}" class="alert alert-danger" role="alert" th:text="${reviewErrorMessage}"></div>
 							
 							
 							            <form id="reviewForm" th:action="@{/movies/{movieId}/reviews/submit(movieId=${movie.id})}" method="post" class="comment-form mt-3">
-							                <!-- Trường movieId đã có trong URL action, không cần input hidden nữa nếu URL đúng -->
 							
 							                <div class="form-group row">
 							                    <label for="rating" class="col-sm-3 col-form-label">Your Rating <span class="text-danger">*</span>:</label>
 							                    <div class="col-sm-9">
-							                        <!-- Ví dụ dùng select, bạn có thể làm đẹp hơn bằng JS (Star Rating Component) -->
 							                        <select class="form-control" id="rating" name="rating" required>
 							                            <option value="" disabled selected>-- Select Rating --</option>
 							                            <option value="5">★★★★★ (Excellent)</option>
@@ -483,7 +396,7 @@
 							                    <label for="reviewTitle" class="col-sm-3 col-form-label">Review Title:</label>
 							                    <div class="col-sm-9">
 							                        <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="e.g., Amazing movie!"
-							                               th:value="${submittedTitle}"> <!-- Giữ lại giá trị nếu có lỗi server-side validation -->
+							                               th:value="${submittedTitle}">
 							                    </div>
 							                </div>
 							
@@ -491,7 +404,7 @@
 							                    <label for="reviewContent" class="col-sm-3 col-form-label">Your Review <span class="text-danger">*</span>:</label>
 							                    <div class="col-sm-9">
 							                        <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your thoughts..." required
-							                                  th:text="${submittedContent}"></textarea> <!-- Giữ lại giá trị -->
+							                                  th:text="${submittedContent}"></textarea>
 							                    </div>
 							                </div>
 							
@@ -502,19 +415,14 @@
 							                </div>
 							            </form>
 							        </div>
-							
-							        <!-- Thông báo nếu người dùng chưa đăng nhập -->
+
 							        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="text-center">
 							            <p class="lead">Want to share your thoughts on this movie?</p>
 							            <a th:href="@{/login(redirectUrl=${#httpServletRequest.requestURI})}" class="custom-button">Login to Write a Review</a>
-							            <!-- (redirectUrl là tùy chọn, để đưa người dùng quay lại sau khi login) -->
 							        </div>
-							    </div> <!-- end .leave-review-section -->
+							    </div> 
 							
-							</div> <!-- end .tab-item -->
-
-									
-							    
+							</div>  
 							</div>
                             </div>
                         </div>
@@ -530,7 +438,7 @@
         <!-- Newsletter Section -->
         <div class="newslater-section padding-bottom">
             <div class="container">
-                <div class="newslater-container bg_img" th:attr="data-background=@{/assets/images/newslater/newslater-bg01.jpg}" style="background-image: url('./assets/images/newslater/newslater-bg01.jpg');">
+                <div class="newslater-container" th:attr="data-background=@{/images/newslater-bg01.jpg}">
                     <div class="newslater-wrapper">
                         <h5 class="cate">subscribe to Boleto </h5>
                         <h3 class="title">to get exclusive benifits</h3>
@@ -572,23 +480,20 @@
     <!-- ==========Footer Section========== -->
 
   	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-  		<script th:src="@{/js/popper.min.js}"></script>
-		<script th:src="@{/js/bootstrap.min.js}"></script>
-		<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
-
-		<script th:src="@{/js/plugins.js}"></script>
-	
-		<script th:src="@{/js/magnific-popup.min.js}"></script>
-		<script th:src="@{/js/nice-select.js}"></script>
-		<script th:src="@{/js/odometer.min.js}"></script>
-		<script th:src="@{/js/owl.carousel.min.js}"></script>
-		<script th:src="@{/js/viewport.jquery.js}"></script>
-		<script th:src="@{/js/wow.min.js}"></script>
-		<script th:src="@{/js/countdown.min.js}"></script>
-		<script th:src="@{/js/isotope.pkgd.min.js}"></script>
-		<script th:src="@{/js/contentInt.js}"></script>
-		<script th:src="@{/js/chunk-7ac80a40.js}"></script>
-		<script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/contentInt.js}"></script>
+    <script th:src="@{/js/chunk-7ac80a40.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
 		
 	<script th:inline="javascript">
 								/*<![CDATA[*/
@@ -646,68 +551,7 @@
 						            invalidInputs.forEach(function(input) {
 						                input.classList.remove('is-invalid');
 						            });
-						        }
-						
-						
-						
-						        // --- PHẦN SCRIPT CHO "LOAD MORE" SẼ VIẾT SAU ---
-						        // const loadMoreButton = document.getElementById('load-more-reviews-btn');
-						        // const reviewsContainer = document.getElementById('more-reviews-container');
-						        // const noReviewsMessage = document.getElementById('no-reviews-message');
-						
-						        // if (loadMoreButton) {
-						        //     loadMoreButton.addEventListener('click', function (event) {
-						        //         event.preventDefault();
-						        //         const movieId = this.dataset.movieId;
-						        //         let nextPage = parseInt(this.dataset.nextPage);
-						        //         const pageSize = parseInt(this.dataset.pageSize);
-						
-						        //         this.textContent = 'Loading...';
-						        //         this.disabled = true;
-						
-						        //         fetch(`/movies/api/${movieId}/reviews?page=${nextPage}&size=${pageSize}`)
-						        //             .then(response => {
-						        //                 if (!response.ok) {
-						        //                     throw new Error('Network response was not ok: ' + response.statusText);
-						        //                 }
-						        //                 return response.json();
-						        //             })
-						        //             .then(pageData => {
-						        //                 if (pageData && pageData.content && pageData.content.length > 0) {
-						        //                     pageData.content.forEach(review => {
-						        //                         const reviewElement = createReviewElement(review); // Bạn cần tự viết hàm này
-						        //                         reviewsContainer.appendChild(reviewElement);
-						        //                     });
-						        //                     nextPage++;
-						        //                     this.dataset.nextPage = nextPage;
-						        //                 }
-						        //                 if (!pageData.last) {
-						        //                     this.textContent = 'Load More';
-						        //                     this.disabled = false;
-						        //                 } else {
-						        //                     this.textContent = 'No More Reviews';
-						        //                     this.style.display = 'none';
-						        //                 }
-						        //             })
-						        //             .catch(error => {
-						        //                 console.error('Error fetching more reviews:', error);
-						        //                 this.textContent = 'Error - Retry';
-						        //                 this.disabled = false;
-						        //             });
-						        //     });
-						        // }
-						
-						        // function createReviewElement(review) {
-						        //     // Hàm này sẽ tạo HTML cho một review item, bạn cần tự định nghĩa dựa trên cấu trúc HTML của bạn
-						        //     // Ví dụ:
-						        //     // const div = document.createElement('div');
-						        //     // div.className = 'movie-review-item';
-						        //     // div.innerHTML = `... HTML của review ...`;
-						        //     // return div;
-						        //     console.warn("createReviewElement function needs to be implemented!");
-						        //     return document.createElement('div'); // Placeholder
-						        // }
-						        // --- KẾT THÚC PHẦN LOAD MORE ---
+						        } 
 						
 						    });
 						    	/*]]>*/

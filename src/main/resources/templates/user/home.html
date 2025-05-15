@@ -6,21 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
     <link rel="stylesheet" th:href="@{/css/odometer.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
-    
-
-    <!-- Favicon Path (Assuming favicon.png exists in static/images/) -->
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
 	<style>
@@ -34,10 +30,7 @@
          .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
 		
 	</style>
-    <!--/* Page Title */-->
     <title th:text="${pageTitle ?: 'Boleto - Welcome'}">Boleto - Online Movie Ticket Booking</title>
-
-    <!--/* Add specific style for logout button if needed */-->
   
 </head>
 
@@ -74,14 +67,6 @@
                     </li>
                     <li class="menu-item-has-children">
                         <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
-                        <ul class="submenu"> 
-                            <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
-                            <li><a th:href="@{/movielist}">Movie Details</a></li>  
-                            <li><a th:href="@{/movielist}">Movie Ticket Plan</a></li>
-                            <li><a th:href="@{/movielist}">Movie Seat Plan</a></li>
-                            <li><a th:href="@{/movielist}">Movie Checkout</a></li>
-                            
-                        </ul>
                     </li>
                 
                      
@@ -120,7 +105,7 @@
 
     <!-- ==========Banner-Section========== -->
     <section class="banner-section">
-         <div class="banner-bg bg_img bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner01.jpg} + ');'"></div>
+         <div class="banner-bg bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner02.jpg} + ');'"></div>
         <div class="container">
             <div class="banner-content">
                 <h1 class="title cd-headline clip">
@@ -138,12 +123,10 @@
     <!-- ==========Ticket-Search (Movie Only) ========== -->
     <section class="search-ticket-section padding-top pt-lg-0">
         <div class="container">
-            <div class="search-tab bg_img" th:styleappend="'background-image: url(' + @{/images/ticket-bg01.jpg} + ');'">
+            <div class="search-tab bg_img" th:styleappend="'background-image: url(' + @{/images/ticket-tab01.png} + ');'">
                 <div class="row align-items-center mb--20">
                     <div class="col-lg-6 mb-20">
-                        <!-- === Welcome Message (Uses sec:authentication as corrected before) === -->
                         <div class="search-ticket-header">
-                             <!-- Personalized Welcome Message (Authenticated Users) -->
                              <h6 class="category" sec:authorize="isAuthenticated()">
                                  Welcome back, <span sec:authentication="principal.username">User</span>!
                              </h6>
@@ -163,13 +146,11 @@
                                 </div>
                                 <span>movie</span>
                             </li>
-                            <!-- Add other tabs (events, sports) here if needed -->
                         </ul>
                     </div>
                 </div>
                 <div class="tab-area">
                     <div class="tab-item active">
-                        <!-- Movie Search Form -->
                         <form class="ticket-search-form" th:action="@{/search/movie}" method="get">
                              <div class="form-group large">
                                 <input type="text" name="query" placeholder="Search for Movies">
@@ -182,9 +163,7 @@
                                 <span class="type">city</span>
                                 <select class="select-bar" name="cityId">
                                     <option value="">Select City</option>
-                                    <!--/* Dynamically populate cities */-->
                                     <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}">London</option>
-                                    <!--/* Fallback/placeholder if cities is null/empty */-->
                                     <option th:if="${cities == null or #lists.isEmpty(cities)}" value="">No Cities Available</option>
                                 </select>
                             </div>
@@ -195,9 +174,7 @@
                                 <span class="type">date</span>
                                 <select class="select-bar" name="date">
                                      <option value="">Select Date</option>
-                                     <!--/* Dynamically populate dates */-->
                                      <option th:each="showDate : ${availableDates}" th:value="${#temporals.format(showDate, 'yyyy-MM-dd')}" th:text="${#temporals.format(showDate, 'dd/MM/yyyy')}">23/10/2024</option>
-                                     <!--/* Fallback/placeholder */-->
                                      <option th:if="${availableDates == null or #lists.isEmpty(availableDates)}" value="">No Dates Available</option>
                                 </select>
                             </div>
@@ -208,15 +185,12 @@
                                 <span class="type">cinema</span>
                                 <select class="select-bar" name="cinemaId">
                                     <option value="">Select Cinema</option>
-                                     <!--/* Dynamically populate cinemas */-->
                                     <option th:each="cinema : ${cinemas}" th:value="${cinema.id}" th:text="${cinema.name}">Awaken</option>
-                                     <!--/* Fallback/placeholder */-->
                                      <option th:if="${cinemas == null or #lists.isEmpty(cinemas)}" value="">No Cinemas Available</option>
                                 </select>
                             </div>
                         </form>
                     </div>
-                    <!-- Add other tab-items (events, sports) here if needed -->
                 </div>
             </div>
         </div>
@@ -232,35 +206,27 @@
 	                    <h2 class="title">movies</h2>
 	                    <p>Be sure not to miss these Movies today.</p>
 	                </div>
-	                <!-- Xóa tab Exclusive khỏi menu -->
 	                <ul class="tab-menu">
 	                    <li class="active">now showing</li>
 	                    <li>coming soon</li>
-	                    <!-- ĐÃ XÓA: <li>exclusive</li> -->
 	                </ul>
 	            </div>
 	            <div class="tab-area mb-30-none">
-	                <!-- Tab Now Showing -->
 	                <div class="tab-item active">
 	                    <div th:if="${not #lists.isEmpty(nowShowingMovies)}" class="owl-carousel owl-theme tab-slider">
-	                        <!-- Movie Item Loop -->
 	                        <div class="item" th:each="movie : ${nowShowingMovies}">
 	                            <div class="movie-grid">
 	                                <div class="movie-thumb c-thumb">
-	                                    <!-- SỬA ĐƯỜNG DẪN và TÊN TRƯỜNG ẢNH -->
 	                                    <a th:href="@{/movie/{id}(id=${movie.id})}">
 	                                        <img th:src="@{${movie.posterUrl} ?: '/images/movie01.jpg'}" alt="movie">
 	                                    </a>
 	                                </div>
 	                                <div class="movie-content bg-one">
 	                                    <h5 class="title m-0">
-	                                        <!-- SỬA ĐƯỜNG DẪN -->
 	                                        <a th:href="@{/movie/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
 	                                    </h5>
-	                                    <!-- SỬA HIỂN THỊ RATING -->
 	                                    <ul class="movie-rating-percent">
 	                                        <li>
-	                                            <!-- Ví dụ: Hiển thị rating chung -->
 	                                            <div class="thumb"><img th:src="@{/images/tomato.png}" alt="rating"></div> 
 	                                            <span class="content" th:text="${movie.rating != null ? #numbers.formatDecimal(movie.rating, 1, 1) : 'N/A'}">8.8</span> <!-- Định dạng số thập phân -->
 	                                        </li>
@@ -281,17 +247,14 @@
 	                        <div class="item" th:each="movie : ${comingSoonMovies}">
 	                            <div class="movie-grid">
 	                                <div class="movie-thumb c-thumb">
-	                                    <!-- SỬA ĐƯỜNG DẪN và TÊN TRƯỜNG ẢNH -->
 	                                    <a th:href="@{/movie/{id}(id=${movie.id})}">
 	                                        <img th:src="@{${movie.posterUrl} ?: '/images/movie02.jpg'}" alt="movie">
 	                                    </a>
 	                                </div>
 	                                <div class="movie-content bg-one">
 	                                    <h5 class="title m-0">
-	                                        <!-- SỬA ĐƯỜNG DẪN -->
 	                                        <a th:href="@{/movie/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
 	                                    </h5>
-	                                    <!-- Có thể giữ nguyên text "Coming Soon" hoặc hiển thị ngày phát hành -->
 	                                     <ul class="movie-rating-percent"> 
 										    <li><span class="content" th:text="'Coming ' + ${#temporals.format(movie.releaseDate, 'dd/MM')}">Coming Soon</span></li>
 										</ul>
@@ -303,7 +266,6 @@
 	                        <p>No upcoming movies announced yet.</p>
 	                    </div>
 	                </div>
-	                <!-- ĐÃ XÓA HOÀN TOÀN KHỐI div class="tab-item" cho Exclusive -->
 	
 	            </div>
 	        </div>
@@ -315,7 +277,7 @@
     <footer class="footer-section">
         <div class="newslater-section padding-bottom">
             <div class="container">
-                <div class="newslater-container bg_img" th:styleappend="'background-image: url(' + @{/images/newslater/newslater-bg01.jpg} + ');'">
+                <div class="newslater-container" th:styleappend="'background-image: url(' + @{/images/newslater-bg01.jpg} + ');'">
                     <div class="newslater-wrapper">
                         <h5 class="cate">subscribe to Boleto </h5>
                         <h3 class="title">to get exclusive benefits</h3>
@@ -361,19 +323,18 @@
     <!-- ==========Newslater-Section========== -->
 
     <!--/* Static JS references */-->
-  <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
     <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/magnific-popup.min.js}"></script>
     <script th:src="@{/js/nice-select.js}"></script>
     <script th:src="@{/js/odometer.min.js}"></script>
     <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.jquery.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/sotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>

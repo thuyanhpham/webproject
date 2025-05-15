@@ -1191,8 +1191,8 @@ input[type="submit"] {
   right: 0;
   left: 0;
   top: 80px;
-  -webkit-mask-image: url(../../assets/images/footer/footer-shape.png);
-  mask-image: url(../../assets/images/footer/footer-shape.png);
+  /*-webkit-mask-image: url(../../assets/images/footer/footer-shape.png);
+  mask-image: url(../../assets/images/footer/footer-shape.png);*/
   -webkit-mask-position: top center;
   mask-position: top center;
   -webkit-mask-repeat: no-repeat;
@@ -4298,8 +4298,6 @@ input[type="submit"] {
   mask-position: center center;
   -webkit-mask-position: center center;
   text-align: center;
-  /*mask-image: url(./img/movie-seat.png); */
-  /*-webkit-mask-image: url(./img/movie-seat.png); */
   -webkit-mask-repeat: no-repeat;
           mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
@@ -4347,7 +4345,6 @@ input[type="submit"] {
   }
 }
 
-/*Window Warning Starts Here*/
 .window-warning {
   position: fixed;
   top: 0;
@@ -4440,7 +4437,6 @@ input[type="submit"] {
   z-index: -99;
 }
 
-/*Seat-Plan Starts Here*/
 .screen {
   font-size: 28px;
   margin: 0 auto 40px;
@@ -9112,4 +9108,79 @@ aside {
     opacity: 0;
   }
 }
-/*# sourceMappingURL=main.css.map */
+
+.movie-schedule {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    justify-content: flex-start;
+}
+
+.movie-schedule .item a.showtime-link,
+.movie-schedule div.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    min-width: 120px;
+    padding: 12px 10px;
+    
+    background-color: #404a69;
+    color: #ffffff;
+    border-radius: 8px;
+    
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.showtime-link .showtime-time {
+    font-size: 1.6em;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.showtime-link .showtime-tags {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    align-items: center;
+}
+
+.showtime-link .showtime-tags .tag {
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.showtime-link .tag.tag-subtitle {
+    background-color: #000000;
+    color: #f1c40f;
+    border: 1px solid #f1c40f;
+}
+
+.showtime-link .tag.tag-experience {
+    background-color: #2ecc71;
+    color: #ffffff;   
+}
+
+.showtime-link .tag.tag-room {
+    background-color: #7f8c8d;
+    color: #ffffff;
+}
+
+.movie-schedule .item a.showtime-link:hover,
+.movie-schedule div.item:hover {
+    background-color: #525f82;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
