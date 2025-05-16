@@ -7,24 +7,16 @@ import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.service.MovieService;
 import com.example.demo.cinema.service.RoomService;
 import com.example.demo.cinema.service.ShowtimeService;
-
 import jakarta.servlet.http.HttpServletRequest;
-// Bỏ @Valid nếu không dùng DTO và validate phức tạp ở đây
-// import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -54,11 +46,9 @@ public class ShowtimeController {
             @PathVariable Long movieId,
             @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        log.info("Controller: Listing showtimes for movie ID: {}, Selected Date: {}", movieId, selectedDate);
         try {
             Movie movie = movieService.getMovieById(movieId);
             model.addAttribute("movie", movie);
-
             List<LocalDate> availableDates = showtimeService.findDistinctShowDatesByMovieId(movieId);
             model.addAttribute("availableDates", availableDates);
 
@@ -87,20 +77,18 @@ public class ShowtimeController {
         }
     }
 
-    // --- 3. HIỂN THỊ FORM THÊM SUẤT CHIẾU CHO PHIM ---
     @GetMapping("/movie/{movieId}/add")
     public String showAddShowtimeForm(@PathVariable Long movieId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        log.info("Controller: Showing add showtime form for movie ID: {}", movieId);
         try {
             Movie movie = movieService.getMovieById(movieId);
             Showtime showtime = new Showtime();
-            showtime.setMovie(movie); // Gán sẵn phim
-            showtime.setShowDate(LocalDate.now()); // Mặc định ngày hiện tại
+            showtime.setMovie(movie);
+            showtime.setShowDate(LocalDate.now());
             List<Room> activeRooms = roomService.getAllActiveRooms();
             
             model.addAttribute("showtime", showtime);
             model.addAttribute("movieTitle", movie.getTitle());
-            model.addAttribute("allRooms", activeRooms); // Lấy danh sách phòng
+            model.addAttribute("allRooms", activeRooms);
             model.addAttribute("currentURI", request.getRequestURI());
             return "admin/showtime/form";
         } catch (ResourceNotFoundException e) {
@@ -110,10 +98,8 @@ public class ShowtimeController {
         }
     }
 
-    // --- 4. HIỂN THỊ FORM SỬA SUẤT CHIẾU ---
     @GetMapping("/edit/{showtimeId}")
     public String showEditShowtimeForm(@PathVariable Long showtimeId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        log.info("Controller: Showing edit showtime form for showtime ID: {}", showtimeId);
         try {
             Showtime showtime = showtimeService.findById(showtimeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + showtimeId));
@@ -123,23 +109,21 @@ public class ShowtimeController {
             model.addAttribute("movieTitle", showtime.getMovie().getTitle());
             model.addAttribute("allRooms", activeRooms);
             model.addAttribute("currentURI", request.getRequestURI());
-            // Truyền startTime dưới dạng String để input type="time" nhận đúng
             if (showtime.getStartTime() != null) {
                 model.addAttribute("startTimeStringValue", showtime.getStartTime().toString());
             } else {
-                model.addAttribute("startTimeStringValue", ""); // Hoặc giá trị mặc định
+                model.addAttribute("startTimeStringValue", "");
             }
             return "admin/showtime/form";
         } catch (ResourceNotFoundException e) {
             log.error("Controller: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/admin/showtimes"; // Hoặc về trang list của phim nếu có movieId
+            return "redirect:/admin/showtimes";
         }
     }
 
-    // --- 5. XỬ LÝ LƯU (THÊM/SỬA) SUẤT CHIẾU ---
     @PostMapping("/save")
-    public String saveOrUpdateShowtime(@ModelAttribute("showtime") Showtime showtimeForm, // Bỏ @Valid tạm thời
+    public String saveOrUpdateShowtime(@ModelAttribute("showtime") Showtime showtimeForm,
                                      BindingResult bindingResult,
                                      @RequestParam("movieId") Long movieId,
                                      @RequestParam("roomId") Long roomId,
@@ -151,16 +135,14 @@ public class ShowtimeController {
                                      RedirectAttributes redirectAttributes,
                                      HttpServletRequest request) {
 
-        log.info("Controller: Attempting to save/update showtime. Movie ID: {}, Room ID: {}, Show Date: {}, Start Time Str: {}",
-                 movieId, roomId, showDate, startTimeString);
         try {
-            Movie movie = movieService.getMovieById(movieId); // Cần movie để gán
+            Movie movie = movieService.getMovieById(movieId); 
             showtimeForm.setMovie(movie);
         } catch (ResourceNotFoundException e){
              bindingResult.reject("movieId", "Movie with ID " + movieId + " not found.");
         }
         try {
-            Room room = roomService.getRoomById(roomId); // Cần room để gán
+            Room room = roomService.getRoomById(roomId);
             showtimeForm.setRoom(room);
         } catch (ResourceNotFoundException e) {
             bindingResult.reject("roomId", "Room with ID " + roomId + " not found.");
@@ -169,13 +151,11 @@ public class ShowtimeController {
         showtimeForm.setExperience(experience);
         showtimeForm.setPrice(price);
 
-
-        // Validate startTimeString thủ công
         if (startTimeString == null || startTimeString.isBlank()) {
             bindingResult.rejectValue("startTime", "showtime.startTime.notBlank", "Start time is required.");
         } else {
             try {
-                LocalTime.parse(startTimeString); // Chỉ kiểm tra parse, service sẽ dùng lại
+                LocalTime.parse(startTimeString);
                 showtimeForm.setStartTime(LocalTime.parse(startTimeString));
             } catch (Exception e) {
                 bindingResult.rejectValue("startTime", "showtime.startTime.invalidFormat", "Invalid start time format (HH:mm).");
@@ -187,41 +167,37 @@ public class ShowtimeController {
             model.addAttribute("movieTitle", showtimeForm.getMovie() != null ? showtimeForm.getMovie().getTitle() : "Unknown Movie");
             model.addAttribute("allRooms", roomService.getAllActiveRooms());
             model.addAttribute("currentURI", request.getRequestURI());
-            model.addAttribute("startTimeStringValue", startTimeString); // Giữ lại giá trị người dùng nhập
-            // model.addAttribute("showtime", showtimeForm); // @ModelAttribute tự thêm lại
+            model.addAttribute("startTimeStringValue", startTimeString);
             return "admin/showtime/form";
         }
 
         try {
-            // Service sẽ xử lý việc tìm Movie, Room bằng ID và parse startTimeString
-            if (showtimeForm.getId() == null) { // Tạo mới
+
+            if (showtimeForm.getId() == null) {
                 log.debug("Controller: Calling createShowtime service...");
                 showtimeService.createShowtime(movieId, roomId, showDate, startTimeString, experience, price);
-            } else { // Cập nhật
+            } else { 
                 log.debug("Controller: Calling updateShowtime service for ID: {}", showtimeForm.getId());
                 showtimeService.updateShowtime(showtimeForm.getId(), movieId, roomId, showDate, startTimeString, experience, price);
             }
             return "redirect:/admin/showtimes/movie/" + movieId + (showDate != null ? "?date=" + showDate.toString() : "");
 
-        } catch (ResourceNotFoundException | IllegalArgumentException e) { // Bắt lỗi cụ thể từ Service
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
             log.error("Controller: Error during showtime operation: {}", e.getMessage());
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("movieTitle", showtimeForm.getMovie() != null ? showtimeForm.getMovie().getTitle() : "Unknown Movie");
             model.addAttribute("allRooms", roomService.getAllActiveRooms());
             model.addAttribute("currentURI", request.getRequestURI());
             model.addAttribute("startTimeStringValue", startTimeString);
-            // model.addAttribute("showtime", showtimeForm); // @ModelAttribute tự thêm lại
             return "admin/showtime/form";
         }
     }
 
-    // --- 6. XÓA SUẤT CHIẾU ---
     @PostMapping("/delete/{id}")
     public String deleteShowtime(@PathVariable Long id,
                                @RequestParam(value = "movieId", required = false) Long movieId,
                                @RequestParam(value = "returnDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate returnDate,
                                RedirectAttributes redirectAttributes) {
-        // ... (Giữ nguyên logic xóa) ...
         log.warn("Controller: Attempting to delete showtime with id: {}", id);
         try {
             showtimeService.deleteShowtime(id);

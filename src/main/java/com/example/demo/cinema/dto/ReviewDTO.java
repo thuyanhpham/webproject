@@ -8,16 +8,14 @@ public class ReviewDTO {
     private Integer rating;
     private String title;
     private String content;
-    private LocalDateTime timestamp; // Giữ nguyên tên trường 'timestamp' như trong Review Entity
+    private LocalDateTime timestamp;
     private Integer likes;
     private Integer dislikes;
     private Boolean verified;
 
-    // Constructors
     public ReviewDTO() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

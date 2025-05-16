@@ -2,10 +2,9 @@ package com.example.demo.cinema.dto;
 
 public class UserReviewDTO {
 	 	private String username;
-	    private String fullname; // Thêm fullname dựa trên User.java của bạn
-	    private String avatarUrl; // Thêm avatarUrl dựa trên User.java của bạn
+	    private String fullname;
+	    private String avatarUrl;
 
-	    // Constructors
 	    public UserReviewDTO() {
 	    }
 
@@ -15,7 +14,6 @@ public class UserReviewDTO {
 	        this.avatarUrl = avatarUrl;
 	    }
 
-	    // Getters and Setters
 	    public String getUsername() {
 	        return username;
 	    }

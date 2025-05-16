@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.hibernate.annotations.Cascade;
+import java.util.stream.Collectors;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -80,17 +82,10 @@ public class Movie {
     
     @Column(name = "cast_list", length = 1000)
     private String cast;
-    
-    @Column(name = "genres_text", length = 500)
-    private String genres;
-    
-    @Column(name = "format_text", length = 200)
-    private String availableFormats;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Showtime> showtimes = new HashSet<>();
 
-    // ... các getter/setter khác ...
 
     public Set<Showtime> getShowtimes() {
         return showtimes;
@@ -100,11 +95,10 @@ public class Movie {
         this.showtimes = showtimes;
     }
 
-    // (Tùy chọn) Helper method
     public void addShowtime(Showtime showtime) {
         if (showtime != null) {
             this.showtimes.add(showtime);
-            showtime.setMovie(this); // Thiết lập mối quan hệ hai chiều
+            showtime.setMovie(this);
         }
     }
 
@@ -114,16 +108,18 @@ public class Movie {
             showtime.setMovie(null);
         }
     } 
+    
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "movie_genre", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres = new HashSet<>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "format_id")
+    private Format format;
 
-    // Mối quan hệ với Review
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 
-    // Mối quan hệ với MovieCrew (bảng trung gian crew)
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<MovieCrew> movieCrews = new HashSet<>();
-
-    // Danh sách URL ảnh chi tiết
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "movie_photos", joinColumns = @JoinColumn(name = "movie_id"))
     @Column(name = "photo_url", nullable = false, length=255)
@@ -143,23 +139,22 @@ public class Movie {
         updatedAt = LocalDateTime.now();
     }
 
-    // Constructor mặc định
     public Movie() {}
     
-    public String getAvailableFormats() {
-		return availableFormats;
-	}
-
-	public void setAvailableFormats(String availableFormats) {
-		this.availableFormats = availableFormats;
-	}
-
-	public String getGenres() {
+    public Set<Genre> getGenres() {
 		return genres;
 	}
 
-	public void setGenres(String genres) {
+	public void setGenres(Set<Genre> genres) {
 		this.genres = genres;
+	}
+
+	public Format getFormat() {
+		return format;
+	}
+
+	public void setFormat(Format format) {
+		this.format = format;
 	}
 
 	public String getCast() {
@@ -290,15 +285,6 @@ public class Movie {
 		this.reviews = reviews;
 	}
 
-
-	public Set<MovieCrew> getMovieCrews() {
-		return movieCrews;
-	}
-
-	public void setMovieCrews(Set<MovieCrew> movieCrews) {
-		this.movieCrews = movieCrews;
-	}
-
 	public List<String> getPhotoUrls() {
 		return photoUrls;
 	}
@@ -306,19 +292,23 @@ public class Movie {
 	public void setPhotoUrls(List<String> photoUrls) {
 		this.photoUrls = photoUrls;
 	}
-
-
-    public void addCrewMember(CrewMember crewMember, String jobTitle) {
-         MovieCrew movieCrew = new MovieCrew(this, crewMember, jobTitle);
-         this.movieCrews.add(movieCrew);
+	
+	public String getGenresDisplay() {
+        if (genres == null || genres.isEmpty()) {
+            return "";
+        }
+        return genres.stream()
+                     .map(Genre::getName)
+                     .collect(Collectors.joining(", "));
     }
 
-    public void removeCrewMember(CrewMember crewMember) {
-        // Sửa lại: dùng equals chuẩn
-        this.movieCrews.removeIf(mc -> mc.getMovie().equals(this) && mc.getCrewMember().equals(crewMember));
+	public String getSelectedFormatName() {
+        if (this.format != null && this.format.getName() != null) {
+            return this.format.getName();
+        }
+        return "N/A";
     }
-
-    // --- equals() và hashCode() chuẩn ---
+	
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -328,12 +318,9 @@ public class Movie {
 
     @Override
     public int hashCode() {
-        // Dùng getClass().hashCode() an toàn với proxy của JPA
         return getClass().hashCode();
-        // Hoặc nếu id luôn được gán trước khi vào Set/Map: return Objects.hash(id);
     }
 
-    // --- toString() ---
     @Override
     public String toString() {
         return "Movie{" +

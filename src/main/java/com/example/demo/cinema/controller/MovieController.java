@@ -1,10 +1,7 @@
 package com.example.demo.cinema.controller;
-
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.service.MovieService;
-// Import HttpServletRequest (dùng jakarta cho Spring Boot 3+, javax cho Spring Boot 2)
 import jakarta.servlet.http.HttpServletRequest;
-// import javax.servlet.http.HttpServletRequest; // Nếu dùng Spring Boot 2
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,8 +30,7 @@ public class MovieController {
                                 @RequestParam(defaultValue = "12") int size,
                                 @RequestParam(required = false) String query,
                                 @RequestParam(required = false, defaultValue = "title,asc") String sort,
-                                HttpServletRequest request // <<<--- 1. Inject HttpServletRequest
-                               ) {
+                                HttpServletRequest request ) {
         Sort sortObj = Sort.unsorted();
         if (sort != null && !sort.isEmpty()) {
             try {
@@ -46,7 +42,6 @@ public class MovieController {
                     sortObj = Sort.by(Sort.Direction.ASC, sortParams[0]);
                 }
             } catch (Exception e) {
-                System.err.println("Invalid sort parameter format: " + sort);
             }
         }
 

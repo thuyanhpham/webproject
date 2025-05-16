@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "review_votes",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "review_id"})) // Mỗi user chỉ vote 1 lần cho 1 review
+       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "review_id"}))
 public class ReviewVote {
 
     @Id
@@ -33,7 +33,6 @@ public class ReviewVote {
         votedAt = LocalDateTime.now();
     }
 
-    // Constructors
     public ReviewVote() {
     }
 
@@ -43,7 +42,6 @@ public class ReviewVote {
         this.voteType = voteType;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

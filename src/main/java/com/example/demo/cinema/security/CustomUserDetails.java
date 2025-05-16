@@ -2,7 +2,6 @@ package com.example.demo.cinema.security;
  
 import java.util.Collection;
 import java.util.Collections;
- 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +32,6 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		 if (user.getRole() == null || user.getRole().getName() == null) {
-            
              return Collections.emptySet();
         }
 		return Collections.singleton(new SimpleGrantedAuthority(user.getRole().getName()));

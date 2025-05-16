@@ -7,13 +7,11 @@
     <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- Thymeleaf links for static resources -->
-   <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
@@ -21,9 +19,6 @@
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
-
-    <link rel="shortcut icon" th:href="@{/assets/images/favicon.png}" type="image/x-icon">
-    
     
 	<style>
 		.header-button.pr-0 { display: flex; align-items: center; }
@@ -33,14 +28,11 @@
          .logout-button-styled {
             background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
          }
-         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
-		
+         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }	
 	</style>
-    <!-- Dynamic page title -->
     <title th:text="${movie != null ? movie.title + ' - Movie Details' : 'Boleto - Movie Details'}">Boleto - Online Ticket Booking Website HTML Template</title>
 
 </head>
-
 <body>
     <!-- ==========Preloader========== -->
     <div class="preloader" style="display: none;">
@@ -54,11 +46,10 @@
     <!-- ==========Preloader========== -->
     <!-- ==========Overlay========== -->
     <div class="overlay"></div>
-    <a href="#0" class="scrollToTop"> <!-- Keep href="#0" for JS functionality -->
+    <a href="#0" class="scrollToTop">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- ==========Overlay========== -->
-
        <!-- ==========Header-Section========== -->
     <header class="header-section">
         <div class="container">
@@ -74,17 +65,8 @@
                     </li>
                     <li class="menu-item-has-children">
                         <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
-                        <ul class="submenu"> 
-                            <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.equals(requestURI, '/movielist')} ? 'active' : ''">Movie List</a></li>
-                            <li><a th:href="@{/movielist}">Movie Details</a></li>  
-                            <li><a th:href="@{/movielist}">Movie Ticket Plan</a></li>
-                            <li><a th:href="@{/movielist}">Movie Seat Plan</a></li>
-                            <li><a th:href="@{/movielist}">Movie Checkout</a></li>
-                            
-                        </ul>
                     </li>
-                
-                     
+
                       <li class="menu-item-has-children">
                          <a href="#">pages</a>
                          <ul class="submenu">
@@ -95,12 +77,10 @@
                              <li><a th:href="@{/404}">404</a></li>
                          </ul>
                      </li>
-	                     <!-- Hiển thị lời chào nếu đã đăng nhập -->
 	                <li class="menu-item" sec:authorize="isAuthenticated()">
 	                    <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
 	                </li>
 	 
-	                <!-- Nút Logout nếu đã đăng nhập -->
 	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
 					    <form class="logout-button-form" th:action="@{/logout}" method="post">
 						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -118,70 +98,50 @@
         </div>
     </header>
     <!-- ==========Header-Section========== -->
-    
     <!-- ==========Banner-Section========== -->
-    <!-- Use dynamic background image from movie.bannerUrl -->
-    <section class="details-banner bg_img"
-             th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/banner03.jpg} + ');'"
-             th:attr="data-background=${movie != null and movie.bannerUrl != null ? movie.bannerUrl : './assets/images/banner/banner03.jpg'}">
+    <section class="details-banner"
+             th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/images/banner02.jpg} + ');'"
+             th:attr="data-background=${movie != null and movie.bannerUrl != null ? movie.bannerUrl : './images/banner02.jpg'}">
         <div class="container">
-            <!-- Only render if movie object exists -->
             <div class="details-banner-wrapper" th:if="${movie != null}">
                 <div class="details-banner-thumb">
-                    <!-- Dynamic poster image -->
                     <img th:src="${movie.posterUrl != null ? movie.posterUrl : '/images/placeholder.jpg'}" alt="movie poster">
-                    <!-- Dynamic trailer link -->
                     <a th:href="${movie.trailerUrl}" class="video-popup" target="_blank">
                         <img th:src="@{/images/video-button.png}" alt="play trailer">
                     </a>
                 </div>
                 <div class="details-banner-content offset-lg-3">
-                    <!-- Dynamic title -->
                     <h3 class="title" th:text="${movie.title}">Movie Title</h3>
                     <div class="tags">
-                        <!-- Dynamic language -->
                         <a href="#0" th:text="${movie.language}">Language</a>
-                        <!-- Add more tags if needed, e.g., from availableFormats -->
-                         <!-- <a href="#0" th:each="format : ${movie.availableFormats}" th:text="${format}">Format</a> -->
                     </div>
-                    <!-- Dynamic primary genre -->
 					<div class="detail-item">
-					    <h5 class="sub-title">Genres</h5>
-					    <p th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
-					        <th:block th:each="genreName, iterStat : ${#strings.arraySplit(movie.genres, ',')}">
-					            <span th:text="${#strings.trim(genreName)}">Genre</span><th:if="${not iterStat.last}">, </th:if>
-					        </th:block>
-					    </p>
-					    <p th:unless="${movie.genres != null and !#strings.isEmpty(movie.genres)}">N/A</p>
-					</div>
-
-					<div class="detail-item">
-					    <h5 class="sub-title">Available Formats</h5>
-					    <th:block th:if="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">
-					        <p>
-					            <span th:each="formatName, iterStat : ${#strings.arraySplit(movie.availableFormats, ',')}">
-					                <span th:text="${#strings.trim(formatName)}">Format</span><th:if="${not iterStat.last}">, </th:if>
-					            </span>
-					        </p>
-					    </th:block>
-					    <span th:unless="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">N/A</span>
-					</div>
-
+						    <span class="detail-label">Genres:</span>
+						    <span class="detail-value"
+						          th:if="${movie.genres != null and not movie.genres.empty}"
+						          th:text="${#strings.listJoin(movie.genres.![name], ', ')}">
+						    </span>
+						    <span class="detail-value" th:unless="${movie.genres != null and not movie.genres.empty}">N/A</span>
+						</div>
+					<div class="detail-item detail-format">
+						     <span class="detail-label">Format:</span>
+						     <span class="detail-value"
+						           th:if="${movie.format != null and movie.format.name != null}"
+						           th:text="${movie.format.name}">
+						     </span>
+						     <span class="detail-value" th:unless="${movie.format != null and movie.format.name != null}">N/A</span>
+						 </div>
                     <div class="social-and-duration">
                         <div class="duration-area">
                             <div class="item">
                                 <i class="fas fa-calendar-alt"></i>
-                                <!-- Dynamic release date formatted -->
                                 <span th:if="${movie.releaseDate != null}" th:text="${#temporals.format(movie.releaseDate, 'dd MMM, yyyy')}">Release Date</span>
                             </div>
                             <div class="item">
                                 <i class="far fa-clock"></i>
-                                <!-- Dynamic duration (needs formatting) -->
-                                <!-- TODO: Format duration nicely (e.g., '2h 50m') in Service/Entity -->
                                 <span th:text="${movie.duration != null ? movie.duration + ' mins' : 'N/A'}">Duration</span>
                             </div>
                         </div>
-                        <!-- Social share links (keep static or make dynamic if needed) -->
                         <ul class="social-share">
                             <li><a href="#0"><i class="fab fa-facebook-f"></i></a></li>
                             <li><a href="#0"><i class="fab fa-twitter"></i></a></li>
@@ -192,20 +152,17 @@
                     </div>
                 </div>
             </div>
-            <!-- Fallback if movie is not found -->
             <div class="details-banner-wrapper" th:unless="${movie != null}">
                  <h3 style="color: white; text-align: center; padding: 50px;">Movie Not Found!</h3>
             </div>
         </div>
     </section>
     <!-- ==========Banner-Section========== -->
-
     <!-- ==========Book-Section========== -->
     <section class="book-section bg-one" th:if="${movie != null}">
         <div class="container">
             <div class="book-wrapper offset-lg-3">
                 <div class="left-side">
-                    <!-- Tomatometer/Audience Score - Keep static or use different fields if available -->
                     <div class="item">
                         <div class="item-header">
                             <div class="thumb"><img th:src="@{/images/tomato2.png}" alt="rating icon"></div>
@@ -220,12 +177,10 @@
                         </div>
                         <p>audience Score</p>
                     </div>
-                    <!-- User Rating -->
                     <div class="item">
                         <div class="item-header">
                             <h5 class="title" th:text="${movie.rating != null ? #numbers.formatDecimal(movie.rating, 1, 1) : 'N/A'}">4.5</h5>
                             <div class="rated">
-                                <!-- TODO: Implement dynamic star display based on movie.rating -->
                                 <i class="fas fa-heart"></i>
                                 <i class="fas fa-heart"></i>
                                 <i class="fas fa-heart"></i>
@@ -235,7 +190,6 @@
                         </div>
                         <p>Users Rating</p>
                     </div>
-                    <!-- Rate It section (User interaction) -->
                     <div class="item">
                         <div class="item-header">
                             <div class="rated rate-it"> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> </div>
@@ -244,44 +198,20 @@
                         <p><a href="#0">Rate It</a></p>
                     </div>
                 </div>
-                <!-- Dynamic book tickets link -->
                 <a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id})}" class="custom-button">book tickets</a>
             </div>
         </div>
     </section>
     <!-- ==========Book-Section========== -->
-
     <!-- ==========Movie-Section========== -->
     <section class="movie-details-section padding-top padding-bottom" th:if="${movie != null}">
         <div class="container">
             <div class="row justify-content-center flex-wrap-reverse mb--50">
-                <!-- Sidebar -->
-                <div class="col-lg-3 col-sm-10 col-md-6 mb-50">
-                    <!-- Available Formats -->
-                    <div class="detail-item">
-					    <h5 class="sub-title">Available Formats</h5>
-					    <p th:text="${movie.availableFormats} ?: 'N/A'"></p>
-					</div>
-
-                    <!-- !!! OFFER WIDGET REMOVED HERE !!! -->
-
-                    <!-- Static Banner Widget -->
-                    <div class="widget-1 widget-banner">
-                        <div class="widget-1-body">
-                            <a href="#0">
-                                <img th:src="@{/images/banner01.jpg}" alt="banner">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Main Content -->
                 <div class="col-lg-9 mb-50">
                     <div class="movie-details">
-                        <!-- Photos Carousel -->
                         <h3 class="title">photos</h3>
                         <div class="details-photos owl-carousel owl-loaded owl-drag">
                             <div class="owl-stage-outer"><div class="owl-stage">
-                                <!-- Loop through photoUrls -->
                                 <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:each="photoUrl : ${movie.photoUrls}">
                                     <div class="thumb">
                                         <a th:href="${photoUrl}" class="img-pop">
@@ -289,29 +219,22 @@
                                         </a>
                                     </div>
                                 </div>
-                                <!-- Fallback if no photos -->
-                                <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:if="${#lists.isEmpty(movie.photoUrls)}">
-                                     <div class="thumb"><img th:src="@{/images/movie-details01.jpg}" alt="movie photo placeholder"></div>
-                                </div>
+                                <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:if="${#lists.isEmpty(movie.photoUrls)}"></div>
                             </div></div>
                             <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
                         </div>
 
-                        <!-- Summary and Review Tabs -->
                         <div class="tab summery-review">
                             <ul class="tab-menu">
                                 <li class="active"> summery </li>
                                 <li> user review <span th:text="${reviewPage != null ? reviewPage.totalElements : 0}">0</span> </li>
                             </ul>
                             <div class="tab-area">
-                                <!-- Summary Tab -->
                                 <div class="tab-item active">
-                                    <!-- Synopsis -->
                                     <div class="item">
                                         <h5 class="sub-title">Synopsis</h5>
                                         <p th:text="${movie.description}">Movie description goes here.</p>
                                     </div>
-                                    <!-- Cast Slider -->
                                     <div class="item">
                                         <div class="header">
                                             <h5 class="sub-title">cast</h5>
@@ -342,42 +265,18 @@
                                             <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
                                         </div>
                                     </div>
-                                    <!-- Crew Slider -->
                                     <div class="item">
-                                        <div class="header">
-                                            <h5 class="sub-title">crew</h5>
-                                            <div class="navigation">
-                                                <div class="cast-prev-2"><i class="flaticon-double-right-arrows-angles"></i></div>
-                                                <div class="cast-next-2"><i class="flaticon-double-right-arrows-angles"></i></div>
-                                            </div>
-                                        </div>
-                                        <div class="casting-slider-two owl-carousel owl-loaded owl-drag">
-                                            <div class="owl-stage-outer"><div class="owl-stage">
-                                                <!-- Loop through movieCrews -->
-                                                <div class="owl-item" style="width: 136.875px; margin-right: 100px;" th:each="movieCrew : ${movie.movieCrews}">
-                                                    <div class="cast-item">
-                                                        <div class="cast-thumb">
-                                                            <a th:href="@{/crew/{id}(id=${movieCrew.crewMember.id})}">
-                                                                <img th:src="${movieCrew.crewMember.imageUrl != null ? movieCrew.crewMember.imageUrl : '/images/crew-placeholder.jpg'}" alt="crew photo">
-                                                            </a>
-                                                        </div>
-                                                        <div class="cast-content">
-                                                            <h6 class="cast-title">
-                                                                <a th:href="@{/crew/{id}(id=${movieCrew.crewMember.id})}" th:text="${movieCrew.crewMember.name}">Crew Name</a>
-                                                            </h6>
-                                                            <span class="cate" th:text="${movieCrew.jobTitle}">Job Title</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                 <!-- Fallback if no crew -->
-                                                <div class="owl-item" th:if="${#lists.isEmpty(movie.movieCrews)}">
-                                                     <p>No crew information available.</p>
-                                                </div>
-                                            </div></div>
-                                            <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
-                                        </div>
+										    <h5 class="sub-title">Director</h5>
+										    <p th:if="${movie.director != null and !#strings.isEmpty(movie.director)}"
+										       th:text="${movie.director}">
+										        Director Name
+										    </p>
+										    <p th:unless="${movie.director != null and !#strings.isEmpty(movie.director)}">
+										        N/A
+										    </p>
                                     </div>
                                 </div>
+                                
  								<div class="tab-item" id="user-review-content-area">
 						    <div th:if="${movie != null}">
 						
@@ -496,8 +395,6 @@
 						        </div>
 						    </div> </div> 
 
-									
-							    
 							</div>
                             </div>
                         </div>
@@ -513,7 +410,7 @@
         <!-- Newsletter Section -->
         <div class="newslater-section padding-bottom">
             <div class="container">
-                <div class="newslater-container bg_img" th:attr="data-background=@{/assets/images/newslater/newslater-bg01.jpg}" style="background-image: url('./assets/images/newslater/newslater-bg01.jpg');">
+                <div class="newslater-container" th:attr="data-background=@{/images/newslater-bg01.jpg}">
                     <div class="newslater-wrapper">
                         <h5 class="cate">subscribe to Boleto </h5>
                         <h3 class="title">to get exclusive benifits</h3>
@@ -555,427 +452,410 @@
     <!-- ==========Footer Section========== -->
 
   	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-  		
-		<script th:src="@{/js/bootstrap.min.js}"></script>
-		<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
-
-		<script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/contentInt.js}"></script>
+    <script th:src="@{/js/chunk-7ac80a40.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+		
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	document.addEventListener('DOMContentLoaded', function() {
+	    // --- PHẦN VALIDATE FORM REVIEW ---
+	    const reviewForm = document.getElementById('reviewForm');
+	    if (reviewForm) {
+	        reviewForm.addEventListener('submit', function(event) {
+	            const ratingSelect = document.getElementById('rating');
+	            const contentTextarea = document.getElementById('reviewContent');
+	            let isValid = true;
+	            clearErrorMessages(this);
+	            if (!ratingSelect.value) {
+	                isValid = false;
+	                displayErrorMessage(ratingSelect, 'Please select a rating.');
+	            }
+	            if (!contentTextarea.value.trim()) {
+	                isValid = false;
+	                displayErrorMessage(contentTextarea, 'Please write your review content.');
+	            } else if (contentTextarea.value.trim().length < 10) {
+	                isValid = false;
+	                displayErrorMessage(contentTextarea, 'Review content must be at least 10 characters long.');
+	            }
+	            if (!isValid) {
+	                event.preventDefault();
+	            }
+	        });
+	    }
 	
-		<script th:src="@{/js/magnific-popup.min.js}"></script>
-		<script th:src="@{/js/nice-select.js}"></script>
-		<script th:src="@{/js/odometer.min.js}"></script>
-		<script th:src="@{/js/owl.carousel.min.js}"></script>
-		<script th:src="@{/js/viewport.js}"></script>
-		<script th:src="@{/js/wow.min.js}"></script>
-		<script th:src="@{/js/countdown.min.js}"></script>
-		<script th:src="@{/js/isotope.pkgd.min.js}"></script>
-		<script th:src="@{/js/contentInt.js}"></script>
-		<script th:src="@{/js/chunk-7ac80a40.js}"></script>
-		<script th:src="@{/js/main.js}"></script>
-		
-<script th:inline="javascript">
-/*<![CDATA[*/
-document.addEventListener('DOMContentLoaded', function() {
-    // --- PHẦN VALIDATE FORM REVIEW ---
-    const reviewForm = document.getElementById('reviewForm');
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', function(event) {
-            const ratingSelect = document.getElementById('rating');
-            const contentTextarea = document.getElementById('reviewContent');
-            let isValid = true;
-            clearErrorMessages(this);
-            if (!ratingSelect.value) {
-                isValid = false;
-                displayErrorMessage(ratingSelect, 'Please select a rating.');
-            }
-            if (!contentTextarea.value.trim()) {
-                isValid = false;
-                displayErrorMessage(contentTextarea, 'Please write your review content.');
-            } else if (contentTextarea.value.trim().length < 10) {
-                isValid = false;
-                displayErrorMessage(contentTextarea, 'Review content must be at least 10 characters long.');
-            }
-            if (!isValid) {
-                event.preventDefault();
-            }
-        });
-    }
+	    function displayErrorMessage(inputElement, message) {
+	        const errorDiv = document.createElement('div');
+	        errorDiv.className = 'text-danger small mt-1 validation-error-message';
+	        errorDiv.textContent = message;
+	        inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
+	        inputElement.classList.add('is-invalid');
+	    }
+	
+	    function clearErrorMessages(formElement) {
+	        formElement.querySelectorAll('.validation-error-message').forEach(msg => msg.remove());
+	        formElement.querySelectorAll('.is-invalid').forEach(input => input.classList.remove('is-invalid'));
+	    }
+	
+	    // --- HÀM TẠO HTML CHO MỘT REVIEW ITEM (CẬP NHẬT CHO REPORT ABUSE) ---
+	    function createReviewElement(review) {
+	        const reviewItemDiv = document.createElement('div');
+	        reviewItemDiv.className = 'movie-review-item';
+	        reviewItemDiv.dataset.reviewId = review.id;
+	
+	        const authorDiv = document.createElement('div');
+	        authorDiv.className = 'author';
+	        const thumbDiv = document.createElement('div');
+	        thumbDiv.className = 'thumb';
+	        const authorLink = document.createElement('a');
+	        authorLink.href = '#0';
+	        const avatarImg = document.createElement('img');
+	        avatarImg.src = (review.user && review.user.avatarUrl) ? review.user.avatarUrl : '/images/user-placeholder.jpg';
+	        avatarImg.alt = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) + "'s avatar" : 'user avatar';
+	        avatarImg.classList.add('review-user-avatar');
+	        authorLink.appendChild(avatarImg);
+	        thumbDiv.appendChild(authorLink);
+	        authorDiv.appendChild(thumbDiv);
+	
+	        const movieReviewInfoDiv = document.createElement('div');
+	        movieReviewInfoDiv.className = 'movie-review-info';
+	        if (review.timestamp) {
+	            const replyDateSpan = document.createElement('span');
+	            replyDateSpan.className = 'reply-date';
+	            try {
+	                const dateObject = new Date(review.timestamp);
+	                if (isNaN(dateObject.getTime())) throw new Error("Invalid date");
+	                const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+	                replyDateSpan.textContent = dateObject.toLocaleDateString('en-GB', options).replace(',', '');
+	            } catch (e) { replyDateSpan.textContent = "Ngày không hợp lệ"; }
+	            movieReviewInfoDiv.appendChild(replyDateSpan);
+	        }
+	        const subtitleH6 = document.createElement('h6');
+	        subtitleH6.className = 'subtitle';
+	        const userNameLink = document.createElement('a');
+	        userNameLink.href = '#0';
+	        let displayName = 'Người dùng ẩn danh';
+	        if (review.user) displayName = review.user.fullname || review.user.username || 'Người dùng ẩn danh';
+	        userNameLink.textContent = displayName;
+	        subtitleH6.appendChild(userNameLink);
+	        movieReviewInfoDiv.appendChild(subtitleH6);
+	        if (review.verified === true) {
+	            const verifiedSpan = document.createElement('span');
+	            verifiedSpan.innerHTML = '<i class="fas fa-check"></i> verified review';
+	            movieReviewInfoDiv.appendChild(verifiedSpan);
+	        }
+	        authorDiv.appendChild(movieReviewInfoDiv);
+	        reviewItemDiv.appendChild(authorDiv);
+	
+	        const movieReviewContentDiv = document.createElement('div');
+	        movieReviewContentDiv.className = 'movie-review-content';
+	        const reviewStarsDiv = document.createElement('div');
+	        reviewStarsDiv.className = 'review';
+	        const ratingValue = review.rating || 0;
+	        for (let i = 1; i <= ratingValue; i++) {
+	            const starIcon = document.createElement('i');
+	            starIcon.className = 'flaticon-favorite-heart-button';
+	            reviewStarsDiv.appendChild(starIcon);
+	        }
+	        movieReviewContentDiv.appendChild(reviewStarsDiv);
+	        if (review.title) {
+	            const contTitleH6 = document.createElement('h6');
+	            contTitleH6.className = 'cont-title';
+	            contTitleH6.textContent = review.title;
+	            movieReviewContentDiv.appendChild(contTitleH6);
+	        }
+	        const contentP = document.createElement('p');
+	        contentP.textContent = review.content || '';
+	        movieReviewContentDiv.appendChild(contentP);
+	
+	        const reviewMetaDiv = document.createElement('div');
+	        reviewMetaDiv.className = 'review-meta';
+	        // Nút Like
+	        const likesLink = document.createElement('a');
+	        likesLink.href = 'javascript:void(0);';
+	        likesLink.className = 'review-like-btn';
+	        likesLink.dataset.reviewId = review.id;
+	        likesLink.innerHTML = `<i class="flaticon-hand"></i><span class="like-count"> ${review.likes || 0}</span>`;
+	        reviewMetaDiv.appendChild(likesLink);
+	        // Nút Dislike
+	        const dislikesLink = document.createElement('a');
+	        dislikesLink.href = 'javascript:void(0);';
+	        dislikesLink.className = 'review-dislike-btn dislike';
+	        dislikesLink.dataset.reviewId = review.id;
+	        dislikesLink.innerHTML = `<i class="flaticon-dont-like-symbol"></i><span class="dislike-count"> ${review.dislikes || 0}</span>`;
+	        reviewMetaDiv.appendChild(dislikesLink);
+	        // Nút Report Abuse - CẬP NHẬT
+	        const reportLink = document.createElement('a');
+	        reportLink.href = 'javascript:void(0);';
+	        reportLink.className = 'review-report-btn';
+	        reportLink.dataset.reviewId = review.id;
+	        const reviewUserDisplayName = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) : 'this user';
+	        reportLink.dataset.reviewUser = reviewUserDisplayName; 
+	        reportLink.textContent = ' Report Abuse ';
+	        reviewMetaDiv.appendChild(reportLink);
+	
+	        movieReviewContentDiv.appendChild(reviewMetaDiv);
+	        reviewItemDiv.appendChild(movieReviewContentDiv);
+	
+	        return reviewItemDiv;
+	    }
+	
+	    // --- PHẦN SCRIPT CHO "LOAD MORE" REVIEWS ---
+	    const loadMoreButton = document.getElementById('load-more-reviews-btn');
+	    const reviewsContainer = document.getElementById('more-reviews-container');
+	    const noReviewsMessage = document.getElementById('no-reviews-message');
+	
+	    if (loadMoreButton && reviewsContainer) {
+	         loadMoreButton.addEventListener('click', function (event) {
+	             event.preventDefault();
+	             const movieId = this.dataset.movieId;
+	             let nextPage = parseInt(this.dataset.nextPage);
+	             const pageSize = parseInt(this.dataset.pageSize);
+	             this.textContent = 'Loading...';
+	             this.disabled = true;
+	
+	             fetch(`/movies/api/${movieId}/reviews?page=${nextPage}&size=${pageSize}`)
+	                 .then(response => {
+	                     if (!response.ok) {
+	                         return response.text().then(text => { throw new Error(`Lỗi mạng: ${response.status} ${response.statusText}. Phản hồi từ server: ${text}`); });
+	                     }
+	                     return response.json();
+	                 })
+	                 .then(pageData => {
+	                     if (pageData && pageData.content && pageData.content.length > 0) {
+	                         pageData.content.forEach(review => {
+	                             const reviewElement = createReviewElement(review);
+	                             reviewsContainer.appendChild(reviewElement);
+	                         });
+	                         nextPage++;
+	                         this.dataset.nextPage = nextPage;
+	                         if (noReviewsMessage && noReviewsMessage.style.display !== 'none') {
+	                         }
+	                     }
+	                     if (!pageData.last) {
+	                         this.textContent = 'Load More';
+	                         this.disabled = false;
+	                     } else {
+	                         this.textContent = 'No More Reviews';
+	                         this.disabled = true;
+	                     }
+	                 })
+	                 .catch(error => {
+	                     console.error('Error fetching more reviews:', error);
+	                     this.textContent = 'Error - Retry';
+	                     this.disabled = false;
+	                 });
+	         });
+	    } else {
+	        if (!loadMoreButton) console.warn("Load more button ('load-more-reviews-btn') not found.");
+	        if (!reviewsContainer) console.warn("Container for more reviews ('more-reviews-container') not found.");
+	    }
+	
+	    // --- PHẦN SCRIPT XỬ LÝ LIKE/DISLIKE ---
+	    async function handleReviewVote(reviewId, action, buttonElement) {
+	        console.log(`[handleReviewVote] Called for reviewId: ${reviewId}, action: ${action}`);
+	        if(buttonElement) buttonElement.disabled = true;
+	
+	        const csrfTokenElement = document.querySelector('meta[name="_csrf"]');
+	        const csrfHeaderNameElement = document.querySelector('meta[name="_csrf_header"]');
+	        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+	        const csrfHeaderName = csrfHeaderNameElement ? csrfHeaderNameElement.getAttribute('content') : null;
+	        const headers = { 'Content-Type': 'application/json' };
+	        if (csrfToken && csrfHeaderName) {
+	            headers[csrfHeaderName] = csrfToken;
+	            console.log(`[handleReviewVote] CSRF Token added: ${csrfHeaderName}`);
+	        } else {
+	            console.warn("[handleReviewVote] CSRF token or header name not found. POST request might be blocked if CSRF is enabled.");
+	        }
+	
+	        try {
+	            const apiUrl = `/movies/api/reviews/${reviewId}/${action}`;
+	            console.log(`[handleReviewVote] Fetching: ${apiUrl}`);
+	            const response = await fetch(apiUrl, { method: 'POST', headers: headers });
+	            console.log(`[handleReviewVote] Response status: ${response.status}`);
+	
+	            if (!response.ok) {
+	                const errorText = await response.text();
+	                console.error(`[handleReviewVote] API Error Response Text: ${errorText}`);
+	                let errorMessage = `Lỗi HTTP ${response.status}. Không thể ${action} đánh giá.`;
+	                try {
+	                    const errorData = JSON.parse(errorText);
+	                    if (errorData && errorData.error) { errorMessage = errorData.error; }
+	                } catch (e) { if(errorText) errorMessage = errorText; }
+	                throw new Error(errorMessage);
+	            }
+	
+	            const updatedReviewDTO = await response.json();
+	            console.log("[handleReviewVote] Updated Review DTO from server:", updatedReviewDTO);
+	
+	            const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
+	            console.log(`[handleReviewVote] Attempting to find review item with selector: .movie-review-item[data-review-id="${reviewId}"]`);
+	            console.log("[handleReviewVote] Found reviewItemElement for UI update:", reviewItemElement);
+	
+	            if (reviewItemElement) {
+	                const likeCountElement = reviewItemElement.querySelector('.like-count');
+	                const dislikeCountElement = reviewItemElement.querySelector('.dislike-count');
+	                console.log("[handleReviewVote] Found likeCountElement:", likeCountElement);
+	                console.log("[handleReviewVote] Found dislikeCountElement:", dislikeCountElement);
+	
+	                if (likeCountElement && updatedReviewDTO.likes !== null && updatedReviewDTO.likes !== undefined) {
+	                    likeCountElement.textContent = ` ${updatedReviewDTO.likes}`;
+	                    console.log(`[handleReviewVote] Updated like count to: ${updatedReviewDTO.likes}`);
+	                } else {
+	                    console.warn("[handleReviewVote] likeCountElement not found or updatedReviewDTO.likes is null/undefined.");
+	                }
+	
+	                if (dislikeCountElement && updatedReviewDTO.dislikes !== null && updatedReviewDTO.dislikes !== undefined) {
+	                    dislikeCountElement.textContent = ` ${updatedReviewDTO.dislikes}`;
+	                    console.log(`[handleReviewVote] Updated dislike count to: ${updatedReviewDTO.dislikes}`);
+	                } else {
+	                    console.warn("[handleReviewVote] dislikeCountElement not found or updatedReviewDTO.dislikes is null/undefined.");
+	                }
+	            } else {
+	                console.warn(`[handleReviewVote] Could not find review item element for reviewId: ${reviewId} to update counts.`);
+	            }
+	        } catch (error) {
+	            console.error(`[handleReviewVote] Lỗi trong quá trình ${action} cho review ${reviewId}:`, error);
+	            alert(`Không thể ${action} đánh giá. ${error.message}`);
+	        } finally {
+	             if(buttonElement) buttonElement.disabled = false;
+	        }
+	    }
+	
+	    // --- HÀM MỚI XỬ LÝ REPORT ABUSE ---
+	    async function handleReviewReport(reviewId, userNameOfReviewedUser, buttonElement) {
+	        console.log(`[handleReviewReport] Called for reviewId: ${reviewId}, user of review: ${userNameOfReviewedUser}`);
+	
+	        const confirmationMessage = `Bạn có chắc chắn muốn báo cáo bình luận của người dùng "${userNameOfReviewedUser}" không?`;
+	        if (!confirm(confirmationMessage)) {
+	            console.log("[handleReviewReport] User cancelled report.");
+	            return;
+	        }
+	
+	        if(buttonElement) {
+	            buttonElement.disabled = true;
+	            buttonElement.textContent = 'Đang báo cáo...';
+	        }
+	
+	        const csrfTokenElement = document.querySelector('meta[name="_csrf"]');
+	        const csrfHeaderNameElement = document.querySelector('meta[name="_csrf_header"]');
+	        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+	        const csrfHeaderName = csrfHeaderNameElement ? csrfHeaderNameElement.getAttribute('content') : null;
+	        const headers = { 'Content-Type': 'application/json' };
+	        if (csrfToken && csrfHeaderName) {
+	            headers[csrfHeaderName] = csrfToken;
+	            console.log(`[handleReviewReport] CSRF Token added: ${csrfHeaderName}`);
+	        } else {
+	            console.warn("[handleReviewReport] CSRF token or header name not found.");
+	        }
+	
+	        try {
+	            const apiUrl = `/movies/api/reviews/${reviewId}/report`;
+	            console.log(`[handleReviewReport] Fetching: ${apiUrl}`);
+	            const response = await fetch(apiUrl, {
+	                method: 'POST',
+	                headers: headers,
+	            });
+	            console.log(`[handleReviewReport] Response status: ${response.status}`);
+	
+	            const resultData = await response.json();
+	            console.log("[handleReviewReport] Report Result from server:", resultData);
+	
+	            if (!response.ok) {
+	                throw new Error(resultData.error || `Lỗi HTTP ${response.status}. Không thể báo cáo đánh giá.`);
+	            }
+	
+	            alert(resultData.message || "Thao tác thành công.");
+	
+	            if (resultData.deleted === true) {
+	                console.log(`[handleReviewReport] Review ID: ${reviewId} was deleted.`);
+	                const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
+	                if (reviewItemElement) {
+	                    reviewItemElement.remove();
+	                    console.log(`[handleReviewReport] Review element for ID: ${reviewId} removed from UI.`);
+	                } else {
+	                     console.warn(`[handleReviewReport] Could not find review item element for reviewId: ${reviewId} to remove from UI.`);
+	                }
+	            } else {
 
-    function displayErrorMessage(inputElement, message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'text-danger small mt-1 validation-error-message';
-        errorDiv.textContent = message;
-        inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
-        inputElement.classList.add('is-invalid');
-    }
-
-    function clearErrorMessages(formElement) {
-        formElement.querySelectorAll('.validation-error-message').forEach(msg => msg.remove());
-        formElement.querySelectorAll('.is-invalid').forEach(input => input.classList.remove('is-invalid'));
-    }
-
-    // --- HÀM TẠO HTML CHO MỘT REVIEW ITEM (CẬP NHẬT CHO REPORT ABUSE) ---
-    function createReviewElement(review) {
-        const reviewItemDiv = document.createElement('div');
-        reviewItemDiv.className = 'movie-review-item';
-        reviewItemDiv.dataset.reviewId = review.id;
-
-        const authorDiv = document.createElement('div');
-        authorDiv.className = 'author';
-        const thumbDiv = document.createElement('div');
-        thumbDiv.className = 'thumb';
-        const authorLink = document.createElement('a');
-        authorLink.href = '#0';
-        const avatarImg = document.createElement('img');
-        avatarImg.src = (review.user && review.user.avatarUrl) ? review.user.avatarUrl : '/images/user-placeholder.jpg';
-        avatarImg.alt = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) + "'s avatar" : 'user avatar';
-        avatarImg.classList.add('review-user-avatar');
-        authorLink.appendChild(avatarImg);
-        thumbDiv.appendChild(authorLink);
-        authorDiv.appendChild(thumbDiv);
-
-        const movieReviewInfoDiv = document.createElement('div');
-        movieReviewInfoDiv.className = 'movie-review-info';
-        if (review.timestamp) {
-            const replyDateSpan = document.createElement('span');
-            replyDateSpan.className = 'reply-date';
-            try {
-                const dateObject = new Date(review.timestamp);
-                if (isNaN(dateObject.getTime())) throw new Error("Invalid date");
-                const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
-                replyDateSpan.textContent = dateObject.toLocaleDateString('en-GB', options).replace(',', '');
-            } catch (e) { replyDateSpan.textContent = "Ngày không hợp lệ"; }
-            movieReviewInfoDiv.appendChild(replyDateSpan);
-        }
-        const subtitleH6 = document.createElement('h6');
-        subtitleH6.className = 'subtitle';
-        const userNameLink = document.createElement('a');
-        userNameLink.href = '#0';
-        let displayName = 'Người dùng ẩn danh';
-        if (review.user) displayName = review.user.fullname || review.user.username || 'Người dùng ẩn danh';
-        userNameLink.textContent = displayName;
-        subtitleH6.appendChild(userNameLink);
-        movieReviewInfoDiv.appendChild(subtitleH6);
-        if (review.verified === true) {
-            const verifiedSpan = document.createElement('span');
-            verifiedSpan.innerHTML = '<i class="fas fa-check"></i> verified review';
-            movieReviewInfoDiv.appendChild(verifiedSpan);
-        }
-        authorDiv.appendChild(movieReviewInfoDiv);
-        reviewItemDiv.appendChild(authorDiv);
-
-        const movieReviewContentDiv = document.createElement('div');
-        movieReviewContentDiv.className = 'movie-review-content';
-        const reviewStarsDiv = document.createElement('div');
-        reviewStarsDiv.className = 'review';
-        const ratingValue = review.rating || 0;
-        for (let i = 1; i <= ratingValue; i++) {
-            const starIcon = document.createElement('i');
-            starIcon.className = 'flaticon-favorite-heart-button';
-            reviewStarsDiv.appendChild(starIcon);
-        }
-        movieReviewContentDiv.appendChild(reviewStarsDiv);
-        if (review.title) {
-            const contTitleH6 = document.createElement('h6');
-            contTitleH6.className = 'cont-title';
-            contTitleH6.textContent = review.title;
-            movieReviewContentDiv.appendChild(contTitleH6);
-        }
-        const contentP = document.createElement('p');
-        contentP.textContent = review.content || '';
-        movieReviewContentDiv.appendChild(contentP);
-
-        const reviewMetaDiv = document.createElement('div');
-        reviewMetaDiv.className = 'review-meta';
-        // Nút Like
-        const likesLink = document.createElement('a');
-        likesLink.href = 'javascript:void(0);';
-        likesLink.className = 'review-like-btn';
-        likesLink.dataset.reviewId = review.id;
-        likesLink.innerHTML = `<i class="flaticon-hand"></i><span class="like-count"> ${review.likes || 0}</span>`;
-        reviewMetaDiv.appendChild(likesLink);
-        // Nút Dislike
-        const dislikesLink = document.createElement('a');
-        dislikesLink.href = 'javascript:void(0);';
-        dislikesLink.className = 'review-dislike-btn dislike';
-        dislikesLink.dataset.reviewId = review.id;
-        dislikesLink.innerHTML = `<i class="flaticon-dont-like-symbol"></i><span class="dislike-count"> ${review.dislikes || 0}</span>`;
-        reviewMetaDiv.appendChild(dislikesLink);
-        // Nút Report Abuse - CẬP NHẬT
-        const reportLink = document.createElement('a');
-        reportLink.href = 'javascript:void(0);';
-        reportLink.className = 'review-report-btn'; // Class để JavaScript nhận diện
-        reportLink.dataset.reviewId = review.id;    // Thêm data-review-id
-        const reviewUserDisplayName = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) : 'this user';
-        reportLink.dataset.reviewUser = reviewUserDisplayName; // Thêm data-review-user để dùng trong confirm dialog
-        reportLink.textContent = ' Report Abuse ';
-        reviewMetaDiv.appendChild(reportLink);
-
-        movieReviewContentDiv.appendChild(reviewMetaDiv);
-        reviewItemDiv.appendChild(movieReviewContentDiv);
-
-        return reviewItemDiv;
-    }
-
-    // --- PHẦN SCRIPT CHO "LOAD MORE" REVIEWS ---
-    const loadMoreButton = document.getElementById('load-more-reviews-btn');
-    const reviewsContainer = document.getElementById('more-reviews-container');
-    const noReviewsMessage = document.getElementById('no-reviews-message');
-
-    if (loadMoreButton && reviewsContainer) {
-         loadMoreButton.addEventListener('click', function (event) {
-             event.preventDefault();
-             const movieId = this.dataset.movieId;
-             let nextPage = parseInt(this.dataset.nextPage);
-             const pageSize = parseInt(this.dataset.pageSize);
-             this.textContent = 'Loading...';
-             this.disabled = true;
-
-             fetch(`/movies/api/${movieId}/reviews?page=${nextPage}&size=${pageSize}`)
-                 .then(response => {
-                     if (!response.ok) {
-                         return response.text().then(text => { throw new Error(`Lỗi mạng: ${response.status} ${response.statusText}. Phản hồi từ server: ${text}`); });
-                     }
-                     return response.json();
-                 })
-                 .then(pageData => {
-                     if (pageData && pageData.content && pageData.content.length > 0) {
-                         pageData.content.forEach(review => {
-                             const reviewElement = createReviewElement(review);
-                             reviewsContainer.appendChild(reviewElement);
-                         });
-                         nextPage++;
-                         this.dataset.nextPage = nextPage;
-                         if (noReviewsMessage && noReviewsMessage.style.display !== 'none') {
-                            //  noReviewsMessage.style.display = 'none';
-                         }
-                     }
-                     if (!pageData.last) {
-                         this.textContent = 'Load More';
-                         this.disabled = false;
-                     } else {
-                         this.textContent = 'No More Reviews';
-                         this.disabled = true;
-                     }
-                 })
-                 .catch(error => {
-                     console.error('Error fetching more reviews:', error);
-                     this.textContent = 'Error - Retry';
-                     this.disabled = false;
-                 });
-         });
-    } else {
-        if (!loadMoreButton) console.warn("Load more button ('load-more-reviews-btn') not found.");
-        if (!reviewsContainer) console.warn("Container for more reviews ('more-reviews-container') not found.");
-    }
-
-    // --- PHẦN SCRIPT XỬ LÝ LIKE/DISLIKE ---
-    async function handleReviewVote(reviewId, action, buttonElement) {
-        console.log(`[handleReviewVote] Called for reviewId: ${reviewId}, action: ${action}`);
-        if(buttonElement) buttonElement.disabled = true;
-
-        const csrfTokenElement = document.querySelector('meta[name="_csrf"]');
-        const csrfHeaderNameElement = document.querySelector('meta[name="_csrf_header"]');
-        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
-        const csrfHeaderName = csrfHeaderNameElement ? csrfHeaderNameElement.getAttribute('content') : null;
-        const headers = { 'Content-Type': 'application/json' };
-        if (csrfToken && csrfHeaderName) {
-            headers[csrfHeaderName] = csrfToken;
-            console.log(`[handleReviewVote] CSRF Token added: ${csrfHeaderName}`);
-        } else {
-            console.warn("[handleReviewVote] CSRF token or header name not found. POST request might be blocked if CSRF is enabled.");
-        }
-
-        try {
-            const apiUrl = `/movies/api/reviews/${reviewId}/${action}`;
-            console.log(`[handleReviewVote] Fetching: ${apiUrl}`);
-            const response = await fetch(apiUrl, { method: 'POST', headers: headers });
-            console.log(`[handleReviewVote] Response status: ${response.status}`);
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`[handleReviewVote] API Error Response Text: ${errorText}`);
-                let errorMessage = `Lỗi HTTP ${response.status}. Không thể ${action} đánh giá.`;
-                try {
-                    const errorData = JSON.parse(errorText);
-                    if (errorData && errorData.error) { errorMessage = errorData.error; }
-                } catch (e) { if(errorText) errorMessage = errorText; }
-                throw new Error(errorMessage);
-            }
-
-            const updatedReviewDTO = await response.json();
-            console.log("[handleReviewVote] Updated Review DTO from server:", updatedReviewDTO);
-
-            const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
-            console.log(`[handleReviewVote] Attempting to find review item with selector: .movie-review-item[data-review-id="${reviewId}"]`);
-            console.log("[handleReviewVote] Found reviewItemElement for UI update:", reviewItemElement);
-
-            if (reviewItemElement) {
-                const likeCountElement = reviewItemElement.querySelector('.like-count');
-                const dislikeCountElement = reviewItemElement.querySelector('.dislike-count');
-                console.log("[handleReviewVote] Found likeCountElement:", likeCountElement);
-                console.log("[handleReviewVote] Found dislikeCountElement:", dislikeCountElement);
-
-                if (likeCountElement && updatedReviewDTO.likes !== null && updatedReviewDTO.likes !== undefined) {
-                    likeCountElement.textContent = ` ${updatedReviewDTO.likes}`;
-                    console.log(`[handleReviewVote] Updated like count to: ${updatedReviewDTO.likes}`);
-                } else {
-                    console.warn("[handleReviewVote] likeCountElement not found or updatedReviewDTO.likes is null/undefined.");
-                }
-
-                if (dislikeCountElement && updatedReviewDTO.dislikes !== null && updatedReviewDTO.dislikes !== undefined) {
-                    dislikeCountElement.textContent = ` ${updatedReviewDTO.dislikes}`;
-                    console.log(`[handleReviewVote] Updated dislike count to: ${updatedReviewDTO.dislikes}`);
-                } else {
-                    console.warn("[handleReviewVote] dislikeCountElement not found or updatedReviewDTO.dislikes is null/undefined.");
-                }
-            } else {
-                console.warn(`[handleReviewVote] Could not find review item element for reviewId: ${reviewId} to update counts.`);
-            }
-        } catch (error) {
-            console.error(`[handleReviewVote] Lỗi trong quá trình ${action} cho review ${reviewId}:`, error);
-            alert(`Không thể ${action} đánh giá. ${error.message}`);
-        } finally {
-             if(buttonElement) buttonElement.disabled = false;
-        }
-    }
-
-    // --- HÀM MỚI XỬ LÝ REPORT ABUSE ---
-    async function handleReviewReport(reviewId, userNameOfReviewedUser, buttonElement) {
-        console.log(`[handleReviewReport] Called for reviewId: ${reviewId}, user of review: ${userNameOfReviewedUser}`);
-
-        const confirmationMessage = `Bạn có chắc chắn muốn báo cáo bình luận của người dùng "${userNameOfReviewedUser}" không?`;
-        if (!confirm(confirmationMessage)) {
-            console.log("[handleReviewReport] User cancelled report.");
-            return; // Người dùng hủy
-        }
-
-        if(buttonElement) {
-            buttonElement.disabled = true;
-            buttonElement.textContent = 'Đang báo cáo...';
-        }
-
-        const csrfTokenElement = document.querySelector('meta[name="_csrf"]');
-        const csrfHeaderNameElement = document.querySelector('meta[name="_csrf_header"]');
-        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
-        const csrfHeaderName = csrfHeaderNameElement ? csrfHeaderNameElement.getAttribute('content') : null;
-        const headers = { 'Content-Type': 'application/json' };
-        if (csrfToken && csrfHeaderName) {
-            headers[csrfHeaderName] = csrfToken;
-            console.log(`[handleReviewReport] CSRF Token added: ${csrfHeaderName}`);
-        } else {
-            console.warn("[handleReviewReport] CSRF token or header name not found.");
-        }
-
-        try {
-            const apiUrl = `/movies/api/reviews/${reviewId}/report`;
-            console.log(`[handleReviewReport] Fetching: ${apiUrl}`);
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: headers,
-            });
-            console.log(`[handleReviewReport] Response status: ${response.status}`);
-
-            const resultData = await response.json(); // API report của bạn trả về Map<String, Object>
-            console.log("[handleReviewReport] Report Result from server:", resultData);
-
-            if (!response.ok) {
-                 // Sử dụng message từ resultData.error nếu có, nếu không thì dùng thông báo chung
-                throw new Error(resultData.error || `Lỗi HTTP ${response.status}. Không thể báo cáo đánh giá.`);
-            }
-
-            alert(resultData.message || "Thao tác thành công."); // Hiển thị thông báo từ server
-
-            if (resultData.deleted === true) {
-                console.log(`[handleReviewReport] Review ID: ${reviewId} was deleted.`);
-                const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
-                if (reviewItemElement) {
-                    reviewItemElement.remove(); // Xóa review khỏi giao diện
-                    console.log(`[handleReviewReport] Review element for ID: ${reviewId} removed from UI.`);
-                } else {
-                     console.warn(`[handleReviewReport] Could not find review item element for reviewId: ${reviewId} to remove from UI.`);
-                }
-            } else {
-                // Nếu review không bị xóa, có thể cập nhật trạng thái nút report
-                if(buttonElement) {
-                    buttonElement.textContent = 'Đã báo cáo';
-                    // Giữ nút bị vô hiệu hóa để người dùng không report lại liên tục
-                    // buttonElement.disabled = true; // Bỏ comment dòng này nếu muốn vô hiệu hóa vĩnh viễn sau khi report
-                }
-            }
-
-        } catch (error) {
-            console.error(`[handleReviewReport] Lỗi khi báo cáo review ${reviewId}:`, error);
-            alert(`Không thể báo cáo đánh giá. ${error.message}`);
-            if(buttonElement) { // Reset nút nếu có lỗi
-                buttonElement.textContent = 'Report Abuse';
-                buttonElement.disabled = false;
-            }
-        }
-        // Không tự động enable lại nút ở đây nếu bạn muốn người dùng chỉ report 1 lần
-        // và trạng thái "Đã báo cáo" được duy trì.
-        // Nếu muốn cho phép thử lại sau lỗi, thì `buttonElement.disabled = false;` có thể đặt trong `finally`
-    }
-
-
-    // Gắn sự kiện click vào container cha của tất cả reviews
-    const reviewsWrapper = document.getElementById('user-review-content-area');
-    console.log("reviewsWrapper (nơi gắn event listener):", reviewsWrapper);
-
-    if (reviewsWrapper) {
-        reviewsWrapper.addEventListener('click', function(event) {
-            const target = event.target;
-            let actionButton = null;    // Cho like/dislike
-            let reportButton = null;    // Cho report
-            let actionType = '';
-
-            // Kiểm tra nút like
-            if (target.matches('.review-like-btn') || target.closest('.review-like-btn')) {
-                actionButton = target.closest('.review-like-btn');
-                actionType = 'like';
-            }
-            // Kiểm tra nút dislike
-            else if (target.matches('.review-dislike-btn') || target.closest('.review-dislike-btn')) {
-                actionButton = target.closest('.review-dislike-btn');
-                actionType = 'dislike';
-            }
-            // Kiểm tra nút report abuse
-            else if (target.matches('.review-report-btn') || target.closest('.review-report-btn')) {
-                reportButton = target.closest('.review-report-btn');
-            }
-
-            // Xử lý cho like/dislike
-            if (actionButton && actionType) {
-                event.preventDefault();
-                const reviewId = actionButton.dataset.reviewId;
-                if (reviewId) {
-                    handleReviewVote(reviewId, actionType, actionButton);
-                } else {
-                    console.error("Không tìm thấy Review ID trên nút like/dislike:", actionButton);
-                }
-            }
-            // Xử lý cho report abuse
-            else if (reportButton) {
-                event.preventDefault();
-                const reviewId = reportButton.dataset.reviewId;
-                const reviewUser = reportButton.dataset.reviewUser || "người dùng này"; // Lấy tên user từ data attribute
-                if (reviewId) {
-                    handleReviewReport(reviewId, reviewUser, reportButton);
-                } else {
-                    console.error("Không tìm thấy Review ID trên nút report:", reportButton);
-                }
-            }
-        });
-    } else {
-        console.warn("Không tìm thấy container cha cho reviews (mong đợi #user-review-content-area) để gắn sự kiện.");
-    }
-});
-/*]]>*/
-</script>
-
-		
-
-								
-
+	                if(buttonElement) {
+	                    buttonElement.textContent = 'Đã báo cáo';
+	                }
+	            }
+	
+	        } catch (error) {
+	            console.error(`[handleReviewReport] Lỗi khi báo cáo review ${reviewId}:`, error);
+	            alert(`Không thể báo cáo đánh giá. ${error.message}`);
+	            if(buttonElement) {
+	                buttonElement.textContent = 'Report Abuse';
+	                buttonElement.disabled = false;
+	            }
+	        }
+	    }
+	    // Gắn sự kiện click vào container cha của tất cả reviews
+	    const reviewsWrapper = document.getElementById('user-review-content-area');
+	    console.log("reviewsWrapper (nơi gắn event listener):", reviewsWrapper);
+	
+	    if (reviewsWrapper) {
+	        reviewsWrapper.addEventListener('click', function(event) {
+	            const target = event.target;
+	            let actionButton = null; 
+	            let reportButton = null;
+	            let actionType = '';
+	
+	            // Kiểm tra nút like
+	            if (target.matches('.review-like-btn') || target.closest('.review-like-btn')) {
+	                actionButton = target.closest('.review-like-btn');
+	                actionType = 'like';
+	            }
+	            // Kiểm tra nút dislike
+	            else if (target.matches('.review-dislike-btn') || target.closest('.review-dislike-btn')) {
+	                actionButton = target.closest('.review-dislike-btn');
+	                actionType = 'dislike';
+	            }
+	            // Kiểm tra nút report abuse
+	            else if (target.matches('.review-report-btn') || target.closest('.review-report-btn')) {
+	                reportButton = target.closest('.review-report-btn');
+	            }
+	
+	            // Xử lý cho like/dislike
+	            if (actionButton && actionType) {
+	                event.preventDefault();
+	                const reviewId = actionButton.dataset.reviewId;
+	                if (reviewId) {
+	                    handleReviewVote(reviewId, actionType, actionButton);
+	                } else {
+	                    console.error("Không tìm thấy Review ID trên nút like/dislike:", actionButton);
+	                }
+	            }
+	            // Xử lý cho report abuse
+	            else if (reportButton) {
+	                event.preventDefault();
+	                const reviewId = reportButton.dataset.reviewId;
+	                const reviewUser = reportButton.dataset.reviewUser || "người dùng này";
+	                if (reviewId) {
+	                    handleReviewReport(reviewId, reviewUser, reportButton);
+	                } else {
+	                    console.error("Không tìm thấy Review ID trên nút report:", reportButton);
+	                }
+	            }
+	        });
+	    } else {
+	        console.warn("Không tìm thấy container cha cho reviews (mong đợi #user-review-content-area) để gắn sự kiện.");
+	    }
+	});
+	/*]]>*/
+	</script>
 </body>
 </html>

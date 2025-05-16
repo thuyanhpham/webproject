@@ -43,21 +43,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         for (GrantedAuthority grantedAuthority : authorities) {
             String authorityName = grantedAuthority.getAuthority();
-            log.debug("User has authority: {}", authorityName);
-
             if (authorityName.equals("ROLE_ADMIN")) {
-                log.debug("User is ADMIN. Redirecting to /admin");
-                return "/admin"; // URL cho Admin Dashboard
+                return "/admin";
             }
-            // Bạn có thể thêm kiểm tra ROLE_USER nếu muốn chắc chắn hơn
-            // else if (authorityName.equals("ROLE_USER")) {
-            //     log.debug("User is USER. Redirecting to /home");
-            //     return "/home"; // URL cho User Home
-            // }
         }
-
-        // Mặc định cho các vai trò khác (bao gồm cả ROLE_USER nếu không kiểm tra riêng)
-        log.debug("User is not ADMIN or has other roles. Redirecting to /home");
-        return "/home"; // <<< THAY ĐỔI Ở ĐÂY: Chuyển hướng user thường về /home
+        return "/home"; 
     }
 }

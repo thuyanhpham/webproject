@@ -14,7 +14,7 @@ public class ReviewReport {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false) // Người dùng thực hiện report
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -24,7 +24,7 @@ public class ReviewReport {
     @Column(name = "reported_at", nullable = false, updatable = false)
     private LocalDateTime reportedAt;
 
-    @Column(length = 500) // Lý do report (tùy chọn)
+    @Column(length = 500)
     private String reason;
 
     @PrePersist
