@@ -1,5 +1,7 @@
 package com.example.demo.cinema.service;
+
 import com.example.demo.cinema.entity.Movie;
+import com.example.demo.cinema.entity.MovieStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
@@ -9,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -34,17 +34,13 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public Page<Movie> getAllMoviesPaginated(Pageable pageable) {
-        log.info("Service: Getting all movies paginated. Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<Movie> result = movieRepository.findAll(pageable);
-        log.info("Service: Found {} movies in total for getAllMoviesPaginated.", result.getTotalElements());
         return result;
     }
 
     @Transactional(readOnly = true)
     public Page<Movie> searchMovies(String searchTerm, Pageable pageable) {
-        log.info("Service: Searching movies with term '{}'. Page: {}, Size: {}", searchTerm, pageable.getPageNumber(), pageable.getPageSize());
         Page<Movie> result = movieRepository.findByTitleContainingIgnoreCase(searchTerm, pageable);
-        log.info("Service: Found {} movies for search term '{}'.", result.getTotalElements(), searchTerm);
         return result;
     }
     
@@ -64,38 +60,27 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public Movie getMovieById(Long id) {
-        log.debug("Finding movie by ID: {}", id);
         return movieRepository.findById(id)
                 .orElseThrow(() -> {
-                     log.error("Movie not found with id: {}", id);
                      return new ResourceNotFoundException("Movie not found with id: " + id);
                 });
     }
 
     @Transactional 
     public Movie createNewMovie(Movie movieDataFromForm) {
-        log.info("Service: Creating new movie: {}", movieDataFromForm.getTitle());
         movieDataFromForm.setId(null);
-
         Movie savedMovie = movieRepository.save(movieDataFromForm);
-        log.info("Service: Initial save complete. Generated Movie ID: {}", savedMovie.getId());
-
         if (savedMovie.getId() == null) {
-            log.error("FATAL: Movie ID is null after initial save! Check ID generation strategy and DB constraints.");
             throw new IllegalStateException("Failed to generate movie ID after initial save.");
         }
-
         return savedMovie;
     }
 
     @Transactional
     public Movie updateMovie(Long movieId, Movie movieDataFromForm) {
-        log.info("Service: Updating existing movie with ID: {}", movieId);
-
         Movie existingMovie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + movieId + " for update."));
 
-        log.debug("Service: Updating fields for movie ID: {}", movieId);
         existingMovie.setTitle(movieDataFromForm.getTitle());
         existingMovie.setDescription(movieDataFromForm.getDescription());
         existingMovie.setDuration(movieDataFromForm.getDuration());
@@ -109,9 +94,8 @@ public class MovieService {
         existingMovie.setStatus(movieDataFromForm.getStatus());
         existingMovie.setRating(movieDataFromForm.getRating());
         existingMovie.setGenres(movieDataFromForm.getGenres());
-        existingMovie.setAvailableFormats(movieDataFromForm.getAvailableFormats());
+        existingMovie.setFormat(movieDataFromForm.getFormat());
 
-        log.info("Service: Explicit save/merge executed for movie ID {}. Transaction proceeding to commit.", movieId);
         return existingMovie;
     }
 
@@ -139,7 +123,7 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<Movie> findNowShowingMovies() {
         LocalDate today = LocalDate.now();
-        return movieRepository.findByReleaseDateLessThanEqualOrderByReleaseDateDesc(today);
+        return movieRepository.findNowShowingMoviesByStatus(today, MovieStatus.NOW_SHOWING);
     }
 
     @Transactional(readOnly = true)

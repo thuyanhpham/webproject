@@ -1,8 +1,19 @@
 package com.example.demo.cinema.controller;
+import com.example.demo.cinema.entity.Format;
+import com.example.demo.cinema.entity.Genre;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
+import com.example.demo.cinema.service.FormatService;
+import com.example.demo.cinema.service.GenreService;
 import com.example.demo.cinema.service.MovieService;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +34,16 @@ public class AdminController {
 
     @Autowired
     private MovieService movieService;
+    
+    @Autowired
+    private GenreService genreService;
+    
+    @Autowired
+    private FormatService formatService;
 
     @GetMapping
     public String showAdminDashboard(Model model, HttpServletRequest request) {
-        log.info("Accessing Admin Dashboard");
         model.addAttribute("currentURI", request.getRequestURI());
-
         return "admin/dashboard";
     }
 
@@ -36,9 +51,6 @@ public class AdminController {
     public String listMovies(Model model,
                              @PageableDefault(size = 10, sort = "title") Pageable pageable,
                              HttpServletRequest request) {
-        log.info("Requesting movies for admin - Page: {}, Size: {}, Sort: {}",
-                 pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-
         Page<Movie> moviesPage = movieService.findMovies(pageable, null);
 
         model.addAttribute("moviesPage", moviesPage);
@@ -48,32 +60,42 @@ public class AdminController {
         model.addAttribute("sortParam", sortParam);
         model.addAttribute("currentURI", request.getRequestURI());
 
-        log.info("Returning movie list view - Page {}/{} - Size: {} - Total Elements: {}",
-                 moviesPage.getNumber(), moviesPage.getTotalPages(), moviesPage.getSize(), moviesPage.getTotalElements());
-
         return "admin/movie/list";
     }
 
     @GetMapping("/movies/add")
     public String showCreateMovieForm(Model model, HttpServletRequest request) {
-        log.info("Showing create movie form");
         model.addAttribute("movie", new Movie());
+        model.addAttribute("pageTitle", "Add New Movie");
         model.addAttribute("currentURI", request.getRequestURI());
+        model.addAttribute("allGenres", genreService.getAllGenres());
+        model.addAttribute("selectedGenres", List.of());
+        model.addAttribute("allFormats", formatService.getAllFormats());
         return "admin/movie/form";
     }
 
     @GetMapping("/movies/edit/{id}")
     public String showEditMovieForm(@PathVariable Long id, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        log.info("Showing edit movie form for id: {}", id);
         try {
             Movie movie = movieService.getMovieById(id);
 
             model.addAttribute("movie", movie);
+            model.addAttribute("pageTitle", "Edit Movie: " + movie.getTitle());
             model.addAttribute("currentURI", request.getRequestURI());
+            model.addAttribute("allGenres", genreService.getAllGenres());
+            model.addAttribute("allFormats", formatService.getAllFormats());
+            
+            if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
+                model.addAttribute("selectedGenres",
+                        movie.getGenres().stream().map(Genre::getName).collect(Collectors.toList()));
+            } else {
+                model.addAttribute("selectedGenres", List.of());
+            }
+
             return "admin/movie/form";
         } catch (Exception e) {
             log.error("Error finding movie with id {} for edit: {}", id, e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", "Movie not found."); // Thông báo lỗi flash
+            redirectAttributes.addFlashAttribute("errorMessage", "Movie not found."); 
             return "redirect:/admin/movies";
         }
     }
@@ -81,36 +103,58 @@ public class AdminController {
     @PostMapping("/movies/save")
     public String saveOrUpdateMovie(@ModelAttribute("movie") Movie movieFromForm,
                                     BindingResult bindingResult,
+                                    @RequestParam(name = "selectedGenresArray", required = false) List<String> selectedGenreNames,
+                                    @RequestParam(name = "formatId", required = false) Long formatId,
                                     RedirectAttributes redirectAttributes,
                                     Model model,
                                     HttpServletRequest request) {
+    	if (selectedGenreNames != null && !selectedGenreNames.isEmpty()) {
+            Set<Genre> resolvedGenres = genreService.findOrCreateGenresByNames(selectedGenreNames);
+            movieFromForm.setGenres(resolvedGenres);
+        } else {
+            movieFromForm.setGenres(new HashSet<>());
+        }
 
-        log.info("Controller: Received request to save/update movie: {}", movieFromForm.getTitle());
-        log.debug("Controller: Received Genres String: {}", movieFromForm.getGenres());
-        log.debug("Controller: Received Formats String: {}", movieFromForm.getAvailableFormats());
-        
+    	if (formatId != null && formatId > 0) {
+            Optional<Format> formatOptional = formatService.findById(formatId);
+            if (formatOptional.isPresent()) {
+                movieFromForm.setFormat(formatOptional.get());
+            } else {
+                movieFromForm.setFormat(null);
+            }
+        }
+    	
         if (bindingResult.hasErrors()) {
             log.error("Controller: Validation errors found: {}", bindingResult.getAllErrors());
             model.addAttribute("currentURI", request.getRequestURI());
-            //model.addAttribute("movie", movieFromForm);
+            model.addAttribute("movie", movieFromForm);
+            model.addAttribute("pageTitle", movieFromForm.getId() == null ? "Add New Movie" : "Edit Movie: " + movieFromForm.getTitle());
+            model.addAttribute("allGenres", genreService.getAllGenres());
+            model.addAttribute("selectedGenres", selectedGenreNames != null ? selectedGenreNames : List.of());
+            model.addAttribute("allFormats", formatService.getAllFormats());
             return "admin/movie/form";
         }
 
         try {
-            log.debug("Controller: Calling movieService.saveOrUpdate...");
+        	if (selectedGenreNames != null && !selectedGenreNames.isEmpty()) {
+                Set<Genre> resolvedGenres = genreService.findOrCreateGenresByNames(selectedGenreNames);
+                movieFromForm.setGenres(resolvedGenres);
+            } else {
+                movieFromForm.setGenres(new HashSet<>());
+            }
             Movie savedOrUpdatedMovie = movieService.saveOrUpdate(movieFromForm);
-            log.info("Controller: Service call completed successfully for Movie ID: {}", savedOrUpdatedMovie.getId());
-
-            redirectAttributes.addFlashAttribute("successMessage", "Movie saved successfully!");
             return "redirect:/admin/movies";
         } catch (ResourceNotFoundException rnfe) {
-            log.error("Controller: {}", rnfe.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", rnfe.getMessage());
             return "redirect:/admin/movies"; 
         } catch (Exception e) {
             log.error("Controller: Error during movie save/update: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", "Error saving movie: " + e.getMessage());
             model.addAttribute("movie", movieFromForm); 
+            model.addAttribute("pageTitle", movieFromForm.getId() == null ? "Add New Movie" : "Edit Movie: " + movieFromForm.getTitle());
+            model.addAttribute("allGenres", genreService.getAllGenres());
+            model.addAttribute("selectedGenres", selectedGenreNames != null ? selectedGenreNames : List.of());
+            model.addAttribute("allFormats", formatService.getAllFormats());
             model.addAttribute("currentURI", request.getRequestURI());
             return "admin/movie/form";
         }
@@ -122,8 +166,6 @@ public class AdminController {
         log.warn("Attempting to delete movie with id: {}", id);
         try {
             movieService.deleteMovie(id);
-            log.info("Movie with id {} deleted", id);
-            redirectAttributes.addFlashAttribute("successMessage", "Movie deleted successfully!");
         } catch (Exception e) {
              log.error("Error deleting movie with id {}: {}", id, e.getMessage(), e);
              redirectAttributes.addFlashAttribute("errorMessage", "Error deleting movie: " + e.getMessage());
@@ -133,13 +175,11 @@ public class AdminController {
 
     @GetMapping("/movies/details/{id}")
     public String showMovieDetails(@PathVariable Long id, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        log.info("Showing movie details for admin, id: {}", id);
         try{
            Movie movie = movieService.getMovieById(id);
 
            model.addAttribute("movie", movie);
            model.addAttribute("currentURI", request.getRequestURI());
-           model.addAttribute("genresString", request.getRequestURI());
            return "admin/movie/details";
 
         } catch (ResourceNotFoundException e) {
@@ -152,6 +192,4 @@ public class AdminController {
             return "redirect:/admin/movies";
         }
     }
-
-
 }

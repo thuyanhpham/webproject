@@ -1,20 +1,17 @@
-package com.example.demo.cinema.entity; // Thay package nếu cần
+package com.example.demo.cinema.entity;
 
-import jakarta.persistence.*; // Hoặc javax...
-// Import các annotation khác nếu cần
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles") // Đảm bảo tên bảng đúng
+@Table(name = "roles")
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Dùng IDENTITY cho MySQL Auto Increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
-    @Column(nullable = false, unique = true) // Tên role phải là duy nhất
+    @Column(nullable = false, unique = true) 
     private String name;
-
-    // Constructors, Getters, Setters, equals/hashCode (Dựa trên ID là tốt nhất)
 
     public Role() { }
 
@@ -32,6 +29,6 @@ public class Role {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode(); // An toàn nhất cho JPA
+        return getClass().hashCode();
     }
 }

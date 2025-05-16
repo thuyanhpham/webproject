@@ -7,7 +7,6 @@
     <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- Thymeleaf links for static resources -->
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
@@ -29,14 +28,11 @@
          .logout-button-styled {
             background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
          }
-         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
-		
+         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }	
 	</style>
-    <!-- Dynamic page title -->
     <title th:text="${movie != null ? movie.title + ' - Movie Details' : 'Boleto - Movie Details'}">Boleto - Online Ticket Booking Website HTML Template</title>
 
 </head>
-
 <body>
     <!-- ==========Preloader========== -->
     <div class="preloader" style="display: none;">
@@ -54,7 +50,6 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- ==========Overlay========== -->
-
        <!-- ==========Header-Section========== -->
     <header class="header-section">
         <div class="container">
@@ -103,7 +98,6 @@
         </div>
     </header>
     <!-- ==========Header-Section========== -->
-    
     <!-- ==========Banner-Section========== -->
     <section class="details-banner"
              th:style="${movie != null and movie.bannerUrl != null} ? 'background-image: url(' + @{${movie.bannerUrl}} + ');' : 'background-image: url(' + @{/images/banner02.jpg} + ');'"
@@ -122,27 +116,21 @@
                         <a href="#0" th:text="${movie.language}">Language</a>
                     </div>
 					<div class="detail-item">
-					    <h5 class="sub-title">Genres</h5>
-					    <p th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
-					        <th:block th:each="genreName, iterStat : ${#strings.arraySplit(movie.genres, ',')}">
-					            <span th:text="${#strings.trim(genreName)}">Genre</span><th:if="${not iterStat.last}">, </th:if>
-					        </th:block>
-					    </p>
-					    <p th:unless="${movie.genres != null and !#strings.isEmpty(movie.genres)}">N/A</p>
-					</div>
-
-					<div class="detail-item">
-					    <h5 class="sub-title">Available Formats</h5>
-					    <th:block th:if="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">
-					        <p>
-					            <span th:each="formatName, iterStat : ${#strings.arraySplit(movie.availableFormats, ',')}">
-					                <span th:text="${#strings.trim(formatName)}">Format</span><th:if="${not iterStat.last}">, </th:if>
-					            </span>
-					        </p>
-					    </th:block>
-					    <span th:unless="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">N/A</span>
-					</div>
-
+						    <span class="detail-label">Genres:</span>
+						    <span class="detail-value"
+						          th:if="${movie.genres != null and not movie.genres.empty}"
+						          th:text="${#strings.listJoin(movie.genres.![name], ', ')}">
+						    </span>
+						    <span class="detail-value" th:unless="${movie.genres != null and not movie.genres.empty}">N/A</span>
+						</div>
+					<div class="detail-item detail-format">
+						     <span class="detail-label">Format:</span>
+						     <span class="detail-value"
+						           th:if="${movie.format != null and movie.format.name != null}"
+						           th:text="${movie.format.name}">
+						     </span>
+						     <span class="detail-value" th:unless="${movie.format != null and movie.format.name != null}">N/A</span>
+						 </div>
                     <div class="social-and-duration">
                         <div class="duration-area">
                             <div class="item">
@@ -170,7 +158,6 @@
         </div>
     </section>
     <!-- ==========Banner-Section========== -->
-
     <!-- ==========Book-Section========== -->
     <section class="book-section bg-one" th:if="${movie != null}">
         <div class="container">
@@ -216,18 +203,10 @@
         </div>
     </section>
     <!-- ==========Book-Section========== -->
-
     <!-- ==========Movie-Section========== -->
     <section class="movie-details-section padding-top padding-bottom" th:if="${movie != null}">
         <div class="container">
             <div class="row justify-content-center flex-wrap-reverse mb--50">
-                <div class="col-lg-3 col-sm-10 col-md-6 mb-50">
-                    <div class="detail-item">
-					    <h5 class="sub-title">Available Formats</h5>
-					    <p th:text="${movie.availableFormats} ?: 'N/A'"></p>
-					</div>
-                </div>
-                <!-- Main Content -->
                 <div class="col-lg-9 mb-50">
                     <div class="movie-details">
                         <h3 class="title">photos</h3>
@@ -240,9 +219,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:if="${#lists.isEmpty(movie.photoUrls)}">
-                                     <div class="thumb"><img th:src="@{/images/movie01.jpg}" alt="movie photo placeholder"></div>
-                                </div>
+                                <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:if="${#lists.isEmpty(movie.photoUrls)}"></div>
                             </div></div>
                             <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
                         </div>
@@ -289,36 +266,14 @@
                                         </div>
                                     </div>
                                     <div class="item">
-                                        <div class="header">
-                                            <h5 class="sub-title">crew</h5>
-                                            <div class="navigation">
-                                                <div class="cast-prev-2"><i class="flaticon-double-right-arrows-angles"></i></div>
-                                                <div class="cast-next-2"><i class="flaticon-double-right-arrows-angles"></i></div>
-                                            </div>
-                                        </div>
-                                        <div class="casting-slider-two owl-carousel owl-loaded owl-drag">
-                                            <div class="owl-stage-outer"><div class="owl-stage">
-                                                <div class="owl-item" style="width: 136.875px; margin-right: 100px;" th:each="movieCrew : ${movie.movieCrews}">
-                                                    <div class="cast-item">
-                                                        <div class="cast-thumb">
-                                                            <a th:href="@{/crew/{id}(id=${movieCrew.crewMember.id})}">
-                                                                <img th:src="${movieCrew.crewMember.imageUrl != null ? movieCrew.crewMember.imageUrl : '/images/crew-placeholder.jpg'}" alt="crew photo">
-                                                            </a>
-                                                        </div>
-                                                        <div class="cast-content">
-                                                            <h6 class="cast-title">
-                                                                <a th:href="@{/crew/{id}(id=${movieCrew.crewMember.id})}" th:text="${movieCrew.crewMember.name}">Crew Name</a>
-                                                            </h6>
-                                                            <span class="cate" th:text="${movieCrew.jobTitle}">Job Title</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="owl-item" th:if="${#lists.isEmpty(movie.movieCrews)}">
-                                                     <p>No crew information available.</p>
-                                                </div>
-                                            </div></div>
-                                            <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
-                                        </div>
+										    <h5 class="sub-title">Director</h5>
+										    <p th:if="${movie.director != null and !#strings.isEmpty(movie.director)}"
+										       th:text="${movie.director}">
+										        Director Name
+										    </p>
+										    <p th:unless="${movie.director != null and !#strings.isEmpty(movie.director)}">
+										        N/A
+										    </p>
                                     </div>
                                 </div>
                                 
@@ -643,10 +598,10 @@
 	        // Nút Report Abuse - CẬP NHẬT
 	        const reportLink = document.createElement('a');
 	        reportLink.href = 'javascript:void(0);';
-	        reportLink.className = 'review-report-btn'; // Class để JavaScript nhận diện
-	        reportLink.dataset.reviewId = review.id;    // Thêm data-review-id
+	        reportLink.className = 'review-report-btn';
+	        reportLink.dataset.reviewId = review.id;
 	        const reviewUserDisplayName = (review.user && (review.user.fullname || review.user.username)) ? (review.user.fullname || review.user.username) : 'this user';
-	        reportLink.dataset.reviewUser = reviewUserDisplayName; // Thêm data-review-user để dùng trong confirm dialog
+	        reportLink.dataset.reviewUser = reviewUserDisplayName; 
 	        reportLink.textContent = ' Report Abuse ';
 	        reviewMetaDiv.appendChild(reportLink);
 	
@@ -686,7 +641,6 @@
 	                         nextPage++;
 	                         this.dataset.nextPage = nextPage;
 	                         if (noReviewsMessage && noReviewsMessage.style.display !== 'none') {
-	                            //  noReviewsMessage.style.display = 'none';
 	                         }
 	                     }
 	                     if (!pageData.last) {
@@ -786,7 +740,7 @@
 	        const confirmationMessage = `Bạn có chắc chắn muốn báo cáo bình luận của người dùng "${userNameOfReviewedUser}" không?`;
 	        if (!confirm(confirmationMessage)) {
 	            console.log("[handleReviewReport] User cancelled report.");
-	            return; // Người dùng hủy
+	            return;
 	        }
 	
 	        if(buttonElement) {
@@ -815,48 +769,40 @@
 	            });
 	            console.log(`[handleReviewReport] Response status: ${response.status}`);
 	
-	            const resultData = await response.json(); // API report của bạn trả về Map<String, Object>
+	            const resultData = await response.json();
 	            console.log("[handleReviewReport] Report Result from server:", resultData);
 	
 	            if (!response.ok) {
-	                 // Sử dụng message từ resultData.error nếu có, nếu không thì dùng thông báo chung
 	                throw new Error(resultData.error || `Lỗi HTTP ${response.status}. Không thể báo cáo đánh giá.`);
 	            }
 	
-	            alert(resultData.message || "Thao tác thành công."); // Hiển thị thông báo từ server
+	            alert(resultData.message || "Thao tác thành công.");
 	
 	            if (resultData.deleted === true) {
 	                console.log(`[handleReviewReport] Review ID: ${reviewId} was deleted.`);
 	                const reviewItemElement = document.querySelector(`.movie-review-item[data-review-id="${reviewId}"]`);
 	                if (reviewItemElement) {
-	                    reviewItemElement.remove(); // Xóa review khỏi giao diện
+	                    reviewItemElement.remove();
 	                    console.log(`[handleReviewReport] Review element for ID: ${reviewId} removed from UI.`);
 	                } else {
 	                     console.warn(`[handleReviewReport] Could not find review item element for reviewId: ${reviewId} to remove from UI.`);
 	                }
 	            } else {
-	                // Nếu review không bị xóa, có thể cập nhật trạng thái nút report
+
 	                if(buttonElement) {
 	                    buttonElement.textContent = 'Đã báo cáo';
-	                    // Giữ nút bị vô hiệu hóa để người dùng không report lại liên tục
-	                    // buttonElement.disabled = true; // Bỏ comment dòng này nếu muốn vô hiệu hóa vĩnh viễn sau khi report
 	                }
 	            }
 	
 	        } catch (error) {
 	            console.error(`[handleReviewReport] Lỗi khi báo cáo review ${reviewId}:`, error);
 	            alert(`Không thể báo cáo đánh giá. ${error.message}`);
-	            if(buttonElement) { // Reset nút nếu có lỗi
+	            if(buttonElement) {
 	                buttonElement.textContent = 'Report Abuse';
 	                buttonElement.disabled = false;
 	            }
 	        }
-	        // Không tự động enable lại nút ở đây nếu bạn muốn người dùng chỉ report 1 lần
-	        // và trạng thái "Đã báo cáo" được duy trì.
-	        // Nếu muốn cho phép thử lại sau lỗi, thì `buttonElement.disabled = false;` có thể đặt trong `finally`
 	    }
-	
-	
 	    // Gắn sự kiện click vào container cha của tất cả reviews
 	    const reviewsWrapper = document.getElementById('user-review-content-area');
 	    console.log("reviewsWrapper (nơi gắn event listener):", reviewsWrapper);
@@ -864,8 +810,8 @@
 	    if (reviewsWrapper) {
 	        reviewsWrapper.addEventListener('click', function(event) {
 	            const target = event.target;
-	            let actionButton = null;    // Cho like/dislike
-	            let reportButton = null;    // Cho report
+	            let actionButton = null; 
+	            let reportButton = null;
 	            let actionType = '';
 	
 	            // Kiểm tra nút like
@@ -897,7 +843,7 @@
 	            else if (reportButton) {
 	                event.preventDefault();
 	                const reviewId = reportButton.dataset.reviewId;
-	                const reviewUser = reportButton.dataset.reviewUser || "người dùng này"; // Lấy tên user từ data attribute
+	                const reviewUser = reportButton.dataset.reviewUser || "người dùng này";
 	                if (reviewId) {
 	                    handleReviewReport(reviewId, reviewUser, reportButton);
 	                } else {

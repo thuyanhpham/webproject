@@ -45,11 +45,6 @@
                     <li><a th:href="@{/home}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/home')} ? 'active' : ''">Home</a></li>
                     <li class="menu-item-has-children">
                         <a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/movies')} ? 'active' : ''">Movies</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.equals(currentRequestURI, '/movies')} ? 'active' : ''">Movie List</a></li>
-                            <li><a href="#">Movie Details</a></li>
-                            <li><a href="#">Movie Ticket Plan</a></li>
-                        </ul>
                     </li>
                     <li class="menu-item-has-children">
                         <a href="#">Pages</a>
@@ -87,12 +82,14 @@
                      <h3 class="title" th:text="${movie.title}">Movie Title</h3>
                      <div class="tags">
                          <a href="javascript:void(0);" th:text="${movie.language ?: 'N/A'}">Language</a>
-                        <th:block th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
-                            <a href="javascript:void(0);" th:each="genreName : ${#strings.arraySplit(movie.genres, ',')}" th:text="${#strings.trim(genreName)}" class="movie-tag">Genre</a>
-                        </th:block>
-                        <th:block th:if="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">
-                            <a href="javascript:void(0);" th:each="formatName : ${#strings.arraySplit(movie.availableFormats, ',')}" th:text="${#strings.trim(formatName)}" class="movie-format-tag">Format</a>
-                        </th:block>
+                        <th:block th:if="${movie.genres != null and not movie.genres.empty}">
+					        <a href="javascript:void(0);" th:each="genreObj : ${movie.genres}" th:if="${genreObj != null}" th:text="${genreObj.name}" class="movie-tag" style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; margin-left: 5px;">Genre</a>
+					    </th:block>
+					    <span th:unless="${movie.genres != null and not movie.genres.empty}" style="margin-left: 5px;">N/A (Genres)</span>
+                        <th:block th:if="${movie.format != null and movie.format.name != null}">
+					        <a href="javascript:void(0);" th:text="${movie.format.name}" class="movie-format-tag">Format</a>
+					    </th:block>
+					    <span th:unless="${movie.format != null and movie.format.name != null}" style="margin-left: 5px;">N/A (Format)</span>
                      </div>
                 </div>
                 <div class="details-banner-wrapper" th:unless="${movie != null}">

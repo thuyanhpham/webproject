@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- CSS Links (Giữ nguyên) -->
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
@@ -19,20 +18,19 @@
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <title>Admin - Movie Management</title> <!-- Sửa lại title nếu cần -->
+    <title>Admin - Movie Management</title> 
 
-    <!-- CSS TÙY CHỈNH CHO TRANG ADMIN LIST -->
      <style>
         body { background-color: #032055; color: #ccc; }
         .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
-        .table { color: #ccc; border-color: #2d3450; margin-bottom: 1rem; width: 100%;} /* Thêm width 100% */
-        .table th { color: #e0e0e0; background-color: #11255a; border-bottom-width: 1px; border-color: #3a4164 !important; padding: 12px 15px; text-align: left; font-weight: 600;} /* Style header bảng */
-        .table td { border-color: #2d3450 !important; vertical-align: middle; padding: 10px 15px;} /* Style ô */
-        .table tbody tr:hover { background-color: rgba(255, 255, 255, 0.04); } /* Hover rõ hơn */
-        .poster-thumbnail { max-width: 55px; height: auto; border-radius: 3px; } /* Poster nhỏ */
+        .table { color: #ccc; border-color: #2d3450; margin-bottom: 1rem; width: 100%;}
+        .table th { color: #e0e0e0; background-color: #11255a; border-bottom-width: 1px; border-color: #3a4164 !important; padding: 12px 15px; text-align: left; font-weight: 600;} 
+        .table td { border-color: #2d3450 !important; vertical-align: middle; padding: 10px 15px;} 
+        .table tbody tr:hover { background-color: rgba(255, 255, 255, 0.04); } 
+        .poster-thumbnail { max-width: 55px; height: auto; border-radius: 3px; }
         .text-danger-msg { color: #ff4343 !important; }
         .text-success-msg { color: #28a745 !important; }
-        .alert { margin-bottom: 20px; border-radius: 5px;} /* Style alert */
+        .alert { margin-bottom: 20px; border-radius: 5px;}
         .pagination-area { margin-top: 30px; }
         .pagination .page-item .page-link { background-color: rgba(255, 255, 255, 0.05); border-color: #2d3450; color: #ccc; margin: 0 2px; border-radius: 4px; }
         .pagination .page-item.active .page-link { background-color: #31d7a9; border-color: #31d7a9; color: #032055; font-weight: bold; }
@@ -48,75 +46,68 @@
         .footer-section { background: #03173a; text-align: center; padding: 20px 0; margin-top: 40px; border-top: 1px solid #1a2c5c;} /* Footer */
         .btn-add-new { display: inline-block; padding: 10px 25px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #001232; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; border: none; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
         .btn-add-new:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
-        .table-responsive { overflow-x: auto; } /* Cho phép cuộn ngang trên màn hình nhỏ */
+        .table-responsive { overflow-x: auto; } 
 
-        /* === CSS SỬA CÁC NÚT ACTION TRONG BẢNG === */
         td.action-buttons {
-            display: flex;         /* Sắp xếp các phần tử con (nút/form) theo hàng ngang */
-            align-items: center;    /* Căn giữa các nút theo chiều dọc trong ô */
-            gap: 6px;             /* Khoảng cách giữa các nút (điều chỉnh nếu cần) */
-            justify-content: flex-start; /* Căn các nút về bên trái */
-            vertical-align: middle !important; /* Đảm bảo căn giữa dọc hoạt động tốt */
-            padding-top: 8px;      /* Thêm padding để cân đối hơn */
+            display: flex;        
+            align-items: center;  
+            gap: 6px;     
+            justify-content: flex-start; 
+            vertical-align: middle !important;
+            padding-top: 8px;      
             padding-bottom: 8px;
-            min-width: 130px;      /* Đảm bảo đủ rộng cho 3 nút */
-            white-space: nowrap;   /* Ngăn các nút xuống dòng nếu ô quá hẹp */
+            min-width: 130px;     
+            white-space: nowrap;  
         }
         td.action-buttons > a,
         td.action-buttons > form {
-            margin: 0;             /* Bỏ margin mặc định */
+            margin: 0;          
             padding: 0;
-            flex-shrink: 0;        /* Ngăn nút bị co lại */
+            flex-shrink: 0;      
         }
         td.action-buttons form {
-            display: inline-block; /* Hiển thị form như một khối inline */
-            line-height: 0;        /* Giúp căn chỉnh button bên trong */
+            display: inline-block; 
+            line-height: 0;        
         }
         td.action-buttons a,
-        td.action-buttons form button { /* Target cả link và button */
-            display: inline-flex;   /* Dùng flex để căn nội dung bên trong nút (icon) */
+        td.action-buttons form button { 
+            display: inline-flex; 
             align-items: center;
             justify-content: center;
-            padding: 7px 10px;      /* Padding bên trong nút */
-            font-size: 14px;        /* Kích thước icon/chữ */
-            line-height: 1;         /* Chiều cao dòng */
-            border-radius: 4px;     /* Bo góc */
-            text-decoration: none;  /* Bỏ gạch chân link */
-            border: none;           /* Bỏ border mặc định */
+            padding: 7px 10px;      
+            font-size: 14px;        
+            line-height: 1;        
+            border-radius: 4px;   
+            text-decoration: none;
+            border: none;       
             cursor: pointer;
             text-align: center;
-            min-width: 36px;       /* Chiều rộng tối thiểu */
-            min-height: 32px;      /* Chiều cao tối thiểu */
+            min-width: 36px; 
+            min-height: 32px;
             box-sizing: border-box;
             transition: opacity 0.2s ease;
         }
         td.action-buttons a:hover,
         td.action-buttons form button:hover {
-            opacity: 0.85; /* Giảm độ sáng khi hover */
+            opacity: 0.85;
         }
-        /* Màu nút */
         td.action-buttons a[href*='/edit/'] { background-color: #ffc107; color: #212529; }
         td.action-buttons form button { background-color: #dc3545; color: white; }
         td.action-buttons a[href*='/details/'] { background-color: #17a2b8; color: white; }
-        /* Style Icon (nếu dùng) */
         td.action-buttons a i,
         td.action-buttons form button i {
-            font-size: 1em; /* Kích thước icon */
-            /* Nếu có cả text và icon, có thể thêm margin: */
-            /* margin-right: 5px; */
+            font-size: 1em; 
         }
-        /* === KẾT THÚC CSS NÚT ACTION === */
-
      </style>
 </head>
 
 <body>
-    <!-- Preloader, Overlay, ScrollToTop (Giữ nguyên) -->
+    <!-- Preloader, Overlay, ScrollToTop -->
     <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
-    <!-- Header Admin (Giữ nguyên) -->
+    <!-- Header Admin -->
     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
@@ -161,9 +152,9 @@
             </h2>
 
              <!-- Nút Thêm Mới -->
-             <div class="text-end mb-4"> <!-- Căn phải nút Add New -->
+             <div class="text-end mb-4">
                  <a th:href="@{/admin/movies/add}" class="btn-add-new">
-                     <i class="fas fa-plus mr-2"></i> Add New Movie <!-- Thêm icon -->
+                     <i class="fas fa-plus mr-2"></i> Add New Movie
                  </a>
              </div>
 
@@ -178,7 +169,7 @@
               </div>
             <!-- Bảng Danh sách Phim -->
             <div class="admin-movie-table table-responsive">
-                <table class="table table-hover"> <!-- Bảng có style admin -->
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -188,7 +179,7 @@
                             <th>Duration</th>
                             <th>Language</th>
                             <th>Status</th>
-                            <th style="min-width: 130px;">Actions</th> <!-- Đặt min-width -->
+                            <th style="min-width: 130px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -223,7 +214,6 @@
                                 </a>
                             </td>
                         </tr>
-                        <!-- Hiển thị nếu không có phim nào -->
                         <tr th:if="${moviesPage.empty}">
                             <td colspan="8" class="text-center" style="padding: 20px;">No movies found.</td>
                         </tr>
@@ -231,7 +221,7 @@
                 </table>
             </div>
 
-             <!-- Pagination Controls (Giữ nguyên) -->
+             <!-- Pagination Controls -->
             <nav aria-label="Page navigation" th:if="${moviesPage.totalPages > 1}">
                 <ul class="pagination justify-content-center mt-4">
                     <!-- Previous Page Link -->
@@ -251,17 +241,14 @@
                 </ul>
             </nav>
 
-        </div><!-- //container -->
+        </div>
     </section>
     <!-- ========== Phần Nội dung Chính End ========== -->
 
-    <!-- Footer (Giữ nguyên) -->
     <footer class="footer-section">
        <div class="container"> <div class="footer-top"> <div class="logo"> <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div> <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul> </div> <div class="footer-bottom"> <div class="footer-bottom-area"> <div class="left"> <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>. Admin Panel.</p></div><ul class="links"> <li><a href="#">About</a></li> <li><a href="#">Terms Of Use</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">FAQ</a></li> </ul></div></div> </div>
     </footer>
-    <!-- ==========Footer Section========== -->
 
-    <!-- Scripts (Giữ nguyên) -->
     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>

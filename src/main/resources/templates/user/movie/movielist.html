@@ -76,14 +76,12 @@
 
     <section class="search-ticket-section padding-top pt-lg-0">
         <div class="container">
-            <div class="search-tab bg_img" th:attr="data-background=@{/images/ticket-bg01.jpg}" th:style="'background-image: url(\'' + @{/images/ticket-bg01.jpg} + '\');'">
+            <div class="search-tab bg_img" th:attr="data-background=@{/images/newslater-bg01.jpg}" th:style="'background-image: url(\'' + @{/images/newslater-bg01.jpg} + '\');'">
                 <div class="row align-items-center mb--20"><div class="col-lg-6 mb-20"><div class="search-ticket-header"><h6 class="category">welcome to Boleto </h6><h3 class="title">what are you looking for</h3></div></div><div class="col-lg-6 mb-20"><ul class="tab-menu ticket-tab-menu"><li class="active"><div class="tab-thumb"><img th:src="@{/images/ticket-tab01.png}" alt="ticket"></div><span>movie</span></li></ul></div></div>
                 <div class="tab-area">
                     <div class="tab-item active">
                         <form class="ticket-search-form" th:action="@{/movies}" method="get">
                             <div class="form-group large"><input type="text" name="search" placeholder="Search for Movies" th:value="${searchTerm}"><button type="submit"><i class="fas fa-search"></i></button></div>
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city: Hà Nội</span></div>
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select name="date" class="select-bar" style=" border-radius: 6px; width: 150px; height: 40px; " ><option value="2020-10-23">23/10/2020</option><option value="2020-10-23">23/10/2020</option></select></div>
                             <input type="hidden" name="size" th:value="${pageSize ?: '9'}">
                             <input type="hidden" name="sort" th:value="${sortParam ?: 'title,asc'}">
                         </form>
@@ -96,12 +94,6 @@
     <section class="movie-section padding-top padding-bottom">
         <div class="container">
             <div class="row flex-wrap-reverse justify-content-center">
-                <div class="col-sm-10 col-md-8 col-lg-3">
-                    <div class="widget-1 widget-banner"><div class="widget-1-body"><a href="#"><img th:src="@{/images/banner01.jpg}" alt="banner"></a></div></div>
-                    <div class="widget-1 widget-check"><div class="widget-header"><h5 class="m-title">Filter By</h5> <a href="#" class="clear-check">Clear All</a></div><div class="widget-1-body"><h6 class="subtitle">Language</h6><div class="check-area"><div class="form-group"><input type="checkbox" name="lang" id="lang1"><label for="lang1">Tamil</label></div><div class="form-group"><input type="checkbox" name="lang" id="lang4"><label for="lang4">English</label></div></div></div></div>
-                    <div class="widget-1 widget-banner"><div class="widget-1-body"><a href="#"><img th:src="@{/images/banner02.jpg}" alt="banner"></a></div></div>
-                </div>
-
                 <div class="col-lg-9 mb-50 mb-lg-0">
                     <div class="filter-tab tab">
                         <div class="filter-area"><div class="filter-main"><div class="left">
@@ -138,12 +130,14 @@
                                                 <h5 class="title"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
                                                 <p class="duration" th:if="${movie.duration != null}" th:text="${(movie.duration / 60) + 'h ' + (movie.duration % 60) + 'm'}"></p>
 												<div class="movie-tags">
-												    <th:block th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
-												        <a href="javascript:void(0);" th:each="genreName : ${#strings.arraySplit(movie.genres, ',')}" th:text="${#strings.trim(genreName)}" class="mr-1 mb-1"
+												    <th:block th:if="${movie.genres != null and not movie.genres.empty}">
+												        <a href="javascript:void(0);" th:each="genreObject : ${movie.genres}" th:if="${genreObject != null}" th:text="${genreObject.name}" class="mr-1 mb-1 movie-genre-tag"
 												           style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">
 												        </a>
 												    </th:block>
-												    <span th:unless="${movie.genres != null and !#strings.isEmpty(movie.genres)}" style="font-style: italic; color: #888;">No Genres</span>
+												    <span th:unless="${movie.genres != null and not movie.genres.empty}" style="font-style: italic; color: #888;">
+												        No Genres Available
+												    </span>
 												</div>
                                                 <ul class="movie-rating-percent">
                                                     <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
