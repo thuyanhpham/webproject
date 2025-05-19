@@ -28,16 +28,10 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
            "AND s.showDate = :showDate " +
            "AND (:experience IS NULL OR :experience = '' OR s.experience = :experience) " +
            "ORDER BY s.startTime ASC")
-    List<Showtime> findShowtimesByMovieIdAndShowDateAndExperience(
-            @Param("movieId") Long movieId,
-            @Param("showDate") LocalDate showDate,
-            @Param("experience") String experience
-    );
+    List<Showtime> findShowtimesByMovieIdAndShowDateAndExperience(@Param("movieId") Long movieId, @Param("showDate") LocalDate showDate, @Param("experience") String experience);
     @Modifying
-    @Query("DELETE FROM Showtime s WHERE s.showDate < :date")
-    int deleteByShowDateBefore(@Param("date") LocalDate date);
-    
-    @Modifying
-    @Query("DELETE FROM Showtime s WHERE s.showDate = :date AND s.startTime < :time")
-    int deleteByShowDateAndStartTimeBefore(@Param("date") LocalDate date, @Param("time") LocalTime time);
+    @Query("UPDATE Showtime s SET s.deleted = true WHERE " +
+           "(s.showDate < :today OR (s.showDate = :today AND s.startTime < :time)) " +
+           "AND s.deleted = false")
+    int markAsDeletedOldShowtimes(@Param("today") LocalDate today, @Param("time") LocalTime time);
 }

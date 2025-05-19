@@ -32,14 +32,14 @@ public class Showtime {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal price;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+    
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
 
     @PrePersist
     protected void onCreate() {
@@ -110,14 +110,6 @@ public class Showtime {
 		this.room = room;
 	}
 
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
@@ -132,6 +124,14 @@ public class Showtime {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	// ----- equals() and hashCode() -----
@@ -155,6 +155,7 @@ public class Showtime {
                ", showDate=" + showDate +
                ", startTime=" + startTime +
                ", experience='" + experience + '\'' +
+               ", deleted=" + deleted +
                ", room=" + (room != null ? room.getName() : "null") +
                '}';
     }
