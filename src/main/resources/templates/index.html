@@ -108,115 +108,74 @@
 
     <!-- ========== Movie Section ========== -->
     <section class="movie-section padding-top padding-bottom">
-        <div class="container">
-            <div class="tab">
-                <div class="section-header-2">
-                    <div class="left">
-                        <h2 class="title">movies</h2>
-                        <p>Be sure not to miss these Movies today.</p>
-                    </div>
-                    <ul class="tab-menu">
-                        <li class="active">now showing</li>
-                        <li>coming soon</li>
-                        <li>exclusive</li>
-                    </ul>
-                </div>
-                <div class="tab-area mb-30-none">
-                    <!-- Now Showing Tab -->
-                    <div class="tab-item active">
-                        <div th:if="${not #lists.isEmpty(nowShowingMovies)}" class="owl-carousel owl-theme tab-slider">
-                            <div class="item" th:each="movie : ${nowShowingMovies}">
-                                <div class="movie-grid">
-                                    <div class="movie-thumb c-thumb">
-                                        <a th:href="@{/movie-details/{id}(id=${movie.id})}">
-                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie01.jpg'}" alt="movie">
-                                        </a>
-                                    </div>
-                                    <div class="movie-content bg-one">
-                                        <h5 class="title m-0">
-                                            <a th:href="@{/movie-details/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
-                                        </h5>
-                                        <ul class="movie-rating-percent">
-                                            <li>
-                                                <div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie rating"></div>
-                                                <span class="content" th:text="${movie.ratingTomatoes != null ? movie.ratingTomatoes + '%' : 'N/A'}">88%</span>
-                                            </li>
-                                            <li>
-                                                <div class="thumb"><img th:src="@{/images/cake.png}" alt="movie rating"></div>
-                                                <span class="content" th:text="${movie.ratingCake != null ? movie.ratingCake + '%' : 'N/A'}">88%</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:unless="${not #lists.isEmpty(nowShowingMovies)}" class="text-center padding-top padding-bottom">
-                            <p>No movies currently showing.</p>
-                        </div>
-                    </div>
-
-                    <!-- Coming Soon Tab -->
-                    <div class="tab-item">
-                        <div th:if="${not #lists.isEmpty(comingSoonMovies)}" class="owl-carousel owl-theme tab-slider">
-                             <div class="item" th:each="movie : ${comingSoonMovies}">
-                                <div class="movie-grid">
-                                    <div class="movie-thumb c-thumb">
-                                        <a th:href="@{/movie-details/{id}(id=${movie.id})}">
-                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie02.jpg'}" alt="movie">
-                                        </a>
-                                    </div>
-                                    <div class="movie-content bg-one">
-                                        <h5 class="title m-0">
-                                            <a th:href="@{/movie-details/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
-                                        </h5>
-                                        <ul class="movie-rating-percent">
-                                            <li><span class="content">Coming Soon</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:unless="${not #lists.isEmpty(comingSoonMovies)}" class="text-center padding-top padding-bottom">
-                            <p>No upcoming movies announced yet.</p>
-                        </div>
-                    </div>
-
-                    <!-- Exclusive Tab -->
-                    <div class="tab-item">
-                         <div th:if="${not #lists.isEmpty(exclusiveMovies)}" class="owl-carousel owl-theme tab-slider">
-                            <div class="item" th:each="movie : ${exclusiveMovies}">
-                                <div class="movie-grid">
-                                    <div class="movie-thumb c-thumb">
-                                        <a th:href="@{/movie-details/{id}(id=${movie.id})}">
-                                            <img th:src="@{${movie.thumbnailUrl} ?: '/images/movie03.jpg'}" alt="movie">
-                                        </a>
-                                    </div>
-                                    <div class="movie-content bg-one">
-                                        <h5 class="title m-0">
-                                            <a th:href="@{/movie-details/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
-                                        </h5>
-                                        <ul class="movie-rating-percent">
-                                            <li>
-                                                <div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie rating"></div>
-                                                <span class="content" th:text="${movie.ratingTomatoes != null ? movie.ratingTomatoes + '%' : 'N/A'}">88%</span>
-                                            </li>
-                                            <li>
-                                                <div class="thumb"><img th:src="@{/images/cake.png}" alt="movie rating"></div>
-                                                <span class="content" th:text="${movie.ratingCake != null ? movie.ratingCake + '%' : 'N/A'}">88%</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:unless="${not #lists.isEmpty(exclusiveMovies)}" class="text-center padding-top padding-bottom">
-                            <p>No exclusive movies available right now.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+	    <div class="container">
+	        <div class="tab movie-tab-container">
+	            <div class="section-header-2">
+	                <div class="left">
+	                    <h2 class="title">movies</h2>
+	                    <p>Be sure not to miss these Movies today.</p>
+	                </div>
+	                <ul class="tab-menu" id="movieTabMenu">
+	                    <li class="active" data-tab-target="#now-showing-content">now showing</li>
+	                    <li data-tab-target="#coming-soon-content">coming soon</li>
+	                </ul>
+	            </div>
+	            <div class="movie-tab-content-wrapper">
+	                <!-- Tab Content "Now Showing" -->
+	                <div class="movie-content-pane" id="now-showing-content"
+	                     th:style="${activeTab == 'nowShowing' || activeTab == null} ? 'display: block;' : 'display: none;'">
+	                    <div th:if="${nowShowingMovies != null and not #lists.isEmpty(nowShowingMovies)}">
+	                        <div class="row mb-30-none justify-content-center">
+	                            <div class="col-sm-6 col-lg-4" th:each="movie : ${nowShowingMovies}">
+	                                <div class="movie-grid">
+	                                    <div class="movie-thumb c-thumb">
+	                                        <a th:href="@{/movies/detail/{id}(id=${movie.id})}">
+	                                            <img th:src="${movie.posterUrl ?: '/images/default-poster.png'}" th:alt="${movie.title}" style="width:100%; height: 400px; object-fit: cover;">
+	                                        </a>
+	                                    </div>
+	                                    <div class="movie-content bg-one">
+	                                        <h5 class="title m-0">
+	                                            <a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
+	                                        </h5>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div th:if="${nowShowingMovies == null or #lists.isEmpty(nowShowingMovies)}">
+	                        <p style="text-align: center; padding: 20px; color: #ccc;">No movies currently showing.</p>
+	                    </div>
+	                </div>
+	
+	                <!-- Tab Content "Coming Soon" -->
+	                <div class="movie-content-pane" id="coming-soon-content"
+	                     th:style="${activeTab == 'comingSoon'} ? 'display: block;' : 'display: none;'">
+	                    <div th:if="${comingSoonMovies != null and not #lists.isEmpty(comingSoonMovies)}">
+	                        <div class="row mb-30-none justify-content-center">
+	                            <div class="col-sm-6 col-lg-4" th:each="movie : ${comingSoonMovies}">
+	                                <div class="movie-grid">
+	                                    <div class="movie-thumb c-thumb">
+	                                        <a th:href="@{/movies/detail/{id}(id=${movie.id})}">
+	                                            <img th:src="${movie.posterUrl ?: '/images/default-poster.png'}" th:alt="${movie.title}" style="width:100%; height: 400px; object-fit: cover;">
+	                                        </a>
+	                                    </div>
+	                                    <div class="movie-content bg-one">
+	                                        <h5 class="title m-0">
+	                                            <a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
+	                                        </h5>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div th:if="${comingSoonMovies == null or #lists.isEmpty(comingSoonMovies)}">
+	                        <p style="text-align: center; padding: 20px; color: #ccc;">No movies coming soon.</p>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</section>
     <!-- ========== Movie Section ========== -->
 
     <!-- ========== Footer Section ========== -->
@@ -285,6 +244,19 @@
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>
+    <script th:inline="javascript">
+/*<![CDATA[*/
+    $(document).ready(function() {
+        $('#movieTabMenu li').on('click', function() {
+            $('#movieTabMenu li').removeClass('active');
+            $(this).addClass('active');
+            var targetPaneId = $(this).data('tab-target');
+            $('.movie-content-pane').hide();
+            $(targetPaneId).show();
+        });
+    });
+/*]]>*/
+</script>
 
 </body>
 

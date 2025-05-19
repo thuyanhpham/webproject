@@ -16,9 +16,9 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    List<Movie> findByReleaseDateLessThanEqualOrderByReleaseDateDesc(LocalDate today);
+	List<Movie> findByStatusAndReleaseDateLessThanEqualOrderByReleaseDateDesc(MovieStatus status, LocalDate today);
 
-    List<Movie> findByReleaseDateGreaterThanOrderByReleaseDateAsc(LocalDate today);
+	List<Movie> findByStatusAndReleaseDateGreaterThanOrderByReleaseDateAsc(MovieStatus status, LocalDate today);
 
 	void deleteMovieById(@Param("movieId") Long movieId);
 	

@@ -209,21 +209,6 @@
             <div class="row justify-content-center flex-wrap-reverse mb--50">
                 <div class="col-lg-9 mb-50">
                     <div class="movie-details">
-                        <h3 class="title">photos</h3>
-                        <div class="details-photos owl-carousel owl-loaded owl-drag">
-                            <div class="owl-stage-outer"><div class="owl-stage">
-                                <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:each="photoUrl : ${movie.photoUrls}">
-                                    <div class="thumb">
-                                        <a th:href="${photoUrl}" class="img-pop">
-                                            <img th:src="${photoUrl}" alt="movie photo">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="owl-item" style="width: 262.5px; margin-right: 30px;" th:if="${#lists.isEmpty(movie.photoUrls)}"></div>
-                            </div></div>
-                            <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
-                        </div>
-
                         <div class="tab summery-review">
                             <ul class="tab-menu">
                                 <li class="active"> summery </li>

@@ -89,7 +89,6 @@ public class MovieService {
         existingMovie.setDirector(movieDataFromForm.getDirector());
         existingMovie.setTrailerUrl(movieDataFromForm.getTrailerUrl());
         existingMovie.setPosterUrl(movieDataFromForm.getPosterUrl());
-        existingMovie.setBannerUrl(movieDataFromForm.getBannerUrl());
         existingMovie.setCast(movieDataFromForm.getCast());
         existingMovie.setStatus(movieDataFromForm.getStatus());
         existingMovie.setRating(movieDataFromForm.getRating());
@@ -123,12 +122,14 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<Movie> findNowShowingMovies() {
         LocalDate today = LocalDate.now();
-        return movieRepository.findNowShowingMoviesByStatus(today, MovieStatus.NOW_SHOWING);
+        return movieRepository.findByStatusAndReleaseDateLessThanEqualOrderByReleaseDateDesc(
+                MovieStatus.NOW_SHOWING, today);
     }
 
     @Transactional(readOnly = true)
     public List<Movie> findComingSoonMovies() {
         LocalDate today = LocalDate.now();
-        return movieRepository.findByReleaseDateGreaterThanOrderByReleaseDateAsc(today);
+        return movieRepository.findByStatusAndReleaseDateGreaterThanOrderByReleaseDateAsc(
+                MovieStatus.COMING_SOON, today);
     }
  }

@@ -2,10 +2,12 @@ package com.example.demo.cinema.repository;
 
 import com.example.demo.cinema.entity.Showtime;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -31,4 +33,11 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
             @Param("showDate") LocalDate showDate,
             @Param("experience") String experience
     );
+    @Modifying
+    @Query("DELETE FROM Showtime s WHERE s.showDate < :date")
+    int deleteByShowDateBefore(@Param("date") LocalDate date);
+    
+    @Modifying
+    @Query("DELETE FROM Showtime s WHERE s.showDate = :date AND s.startTime < :time")
+    int deleteByShowDateAndStartTimeBefore(@Param("date") LocalDate date, @Param("time") LocalTime time);
 }
