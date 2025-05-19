@@ -6,14 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- ========== CSS ========== -->
-    <!-- Giữ lại các link CSS giống như form -->
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
@@ -22,7 +19,6 @@
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <!-- Title động cho trang details -->
     <title th:text="|Admin - Movie Details - ${movie?.title ?: 'Not Found'}|">Admin - Movie Details</title>
 
         <style>
@@ -80,12 +76,12 @@
 </head>
 
 <body>
-    <!-- Preloader, Overlay, ScrollToTop (Giữ nguyên) -->
+    <!-- Preloader, Overlay, ScrollToTop -->
     <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
-    <!-- Header Admin (Copy từ form.html) -->
+    <!-- Header Admin -->
     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
@@ -128,7 +124,7 @@
             <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;"
                 th:text="|Movie Details: ${movie?.title ?: 'Not Found'}|">Movie Details</h2>
 
-            <!-- Hiển thị thông báo lỗi/thành công (nếu có từ RedirectAttributes) -->
+            <!-- Hiển thị thông báo lỗi/thành công -->
              <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
              <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
 
@@ -186,13 +182,21 @@
                              <span class="detail-value" th:text="${movie.cast != null and !movie.cast.isBlank() ? movie.cast : 'N/A'}"></span>
                          </div>
                          <div class="detail-item detail-genres">
-                             <span class="detail-label">Genres:</span>
-                             <span class="detail-value" th:text="${movie.genres} ?: 'N/A'">Action, Comedy</span>
-                         </div>
-                         <div class="detail-item detail-formats">
-                             <span class="detail-label">Available Formats:</span>
-                             <span class="detail-value" th:text="${movie.availableFormats} ?: 'N/A'">2D, 3D</span>
-                         </div>
+						    <span class="detail-label">Genres:</span>
+						    <span class="detail-value"
+						          th:if="${movie.genres != null and not movie.genres.empty}"
+						          th:text="${#strings.listJoin(movie.genres.![name], ', ')}">
+						    </span>
+						    <span class="detail-value" th:unless="${movie.genres != null and not movie.genres.empty}">N/A</span>
+						 </div>
+						 <div class="detail-item detail-format">
+						     <span class="detail-label">Format:</span>
+						     <span class="detail-value"
+						           th:if="${movie.format != null and movie.format.name != null}"
+						           th:text="${movie.format.name}">
+						     </span>
+						     <span class="detail-value" th:unless="${movie.format != null and movie.format.name != null}">N/A</span>
+						 </div>
                          <div class="detail-item">
                              <span class="detail-label">Trailer URL:</span>
                              <a th:if="${movie.trailerUrl != null}" th:href="${movie.trailerUrl}" target="_blank" class="detail-value" style="color: #50a6fc; text-decoration: underline;" th:text="${movie.trailerUrl}"></a>
@@ -220,10 +224,10 @@
                              <span class="detail-value" th:text="${movie.updatedAt != null ? #temporals.format(movie.updatedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></span>
                          </div>
 
-                    </div> <!-- //col-md-8 -->
-                </div> <!-- //row -->
+                    </div>
+                </div>
 
-            </div><!-- //th:if movie != null -->
+            </div>
 
             <!-- Trường hợp không tìm thấy movie -->
             <div th:unless="${movie != null}" class="text-center" style="padding: 50px 0;">
@@ -231,11 +235,11 @@
                 <a th:href="@{/admin/movies}" class="btn-action btn-back">Back to List</a>
             </div>
 
-        </div><!-- //container -->
+        </div>
     </section>
     <!-- ========== Phần Nội dung Chính End ========== -->
 
-    <!-- Footer (Giữ nguyên) -->
+    <!-- Footer -->
     <footer class="footer-section">
          <div class="container">
              <div class="footer-bottom">
@@ -249,20 +253,19 @@
      </footer>
     <!-- ==========Footer Section========== -->
 
-    <!-- Scripts (Giữ lại các script cần thiết) -->
-     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <!-- Scripts -->
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
     <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/magnific-popup.min.js}"></script>
     <script th:src="@{/js/nice-select.js}"></script>
     <script th:src="@{/js/odometer.min.js}"></script>
     <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.jquery.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/sotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>

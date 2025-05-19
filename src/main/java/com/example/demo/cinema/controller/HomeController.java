@@ -23,29 +23,20 @@ public class HomeController {
 
 
     @GetMapping("/home")
-    public String userHomePage(Model model, Principal principal) { // Dùng Principal để lấy thông tin user
-        log.info("Accessing user home page '/home'");
-
-        String username = "Guest"; // Giá trị mặc định nếu không đăng nhập (dù request này nên được bảo vệ)
+    public String userHomePage(Model model, Principal principal) {
+        String username = "Guest";
         if (principal != null) {
-            username = principal.getName(); // Lấy username nếu đã đăng nhập
-            log.info("User '{}' is logged in.", username);
+            username = principal.getName();
             model.addAttribute("username", username);
         } else {
-            // Trường hợp này không nên xảy ra nếu /home được bảo vệ đúng cách
             log.warn("Accessing /home without authentication!");
-             // Có thể chuyển hướng về login hoặc trả lỗi, nhưng Security nên chặn trước đó
-             // return "redirect:/login";
         }
 
-        // Lấy danh sách phim
-        List<Movie> movies = movieService.getAllMovies();
-        log.info("Fetched {} movies for /home page.", movies.size());
-
-        model.addAttribute("movies", movies);
-        model.addAttribute("bannerUrl", "/images/banner.jpg");
-
+        List<Movie> nowShowingMovies = movieService.findNowShowingMovies();
+        model.addAttribute("nowShowingMovies", nowShowingMovies);
+        List<Movie> comingSoonMovies = movieService.findComingSoonMovies(); 
+        model.addAttribute("comingSoonMovies", comingSoonMovies);
+        model.addAttribute("bannerUrl", "/images/banner.jpg"); 
         return "user/home";
     }
-
 }

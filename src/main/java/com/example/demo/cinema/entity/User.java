@@ -1,9 +1,7 @@
 package com.example.demo.cinema.entity;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import com.example.demo.cinema.entity.Status;
 @Entity
 public class User {
 	
@@ -38,10 +35,9 @@ public class User {
 	private String password;
 	
 	
-	@Column(name = "avatar_url", length = 255) // Hoặc dùng @Lob nếu URL có thể rất dài
+	@Column(name = "avatar_url", length = 255)
 	private String avatarUrl;
 
-	// Thêm getter và setter cho avatarUrl
 	public String getAvatarUrl() {
 	    return avatarUrl;
 	}

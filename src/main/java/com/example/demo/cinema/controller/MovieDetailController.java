@@ -1,5 +1,4 @@
 package com.example.demo.cinema.controller;
-
 import com.example.demo.cinema.dto.ReviewDTO;
 import com.example.demo.cinema.dto.UserReviewDTO;
 import com.example.demo.cinema.entity.Movie;
@@ -10,9 +9,7 @@ import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.service.MovieService;
 import com.example.demo.cinema.service.ReviewService;
 import com.example.demo.cinema.service.ShowtimeService;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +49,6 @@ public class MovieDetailController {
     private final ReviewService reviewService; 
 
     private static final String CINEMA_NAME = "Boleto Cinema VN";
-    private static final String CINEMA_CITY = "Ha Noi City";
     private static final int REVIEWS_PER_PAGE = 5;
 
     @Autowired
@@ -86,16 +82,6 @@ public class MovieDetailController {
                 moviesPageResult = movieService.getAllMoviesPaginated(pageable);
                 model.addAttribute("searchTerm", "");
             }
-            if (moviesPageResult != null) {
-                if (!moviesPageResult.isEmpty()) {
-                    moviesPageResult.getContent().forEach(movie ->
-                            log.info("Controller: Fetched movie from service: ID={}, Title={}, Status={}",
-                                    movie.getId(), movie.getTitle(), movie.getStatus() != null ? movie.getStatus().name() : "N/A")
-                    );
-                }
-            } else {
-                log.warn("Controller: moviesPage received from service is NULL!");
-            }
             model.addAttribute("moviesPage", moviesPageResult);
             model.addAttribute("pageTitle", "All Movies");
             model.addAttribute("sortParam", sortParamValue);
@@ -125,7 +111,6 @@ public class MovieDetailController {
             Movie movie = movieService.getMovieById(id);
             model.addAttribute("movie", movie);
             model.addAttribute("cinemaName", CINEMA_NAME);
-            model.addAttribute("cinemaCity", CINEMA_CITY);
             model.addAttribute("pageTitle", movie.getTitle() + " - Details");
             Pageable firstPageable = PageRequest.of(0, REVIEWS_PER_PAGE, Sort.by("timestamp").descending());
             Page<Review> reviewPage = reviewService.getReviewsForMovie(id, firstPageable);
@@ -174,12 +159,9 @@ public class MovieDetailController {
             @PathVariable("id") Long movieId,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "" + REVIEWS_PER_PAGE, required = false) int size) {
-        log.debug("API: Requesting reviews for movie ID: {}, page: {}, size: {}", movieId, page, size);
         Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
         Page<Review> reviewPageEntity = reviewService.getReviewsForMovie(movieId, pageable);
         Page<ReviewDTO> reviewDtoPage = reviewPageEntity.map(this::convertToReviewDTO);
-        log.debug("API: Found {} review DTOs for movie ID: {} on page: {}. Total pages: {}",
-                reviewDtoPage.getNumberOfElements(), movieId, page, reviewDtoPage.getTotalPages());
         return reviewDtoPage;
     }
 
@@ -267,7 +249,6 @@ public class MovieDetailController {
         dto.setLikes(reviewEntity.getLikes());
         dto.setDislikes(reviewEntity.getDislikes());
         dto.setVerified(reviewEntity.getVerified());
-        
 
         User userEntity = reviewEntity.getUser();
         if (userEntity != null) {

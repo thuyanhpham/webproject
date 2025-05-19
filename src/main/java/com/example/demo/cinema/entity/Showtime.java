@@ -15,7 +15,6 @@ public class Showtime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Mối quan hệ ManyToOne: Nhiều Suất chiếu thuộc về một Phim
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
@@ -29,9 +28,8 @@ public class Showtime {
     @Column(nullable = false, length = 50)
     private String experience;
 
-    // Liên kết với entity Room
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false) // Tên cột khóa ngoại, không được null
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
     @Column(precision = 10, scale = 2)
@@ -43,7 +41,6 @@ public class Showtime {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // ----- Lifecycle Callbacks -----
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -55,7 +52,6 @@ public class Showtime {
         updatedAt = LocalDateTime.now();
     }
 
-    // ----- Constructors -----
     public Showtime() { }
 
     public Showtime(Movie movie, LocalDate showDate, LocalTime startTime, String experience, Room room) {

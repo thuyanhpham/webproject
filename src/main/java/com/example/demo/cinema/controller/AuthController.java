@@ -78,7 +78,6 @@ public class AuthController {
 		}
 		user.setRole(role);
 		userRepository.save(user);
-
 		redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập. ");
 		return "redirect:/login";
 	}

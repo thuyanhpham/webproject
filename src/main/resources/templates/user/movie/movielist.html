@@ -4,12 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
@@ -18,7 +18,7 @@
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
     <style>
-        /* CSS của bạn giữ nguyên */
+
         .header-button.pr-0 { display: flex; align-items: center; }
         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
         .header-user-greeting b { color: #fff; font-weight: 600; }
@@ -43,12 +43,6 @@
                     <li><a th:href="@{/home}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/home')} ? 'active' : ''">Home</a></li>
                     <li class="menu-item-has-children">
                         <a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/movies')} ? 'active' : ''">Movies</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.equals(currentRequestURI, '/movies')} ? 'active' : ''">Movie List</a></li>
-                            <!-- Các link này nên được sửa để trỏ đến trang cụ thể nếu có, ví dụ: /movies/detail/some-id -->
-                            <li><a href="#">Movie Details (Example)</a></li>
-                            <li><a href="#">Movie Ticket Plan (Example)</a></li>
-                        </ul>
                     </li>
                     <li class="menu-item-has-children">
                         <a href="#">Pages</a>
@@ -76,22 +70,18 @@
     </header>
 
     <section class="banner-section">
-        <div class="banner-bg bg_img bg-fixed" th:attr="data-background=@{/images/banner02.jpg}" th:style="'background-image: url(\'' + @{/images/banner02.jpg} + '\');'"></div>
+        <div class="banner-bg bg-fixed" th:attr="data-background=@{/images/banner02.jpg}" th:style="'background-image: url(\'' + @{/images/banner02.jpg} + '\');'"></div>
         <div class="container"><div class="banner-content"><h1 class="title bold">get <span class="color-theme">movie</span> tickets</h1><p>Buy movie tickets in advance, find movie times watch trailer, read movie reviews and much more</p></div></div>
     </section>
 
     <section class="search-ticket-section padding-top pt-lg-0">
         <div class="container">
-            <div class="search-tab bg_img" th:attr="data-background=@{/images/ticket-bg01.jpg}" th:style="'background-image: url(\'' + @{/images/ticket-bg01.jpg} + '\');'">
+            <div class="search-tab bg_img" th:attr="data-background=@{/images/newslater-bg01.jpg}" th:style="'background-image: url(\'' + @{/images/newslater-bg01.jpg} + '\');'">
                 <div class="row align-items-center mb--20"><div class="col-lg-6 mb-20"><div class="search-ticket-header"><h6 class="category">welcome to Boleto </h6><h3 class="title">what are you looking for</h3></div></div><div class="col-lg-6 mb-20"><ul class="tab-menu ticket-tab-menu"><li class="active"><div class="tab-thumb"><img th:src="@{/images/ticket-tab01.png}" alt="ticket"></div><span>movie</span></li></ul></div></div>
                 <div class="tab-area">
                     <div class="tab-item active">
-                        <!-- SỬA URL ACTION VÀ TÊN INPUT + VALUE -->
                         <form class="ticket-search-form" th:action="@{/movies}" method="get">
                             <div class="form-group large"><input type="text" name="search" placeholder="Search for Movies" th:value="${searchTerm}"><button type="submit"><i class="fas fa-search"></i></button></div>
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/city.png}" alt="ticket"></div><span class="type">city: Hà Nội</span></div>
-                            <div class="form-group"><div class="thumb"><img th:src="@{/images/date.png}" alt="ticket"></div><span class="type">date</span><select name="date" class="select-bar" style=" border-radius: 6px; width: 150px; height: 40px; " ><option value="2020-10-23">23/10/2020</option><option value="2020-10-23">23/10/2020</option></select></div>
-                            <!-- Truyền các tham số hiện tại để giữ state khi submit form -->
                             <input type="hidden" name="size" th:value="${pageSize ?: '9'}">
                             <input type="hidden" name="sort" th:value="${sortParam ?: 'title,asc'}">
                         </form>
@@ -104,12 +94,6 @@
     <section class="movie-section padding-top padding-bottom">
         <div class="container">
             <div class="row flex-wrap-reverse justify-content-center">
-                <div class="col-sm-10 col-md-8 col-lg-3">
-                    <div class="widget-1 widget-banner"><div class="widget-1-body"><a href="#"><img th:src="@{/images/banner01.jpg}" alt="banner"></a></div></div>
-                    <div class="widget-1 widget-check"><div class="widget-header"><h5 class="m-title">Filter By</h5> <a href="#" class="clear-check">Clear All</a></div><div class="widget-1-body"><h6 class="subtitle">Language</h6><div class="check-area"><div class="form-group"><input type="checkbox" name="lang" id="lang1"><label for="lang1">Tamil</label></div><div class="form-group"><input type="checkbox" name="lang" id="lang4"><label for="lang4">English</label></div></div></div></div>
-                    <div class="widget-1 widget-banner"><div class="widget-1-body"><a href="#"><img th:src="@{/images/banner02.jpg}" alt="banner"></a></div></div>
-                </div>
-
                 <div class="col-lg-9 mb-50 mb-lg-0">
                     <div class="filter-tab tab">
                         <div class="filter-area"><div class="filter-main"><div class="left">
@@ -146,12 +130,14 @@
                                                 <h5 class="title"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
                                                 <p class="duration" th:if="${movie.duration != null}" th:text="${(movie.duration / 60) + 'h ' + (movie.duration % 60) + 'm'}"></p>
 												<div class="movie-tags">
-												    <th:block th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
-												        <a href="javascript:void(0);" th:each="genreName : ${#strings.arraySplit(movie.genres, ',')}" th:text="${#strings.trim(genreName)}" class="mr-1 mb-1"
+												    <th:block th:if="${movie.genres != null and not movie.genres.empty}">
+												        <a href="javascript:void(0);" th:each="genreObject : ${movie.genres}" th:if="${genreObject != null}" th:text="${genreObject.name}" class="mr-1 mb-1 movie-genre-tag"
 												           style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">
 												        </a>
 												    </th:block>
-												    <span th:unless="${movie.genres != null and !#strings.isEmpty(movie.genres)}" style="font-style: italic; color: #888;">No Genres</span>
+												    <span th:unless="${movie.genres != null and not movie.genres.empty}" style="font-style: italic; color: #888;">
+												        No Genres Available
+												    </span>
 												</div>
                                                 <ul class="movie-rating-percent">
                                                     <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
@@ -194,15 +180,14 @@
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
     <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/magnific-popup.min.js}"></script>
     <script th:src="@{/js/nice-select.js}"></script>
     <script th:src="@{/js/odometer.min.js}"></script>
     <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.jquery.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/sotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>

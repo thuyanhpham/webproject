@@ -6,24 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- CSS Links -->
-     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
     <link rel="stylesheet" th:href="@{/css/odometer.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
-
-    <!-- Favicon Path -->
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <!-- Page Title -->
     <title th:text="${pageTitle ?: 'Boleto - Online Movie Ticket Booking'}">Boleto - Online Movie Ticket Booking</title>
 </head>
 
@@ -96,14 +91,13 @@
 
     <!-- ========== Banner Section ========== -->
     <section class="banner-section">
-        <div class="banner-bg bg_img bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner01.jpg} + '); height: 400px; border: 1px solid red;'"></div>
+        <div class="banner-bg bg-fixed" th:style="'background-image: url(\'' + @{/images/banner02.jpg} + '\')'"></div>
         <div class="container">
             <div class="banner-content">
                 <h1 class="title cd-headline clip">
                     <span class="d-block" th:text="${bannerTitleLine1 ?: 'book your'}">book your</span> tickets for
                     <span class="color-theme cd-words-wrapper p-0 m-0" style="width: auto;">
                         <b class="is-visible" th:text="${bannerCategory1 ?: 'Movie'}">Movie</b>
-                        <!-- Add other categories here if needed, e.g., <b>Event</b>, <b>Sport</b> -->
                     </span>
                 </h1>
                 <p th:text="${bannerSubtitle ?: 'Safe, secure, reliable ticketing. Your ticket to live entertainment!'}">Safe, secure, reliable ticketing.Your ticket to live entertainment!</p>
@@ -111,73 +105,6 @@
         </div>
     </section>
     <!-- ========== Banner Section ========== -->
-
-    <!-- ========== Ticket Search (Movie Only) ========== -->
-    <section class="search-ticket-section padding-top pt-lg-0">
-        <div class="container">
-            <div class="search-tab bg_img" th:styleappend="'background-image: url(' + @{/images/ticket-bg01.jpg} + ');'">
-                <div class="row align-items-center mb--20">
-                    <div class="col-lg-6 mb-20">
-                        <div class="search-ticket-header">
-                            <h6 class="category">welcome to Boleto </h6>
-                            <h3 class="title">what are you looking for</h3>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 mb-20">
-                        <ul class="tab-menu ticket-tab-menu">
-                            <li class="active"> <!-- Only Movie Tab is active -->
-                                <div class="tab-thumb">
-                                    <img th:src="@{/images/ticket-tab01.png}" alt="ticket">
-                                </div>
-                                <span>movie</span>
-                            </li>
-                            <!-- Removed other tabs (Events, Sports) -->
-                        </ul>
-                    </div>
-                </div>
-                <div class="tab-area">
-                    <div class="tab-item active"> <!-- Only Movie Tab Content is active -->
-                        <form class="ticket-search-form" th:action="@{/search/movie}" method="get">
-                            <div class="form-group large">
-                                <input type="text" name="query" placeholder="Search for Movies">
-                                <button type="submit"><i class="fas fa-search"></i></button>
-                            </div>
-                            <div class="form-group">
-                                <div class="thumb">
-                                    <img th:src="@{/images/city.png}" alt="ticket">
-                                </div>
-                                <span class="type">city</span>
-                                <select class="select-bar" name="cityId">
-                                    <option value="">Select City</option>
-                                    <!-- Dynamically populated cities -->
-                                    <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}">City Name</option>
-                                    <!-- Fallback/Example if cities is null -->
-                                    <option th:if="${cities == null}" value="london">London</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <div class="thumb">
-                                    <img th:src="@{/images/date.png}" alt="ticket">
-                                </div>
-                                <span class="type">date</span>
-                                <select class="select-bar" name="date">
-                                     <option value="">Select Date</option>
-                                     <!-- Dynamically populated dates -->
-                                     <option th:each="showDate : ${availableDates}"
-                                             th:value="${#temporals.format(showDate, 'yyyy-MM-dd')}"
-                                             th:text="${#temporals.format(showDate, 'dd/MM/yyyy')}">dd/MM/yyyy</option>
-                                     <!-- Fallback/Example if availableDates is null -->
-                                     <option th:if="${availableDates == null}" value="2024-10-23">23/10/2024</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Removed other tab items (Events, Sports) -->
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ========== Ticket Search ========== -->
 
     <!-- ========== Movie Section ========== -->
     <section class="movie-section padding-top padding-bottom">
@@ -244,7 +171,6 @@
                                         </h5>
                                         <ul class="movie-rating-percent">
                                             <li><span class="content">Coming Soon</span></li>
-                                            <!-- Optionally add placeholder ratings if available -->
                                         </ul>
                                     </div>
                                 </div>
@@ -293,15 +219,11 @@
     </section>
     <!-- ========== Movie Section ========== -->
 
-    <!-- Removed Event Section -->
-    <!-- Removed Sports Section -->
-
     <!-- ========== Footer Section ========== -->
     <footer class="footer-section">
-        <!-- Newsletter Section -->
         <div class="newslater-section padding-bottom">
             <div class="container">
-                <div class="newslater-container bg_img" th:styleappend="'background-image: url(' + @{/images/newslater-bg01.jpg} + ');'">
+                <div class="newslater-container" th:styleappend="'background-image: url(' + @{/images/newslater-bg01.jpg} + ');'">
                     <div class="newslater-wrapper">
                         <h5 class="cate">subscribe to Boleto </h5>
                         <h3 class="title">to get exclusive benefits</h3>
@@ -340,7 +262,6 @@
                         <li><a th:href="@{/terms}">Terms Of Use</a></li>
                         <li><a th:href="@{/privacy}">Privacy Policy</a></li>
                         <li><a th:href="@{/faq}">FAQ</a></li>
-                        <!-- Removed Feedback Link -->
                     </ul>
                 </div>
             </div>
@@ -349,19 +270,18 @@
     <!-- ========== Footer Section ========== -->
 
     <!-- JavaScript Files -->
-     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
     <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/magnific-popup.min.js}"></script>
     <script th:src="@{/js/nice-select.js}"></script>
     <script th:src="@{/js/odometer.min.js}"></script>
     <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.jquery.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/sotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>

@@ -5,19 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
     <link rel="stylesheet" th:href="@{/css/odometer.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
-   
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
     <style>
@@ -47,11 +45,6 @@
                     <li><a th:href="@{/home}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/home')} ? 'active' : ''">Home</a></li>
                     <li class="menu-item-has-children">
                         <a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/movies')} ? 'active' : ''">Movies</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.equals(currentRequestURI, '/movies')} ? 'active' : ''">Movie List</a></li>
-                            <li><a href="#">Movie Details</a></li>
-                            <li><a href="#">Movie Ticket Plan</a></li>
-                        </ul>
                     </li>
                     <li class="menu-item-has-children">
                         <a href="#">Pages</a>
@@ -80,23 +73,23 @@
 
     <section class="window-warning inActive"> <div class="lay"></div> <div class="warning-item"> <h6 class="subtitle">Welcome! </h6> <h4 class="title">Select Your Seats</h4> <div class="thumb"> <img th:src="@{/images/seat-plan.png}" alt="movie"> </div> <a th:href="@{/movie-seat-plan}" class="custom-button seatPlanButton">Seat Plans<i class="fas fa-angle-right"></i></a> </div> </section>
 
-    <section class="details-banner hero-area bg_img"
-             th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}"
-             th:style="|background-image: url('${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}');|">
+    <section class="details-banner hero-area"
+             th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner02.jpg'}"
+             th:style="|background-image: url('${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner02.jpg'}');|">
         <div class="container">
             <div class="details-banner-wrapper">
                 <div class="details-banner-content" th:if="${movie != null}">
                      <h3 class="title" th:text="${movie.title}">Movie Title</h3>
                      <div class="tags">
                          <a href="javascript:void(0);" th:text="${movie.language ?: 'N/A'}">Language</a>
-                        <!-- SỬA HIỂN THỊ GENRES -->
-                        <th:block th:if="${movie.genres != null and !#strings.isEmpty(movie.genres)}">
-                            <a href="javascript:void(0);" th:each="genreName : ${#strings.arraySplit(movie.genres, ',')}" th:text="${#strings.trim(genreName)}" class="movie-tag">Genre</a>
-                        </th:block>
-                        <!-- SỬA HIỂN THỊ AVAILABLE FORMATS -->
-                        <th:block th:if="${movie.availableFormats != null and !#strings.isEmpty(movie.availableFormats)}">
-                            <a href="javascript:void(0);" th:each="formatName : ${#strings.arraySplit(movie.availableFormats, ',')}" th:text="${#strings.trim(formatName)}" class="movie-format-tag">Format</a>
-                        </th:block>
+                        <th:block th:if="${movie.genres != null and not movie.genres.empty}">
+					        <a href="javascript:void(0);" th:each="genreObj : ${movie.genres}" th:if="${genreObj != null}" th:text="${genreObj.name}" class="movie-tag" style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; margin-left: 5px;">Genre</a>
+					    </th:block>
+					    <span th:unless="${movie.genres != null and not movie.genres.empty}" style="margin-left: 5px;">N/A (Genres)</span>
+                        <th:block th:if="${movie.format != null and movie.format.name != null}">
+					        <a href="javascript:void(0);" th:text="${movie.format.name}" class="movie-format-tag">Format</a>
+					    </th:block>
+					    <span th:unless="${movie.format != null and movie.format.name != null}" style="margin-left: 5px;">N/A (Format)</span>
                      </div>
                 </div>
                 <div class="details-banner-wrapper" th:unless="${movie != null}">
@@ -114,7 +107,6 @@
                     <div class="filter-content">
                         <span class="type">Cinema</span>
                         <h6 class="value" th:text="${cinemaName}">Cinema Name</h6>
-                        <!-- <small th:text="${cinemaCity}">City</small> --> <!-- Bỏ city nếu không cần -->
                     </div>
                 </div>
 				<div class="form-group col-md-4">
@@ -123,7 +115,6 @@
 				        <span class="type">Date</span>
 				        <div th:if="${not #lists.isEmpty(availableDates)}">
 				            <ul class="list-inline">
-				                <!-- Phần Date Filter trong movieticketplan.html -->
 								<li class="list-inline-item date-filter-item" th:each="dateOption : ${availableDates}"
 								    th:classappend="${dateOption != null && selectedDate != null && dateOption.equals(selectedDate)} ? 'active' : ''">
 								    <a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id}, date=${#temporals.format(dateOption, 'yyyy-MM-dd')}, experience=${selectedExperience})}"
@@ -166,25 +157,15 @@
                 <div class="col-lg-9 mb-5 mb-lg-0">
                     <ul class="seat-plan-wrapper bg-five">
                         <li>
-                            <div class="movie-name">
-                                <a href="javascript:void(0);" class="name" th:text="${cinemaName}">Cinema Name</a>
-                                <div class="location-icon" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${cinemaAddress ?: 'Address not available'}">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span th:text="${cinemaCity ?: 'City not available'}">City</span>
-                                </div>
-                                <p class="cinema-address" th:text="${cinemaAddress ?: 'Address not available'}">Address</p>
-                            </div>
                             <div class="movie-schedule">
                                 <div th:if="${showtimes != null and not #lists.isEmpty(showtimes)}">
                                     <div class="item" th:each="showtime : ${showtimes}">
-                                        <!-- SỬA HIỂN THỊ SCREENNAME (TÊN PHÒNG) -->
                                         <a th:href="@{/movie-seat-plan}"
                                            th:attr="data-showtime-id=${showtime.id}"
                                            class="showtime-link"
                                            th:title="'Select seats for ' + ${#temporals.format(showtime.startTime, 'HH:mm')} + ' - ' + ${showtime.experience} + (${showtime.room?.name != null ? ' - Room ' + showtime.room.name : ''})">
                                             <span th:text="${#temporals.format(showtime.startTime, 'HH:mm')}">00:00</span>
                                             <small th:text="'(' + ${showtime.experience} + ')'">(Experience)</small>
-                                            <!-- SỬA HIỂN THỊ SCREENNAME (TÊN PHÒNG) -->
                                             <small th:if="${showtime.room?.name != null}" th:text="' - ' + ${showtime.room.name}"> - Room Name</small>
                                         </a>
                                     </div>
@@ -196,15 +177,6 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-10">
-                    <div class="widget-1 widget-banner">
-                        <div class="widget-1-body">
-                            <a href="#0">
-                                <img th:src="@{/images/banner03.jpg}" alt="banner">
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -212,7 +184,7 @@
     <footer class="footer-section">
         <div class="newslater-section padding-bottom">
             <div class="container">
-                 <div class="newslater-container bg_img"
+                 <div class="newslater-container"
                       th:attr="data-background=@{/images/newslater-bg01.jpg}"
                       th:style="|background-image: url('@{/images/newslater-bg01.jpg}');|">
                      <div class="newslater-wrapper"> <h5 class="cate">subscribe to Boleto</h5> <h3 class="title">to get exclusive benefits</h3> <form class="newslater-form" th:action="@{/subscribe}" method="post"> <input type="email" name="email" placeholder="Your Email Address" required> <button type="submit">subscribe</button> </form> <p>We respect your privacy, so we never share your info</p> </div>
@@ -225,19 +197,18 @@
         </div>
     </footer>
 
-     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
     <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/popper.min.js}"></script>
     <script th:src="@{/js/magnific-popup.min.js}"></script>
     <script th:src="@{/js/nice-select.js}"></script>
     <script th:src="@{/js/odometer.min.js}"></script>
     <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.jquery.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
     <script th:src="@{/js/wow.min.js}"></script>
     <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/sotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>

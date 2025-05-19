@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- ========== CSS ========== -->
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/css.css}" />
     <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
     <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
@@ -22,7 +20,6 @@
 
     <title th:text="|Admin - Showtimes for ${movie?.title ?: 'Movie'}|">Admin - Showtimes by Movie</title>
 
-    <!-- CSS TÙY CHỈNH CHO TRANG ADMIN -->
      <style>
         body { background-color: #032055; color: #ccc; }
         .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
@@ -86,8 +83,6 @@
              margin-right: 6px;
         }
 
-
-        /* === CSS CHO CÁC NÚT ACTION TRONG BẢNG (Giữ nguyên) === */
         td.action-buttons {
             display: flex;
             align-items: center;
@@ -184,7 +179,6 @@
     <section class="admin-section padding-top padding-bottom">
         <div class="container">
 
-            <!-- Hiển thị tên phim và nút quay lại -->
             <div th:if="${movie != null}" class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0" style="color: white;">
                     Showtimes for: <span th:text="${movie.title}" style="color: #31d7a9;">Movie Title</span>
@@ -198,7 +192,6 @@
                 <a th:href="@{/admin/movies}" class="custom-button">Back to Movie List</a>
             </div>
 
-             <!-- Bộ lọc ngày -->
 			<div class="date-filter" th:if="${movie != null and not #lists.isEmpty(availableDates)}">
 			    <strong>Filter by Date:</strong>
 			    <a th:each="dateOpt : ${availableDates}"
@@ -206,52 +199,45 @@
 			       th:text="${#temporals.format(dateOpt, 'dd MMM')}"
 			       th:classappend="${selectedDate != null and dateOpt != null and dateOpt.equals(selectedDate)} ? 'active' : ''">
 			    </a>
-			     <!-- Nút hiển thị tất cả các ngày hoặc xóa bộ lọc ngày -->
 			    <a th:href="@{/admin/showtimes/movie/{movieId}(movieId=${movie.id})}"
 			       th:classappend="${selectedDate == null} ? 'active' : ''">All Dates</a>
 			</div>
-			
-			<!-- Thông báo khi không có ngày chiếu nào và không có bộ lọc ngày được áp dụng -->
 			<div th:if="${movie != null and #lists.isEmpty(availableDates) and selectedDate == null}" class="mb-3">
 			    <p>No show dates available for this movie yet.</p>
 			</div>
 			
-            <!-- Nút Thêm Mới Suất Chiếu cho Phim này -->
             <div class="text-end mb-4" th:if="${movie != null}">
                 <a th:href="@{/admin/showtimes/movie/{movieId}/add(movieId=${movie.id})}" class="btn-add-new">
                     <i class="fas fa-plus mr-2"></i> Add Showtime
                 </a>
             </div>
 
-            <!-- Bảng Danh sách Suất Chiếu -->
             <div class="admin-showtime-table table-responsive" th:if="${movie != null}">
                 <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Room</th> <!-- Đổi lại vị trí -->
+                            <th>Room</th>
                             <th>Date</th>
                             <th>Start Time</th>
-                            <th>End Time (Est.)</th> <!-- Ghi chú là ước tính -->
+                            <th>End Time (Est.)</th>
                             <th>Experience</th>
                             <th>Price (VND)</th>
                             <th style="min-width: 100px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="showtime : ${showtimes}"> <!-- 'showtimes' được truyền từ Controller -->
+                        <tr th:each="showtime : ${showtimes}"> 
                             <td th:text="${showtime.id}"></td>
                             <td th:text="${showtime.room?.name}"></td>
                             <td th:text="${showtime.showDate != null ? #temporals.format(showtime.showDate, 'dd/MM/yyyy') : 'N/A'}"></td>
                             <td th:if="${showtime.startTime != null}" th:text="${#temporals.format(showtime.startTime, 'HH:mm')}">Start Time</td>
 							<td th:if="${showtime.startTime == null}">N/A</td>
-                            <!-- Tính toán và hiển thị endTime ước tính -->
                             <td th:text="${showtime.startTime != null and showtime.movie?.duration != null ? #temporals.format(showtime.startTime.plusMinutes(showtime.movie.duration), 'HH:mm') : 'N/A'}"></td>
                             <td th:text="${showtime.experience ?: 'N/A'}"></td>
                             <td th:text="${showtime.price != null ? #numbers.formatDecimal(showtime.price, 1, 'COMMA', 0, 'POINT') : 'N/A'}"></td>
                             <td class="action-buttons">
                                 <a th:href="@{/admin/showtimes/edit/{id}(id=${showtime.id})}" title="Edit"><i class="fas fa-edit"></i></a>
-                                <!-- Form Delete, truyền movieId và returnDate để quay lại đúng trang -->
                                 <form th:action="@{/admin/showtimes/delete/{id}(id=${showtime.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this showtime?');">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <input type="hidden" name="movieId" th:value="${movie.id}" />
@@ -260,8 +246,8 @@
                                 </form>
                             </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(showtimes)}"> <!-- Kiểm tra showtimes rỗng -->
-                            <td colspan="8" class="text-center" style="padding: 20px;">No showtimes found for the selected criteria.</td> <!-- Cập nhật colspan -->
+                        <tr th:if="${#lists.isEmpty(showtimes)}"> 
+                            <td colspan="8" class="text-center" style="padding: 20px;">No showtimes found for the selected criteria.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -270,16 +256,22 @@
     </section>
     <!-- ========== Phần Nội dung Chính End ========== -->
 
-    <!-- Footer (Giữ nguyên) -->
-    <footer class="footer-section">
-       <div class="container"> <div class="footer-top"> <div class="logo"> <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div> <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul> </div> <div class="footer-bottom"> <div class="footer-bottom-area"> <div class="left"> <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>. Admin Panel.</p></div><ul class="links"> <li><a href="#">About</a></li> <li><a href="#">Terms Of Use</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">FAQ</a></li> </ul></div></div> </div>
-    </footer>
-    <!-- ==========Footer Section========== -->
-
-    <!-- Scripts (Giữ lại các script cần thiết) -->
-     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-     <script th:src="@{/js/bootstrap.min.js}"></script>
-     <script th:src="@{/js/main.js}"></script>
+    <!-- Scripts-->
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/contentInt.js}"></script>
+    <script th:src="@{/js/chunk-7ac80a40.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
