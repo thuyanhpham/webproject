@@ -157,10 +157,7 @@
 				<div class="mb-3">
 				    <label for="genresSelect" class="form-label">Genres <span class="required-star">*</span></label>
 				    <select multiple class="form-control" id="genresSelect" name="selectedGenresArray" style="width: 100%;">
-				        <option th:each="genreObj : ${allGenres}"
-				                th:if="${genreObj != null}"
-				                th:value="${genreObj.name}"
-				                th:text="${genreObj.name}"
+				        <option th:each="genreObj : ${allGenres}" th:if="${genreObj != null}" th:value="${genreObj.name}" th:text="${genreObj.name}"
 				                th:selected="${selectedGenres != null and selectedGenres.contains(genreObj.name)}">
 				        </option>
 				    </select>
@@ -171,15 +168,20 @@
 				    <label for="formatIdField" class="form-label">Format <span class="required-star">*</span></label>
 				    <select class="form-select" id="formatIdField" name="formatId">
 				        <option value="">-- Select Format --</option>
-				        <option th:each="formatOpt : ${allFormats}"
-				                th:if="${formatOpt != null}"
-				                th:value="${formatOpt.id}"
-				                th:text="${formatOpt.name}"
+				        <option th:each="formatOpt : ${allFormats}" th:if="${formatOpt != null}" th:value="${formatOpt.id}" th:text="${formatOpt.name}"
 				                th:selected="${movie.format != null and movie.format.id == formatOpt.id}">
 				        </option>
 				    </select>
 				    <div class="text-danger" th:if="${#fields.hasErrors('format')}" th:errors="*{format}"></div>
 				</div>
+				<div class="mb-3">
+			        <label for="status" class="form-label">Status <span class="required-star">*</span></label>
+			        <select class="form-select" id="status" th:field="*{status}" required>
+			            <option value="">-- Select Status --</option>
+			            <option th:each="stat : ${allMovieStatuses}" th:value="${stat}" th:text="${stat.displayName}"></option>
+			        </select>
+			        <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-danger small"></div>
+			    </div>
 
                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 

@@ -112,41 +112,70 @@
   	<!-- ==========Movie-Section========== -->
 	<section class="movie-section padding-top padding-bottom">
 	    <div class="container">
-	        <div class="tab">
+	        <div class="tab movie-tab-container">
 	            <div class="section-header-2">
 	                <div class="left">
 	                    <h2 class="title">movies</h2>
 	                    <p>Be sure not to miss these Movies today.</p>
 	                </div>
-	                <ul class="tab-menu">
-	                    <li class="active">now showing</li>
-	                    <li>coming soon</li>
+	                <ul class="tab-menu" id="movieTabMenu">
+	                    <li class="active" data-tab-target="#now-showing-content">now showing</li>
+	                    <li data-tab-target="#coming-soon-content">coming soon</li>
 	                </ul>
 	            </div>
-	            <!-- Tab "Now Showing" -->
-				<div class="tab-pane fade show active" id="now-showing" role="tabpanel">
-				    <div th:if="${nowShowingMovies != null and not #lists.isEmpty(nowShowingMovies)}">
-				        <div class="row mb-30-none">
-				            <div class="col-sm-6 col-lg-4" th:each="movie : ${nowShowingMovies}">
-				            </div>
-				        </div>
-				    </div>
-				    <div th:unless="${nowShowingMovies != null and not #lists.isEmpty(nowShowingMovies)}">
-				        <p>No movies currently showing.</p>
-				    </div>
-				</div>
-				<!-- Tab "Coming Soon" -->
-				<div class="tab-pane fade" id="coming-soon" role="tabpanel">
-				    <div th:if="${comingSoonMovies != null and not #lists.isEmpty(comingSoonMovies)}">
-				        <div class="row mb-30-none">
-				            <div class="col-sm-6 col-lg-4" th:each="movie : ${comingSoonMovies}">
-				            </div>
-				        </div>
-				    </div>
-				    <div th:unless="${comingSoonMovies != null and not #lists.isEmpty(comingSoonMovies)}">
-				        <p>No movies coming soon.</p>
-				    </div>
-				</div>
+	            <div class="movie-tab-content-wrapper">
+	                <!-- Tab Content "Now Showing" -->
+	                <div class="movie-content-pane" id="now-showing-content"
+	                     th:style="${activeTab == 'nowShowing' || activeTab == null} ? 'display: block;' : 'display: none;'">
+	                    <div th:if="${nowShowingMovies != null and not #lists.isEmpty(nowShowingMovies)}">
+	                        <div class="row mb-30-none justify-content-center">
+	                            <div class="col-sm-6 col-lg-4" th:each="movie : ${nowShowingMovies}">
+	                                <div class="movie-grid">
+	                                    <div class="movie-thumb c-thumb">
+	                                        <a th:href="@{/movies/detail/{id}(id=${movie.id})}">
+	                                            <img th:src="${movie.posterUrl ?: '/images/default-poster.png'}" th:alt="${movie.title}" style="width:100%; height: 400px; object-fit: cover;">
+	                                        </a>
+	                                    </div>
+	                                    <div class="movie-content bg-one">
+	                                        <h5 class="title m-0">
+	                                            <a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
+	                                        </h5>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div th:if="${nowShowingMovies == null or #lists.isEmpty(nowShowingMovies)}">
+	                        <p style="text-align: center; padding: 20px; color: #ccc;">No movies currently showing.</p>
+	                    </div>
+	                </div>
+	
+	                <!-- Tab Content "Coming Soon" -->
+	                <div class="movie-content-pane" id="coming-soon-content"
+	                     th:style="${activeTab == 'comingSoon'} ? 'display: block;' : 'display: none;'">
+	                    <div th:if="${comingSoonMovies != null and not #lists.isEmpty(comingSoonMovies)}">
+	                        <div class="row mb-30-none justify-content-center">
+	                            <div class="col-sm-6 col-lg-4" th:each="movie : ${comingSoonMovies}">
+	                                <div class="movie-grid">
+	                                    <div class="movie-thumb c-thumb">
+	                                        <a th:href="@{/movies/detail/{id}(id=${movie.id})}">
+	                                            <img th:src="${movie.posterUrl ?: '/images/default-poster.png'}" th:alt="${movie.title}" style="width:100%; height: 400px; object-fit: cover;">
+	                                        </a>
+	                                    </div>
+	                                    <div class="movie-content bg-one">
+	                                        <h5 class="title m-0">
+	                                            <a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}">Movie Title</a>
+	                                        </h5>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div th:if="${comingSoonMovies == null or #lists.isEmpty(comingSoonMovies)}">
+	                        <p style="text-align: center; padding: 20px; color: #ccc;">No movies coming soon.</p>
+	                    </div>
+	                </div>
+	            </div>
 	        </div>
 	    </div>
 	</section>
@@ -215,5 +244,19 @@
     <script th:src="@{/js/contentInt.js}"></script>
     <script th:src="@{/js/chunk-7ac80a40.js}"></script>
     <script th:src="@{/js/main.js}"></script>
+    
+    <script th:inline="javascript">
+/*<![CDATA[*/
+    $(document).ready(function() {
+        $('#movieTabMenu li').on('click', function() {
+            $('#movieTabMenu li').removeClass('active');
+            $(this).addClass('active');
+            var targetPaneId = $(this).data('tab-target');
+            $('.movie-content-pane').hide();
+            $(targetPaneId).show();
+        });
+    });
+/*]]>*/
+</script>
 </body>
 </html>

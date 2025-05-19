@@ -161,11 +161,11 @@
              <!-- Hiển thị thông báo lỗi/thành công -->
               <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
                   <span th:text="${errorMessage}"></span>
-                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button> <!-- Thêm btn-close-white -->
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
               <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                   <span th:text="${successMessage}"></span>
-                   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button> <!-- Thêm btn-close-white -->
+                   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
             <!-- Bảng Danh sách Phim -->
             <div class="admin-movie-table table-responsive">
@@ -194,7 +194,8 @@
                             <td th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
                             <td th:text="${movie.duration != null ? movie.duration + ' min' : 'N/A'}">120 min</td>
                             <td th:text="${movie.language} ?: 'N/A'">English</td>
-                            <td th:text="${movie.status} ?: 'N/A'">Status</td>
+							<td th:if="${movie.status != null}" th:text="${movie.status.displayName}">Status</td>
+							<td th:if="${movie.status == null}">N/A</td>
                             <!-- Ô chứa các nút Actions với class -->
                             <td class="action-buttons">
                                 <!-- Nút Edit -->

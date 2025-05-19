@@ -2,6 +2,7 @@ package com.example.demo.cinema.controller;
 import com.example.demo.cinema.entity.Format;
 import com.example.demo.cinema.entity.Genre;
 import com.example.demo.cinema.entity.Movie;
+import com.example.demo.cinema.entity.MovieStatus;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.service.FormatService;
 import com.example.demo.cinema.service.GenreService;
@@ -71,6 +72,7 @@ public class AdminController {
         model.addAttribute("allGenres", genreService.getAllGenres());
         model.addAttribute("selectedGenres", List.of());
         model.addAttribute("allFormats", formatService.getAllFormats());
+        model.addAttribute("allMovieStatuses", MovieStatus.values());
         return "admin/movie/form";
     }
 
@@ -84,6 +86,7 @@ public class AdminController {
             model.addAttribute("currentURI", request.getRequestURI());
             model.addAttribute("allGenres", genreService.getAllGenres());
             model.addAttribute("allFormats", formatService.getAllFormats());
+            model.addAttribute("allMovieStatuses", MovieStatus.values());
             
             if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
                 model.addAttribute("selectedGenres",
@@ -155,6 +158,7 @@ public class AdminController {
             model.addAttribute("allGenres", genreService.getAllGenres());
             model.addAttribute("selectedGenres", selectedGenreNames != null ? selectedGenreNames : List.of());
             model.addAttribute("allFormats", formatService.getAllFormats());
+            model.addAttribute("allMovieStatuses", MovieStatus.values());
             model.addAttribute("currentURI", request.getRequestURI());
             return "admin/movie/form";
         }

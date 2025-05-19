@@ -66,13 +66,13 @@ public class Movie {
 
     @Column(name = "poster_url", nullable = false, length = 255)
     private String posterUrl;
-
+    
     @Column(name = "banner_url", length = 255)
     private String bannerUrl;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50)
-    private MovieStatus status = MovieStatus.COMING_SOON;
+    private MovieStatus status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -109,8 +109,8 @@ public class Movie {
         }
     } 
     
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "movie_genre", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "movie_genre", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "genre_id") )
     private Set<Genre> genres = new HashSet<>();
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -119,11 +119,6 @@ public class Movie {
 
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "movie_photos", joinColumns = @JoinColumn(name = "movie_id"))
-    @Column(name = "photo_url", nullable = false, length=255)
-    private List<String> photoUrls = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -285,14 +280,6 @@ public class Movie {
 		this.reviews = reviews;
 	}
 
-	public List<String> getPhotoUrls() {
-		return photoUrls;
-	}
-
-	public void setPhotoUrls(List<String> photoUrls) {
-		this.photoUrls = photoUrls;
-	}
-	
 	public String getGenresDisplay() {
         if (genres == null || genres.isEmpty()) {
             return "";

@@ -195,4 +195,21 @@ public class ShowtimeService {
         }
         return showtimeRepository.findShowtimesByMovieIdAndShowDateAndExperience(movieId, date, experience);
     }
+    
+    @Transactional
+    public void cleanupOldShowtimes() {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        int deletedPastDates = showtimeRepository.deleteByShowDateBefore(today);
+        if (deletedPastDates > 0) {
+        }
+        
+        int deletedTodayPassed = showtimeRepository.deleteByShowDateAndStartTimeBefore(today, now);
+        if (deletedTodayPassed > 0) {
+        }
+
+        if (deletedPastDates == 0 && deletedTodayPassed == 0) {
+        }
+    }
 }

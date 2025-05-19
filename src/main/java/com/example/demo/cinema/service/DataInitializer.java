@@ -85,7 +85,7 @@ public class DataInitializer implements CommandLineRunner {
             createGenreIfNotExist("Healing");
             createGenreIfNotExist("History");
             createGenreIfNotExist("Horror");
-            createGenreIfNotExist("Music");
+            createGenreIfNotExist("Musical");
             createGenreIfNotExist("Mystery");
             createGenreIfNotExist("Romance");
             createGenreIfNotExist("Sci-Fi");

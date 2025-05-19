@@ -199,8 +199,6 @@
 			       th:text="${#temporals.format(dateOpt, 'dd MMM')}"
 			       th:classappend="${selectedDate != null and dateOpt != null and dateOpt.equals(selectedDate)} ? 'active' : ''">
 			    </a>
-			    <a th:href="@{/admin/showtimes/movie/{movieId}(movieId=${movie.id})}"
-			       th:classappend="${selectedDate == null} ? 'active' : ''">All Dates</a>
 			</div>
 			<div th:if="${movie != null and #lists.isEmpty(availableDates) and selectedDate == null}" class="mb-3">
 			    <p>No show dates available for this movie yet.</p>
@@ -222,7 +220,6 @@
                             <th>Start Time</th>
                             <th>End Time (Est.)</th>
                             <th>Experience</th>
-                            <th>Price (VND)</th>
                             <th style="min-width: 100px;">Actions</th>
                         </tr>
                     </thead>
@@ -235,7 +232,6 @@
 							<td th:if="${showtime.startTime == null}">N/A</td>
                             <td th:text="${showtime.startTime != null and showtime.movie?.duration != null ? #temporals.format(showtime.startTime.plusMinutes(showtime.movie.duration), 'HH:mm') : 'N/A'}"></td>
                             <td th:text="${showtime.experience ?: 'N/A'}"></td>
-                            <td th:text="${showtime.price != null ? #numbers.formatDecimal(showtime.price, 1, 'COMMA', 0, 'POINT') : 'N/A'}"></td>
                             <td class="action-buttons">
                                 <a th:href="@{/admin/showtimes/edit/{id}(id=${showtime.id})}" title="Edit"><i class="fas fa-edit"></i></a>
                                 <form th:action="@{/admin/showtimes/delete/{id}(id=${showtime.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this showtime?');">

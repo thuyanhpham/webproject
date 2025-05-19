@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.service.MovieService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class HomeController {
 
@@ -23,7 +25,7 @@ public class HomeController {
 
 
     @GetMapping("/home")
-    public String userHomePage(Model model, Principal principal) {
+    public String userHomePage(Model model, Principal principal, HttpServletRequest request) {
         String username = "Guest";
         if (principal != null) {
             username = principal.getName();
@@ -37,6 +39,15 @@ public class HomeController {
         List<Movie> comingSoonMovies = movieService.findComingSoonMovies(); 
         model.addAttribute("comingSoonMovies", comingSoonMovies);
         model.addAttribute("bannerUrl", "/images/banner.jpg"); 
+        model.addAttribute("currentRequestURI", request.getRequestURI());
+        
+        if (!nowShowingMovies.isEmpty()) {
+            model.addAttribute("activeTab", "nowShowing");
+        } else if (!comingSoonMovies.isEmpty()) {
+            model.addAttribute("activeTab", "comingSoon");
+        } else {
+            model.addAttribute("activeTab", "nowShowing");
+        }
         return "user/home";
     }
 }
