@@ -149,7 +149,6 @@ public class ShowtimeController {
         }
         showtimeForm.setShowDate(showDate);
         showtimeForm.setExperience(experience);
-        showtimeForm.setPrice(price);
 
         if (startTimeString == null || startTimeString.isBlank()) {
             bindingResult.rejectValue("startTime", "showtime.startTime.notBlank", "Start time is required.");
