@@ -118,7 +118,8 @@
 								<li class="list-inline-item date-filter-item" th:each="dateOption : ${availableDates}"
 								    th:classappend="${dateOption != null && selectedDate != null && dateOption.equals(selectedDate)} ? 'active' : ''">
 								    <a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id}, date=${#temporals.format(dateOption, 'yyyy-MM-dd')}, experience=${selectedExperience})}"
-								       th:text="${#temporals.format(dateOption, 'dd/MM')}">Date</a>
+								       th:text="${#temporals.format(dateOption, 'dd/MM')}">
+								    </a>
 								</li>
 				            </ul>
 				        </div>

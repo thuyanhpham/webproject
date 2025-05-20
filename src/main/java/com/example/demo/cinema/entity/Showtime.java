@@ -1,14 +1,15 @@
 package com.example.demo.cinema.entity;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "showtimes")
+@SQLDelete(sql = "UPDATE showtimes SET deleted = true, updated_at = NOW() WHERE id = ?")
 public class Showtime {
 
     @Id
@@ -49,7 +50,7 @@ public class Showtime {
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+            this.updatedAt = LocalDateTime.now();
     }
 
     public Showtime() { }

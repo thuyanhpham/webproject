@@ -138,9 +138,9 @@ public class ShowtimeService {
 
     @Transactional
     public void deleteShowtime(Long id) {
-        Showtime showtime = showtimeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + id + " for deletion. It might have already been soft-deleted or does not exist."));
-        showtimeRepository.deleteById(id);
+    	Showtime showtime = showtimeRepository.findById(id) 
+    	        .orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + id + " or already deleted."));
+    	showtimeRepository.delete(showtime);
     }
 
     @Transactional(readOnly = true)
@@ -192,13 +192,13 @@ public class ShowtimeService {
         }
         return showtimeRepository.findShowtimesByMovieIdAndShowDateAndExperience(movieId, date, experience);
     }
-    
+
     @Transactional
-    public void cleanupOldShowtimes() {
+    public void cleanupOldShowtimesByMarkingAsDeleted() {
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
-        int updatedCount = showtimeRepository.markAsDeletedOldShowtimes(today, now);
+        int updatedCount = showtimeRepository.markOldShowtimesAsDeleted(today, now);
         if (updatedCount > 0) {
-        }
+        } 
     }
 }
