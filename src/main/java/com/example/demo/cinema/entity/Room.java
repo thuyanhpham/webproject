@@ -1,7 +1,10 @@
 package com.example.demo.cinema.entity;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -21,7 +24,14 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Showtime> showtimes = new HashSet<>();
+    
+    private Integer numberOfRows;
+    private Integer seatsPerRow;
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("rowIdentifier ASC, seatNumber ASC")
+    private List<Seat> seats = new ArrayList<>();
+    
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
@@ -33,7 +43,7 @@ public class Room {
         this.capacity = capacity;
         this.isActive = isActive;
     }
-
+    
     public Long getId() {
 		return id;
 	}
@@ -64,6 +74,30 @@ public class Room {
 
 	public void setShowtimes(Set<Showtime> showtimes) {
         this.showtimes = showtimes;
+	}
+	
+	public Integer getNumberOfRows() {
+		return numberOfRows;
+	}
+
+	public void setNumberOfRows(Integer numberOfRows) {
+		this.numberOfRows = numberOfRows;
+	}
+
+	public Integer getSeatsPerRow() {
+		return seatsPerRow;
+	}
+
+	public void setSeatsPerRow(Integer seatsPerRow) {
+		this.seatsPerRow = seatsPerRow;
+	}
+
+	public List<Seat> getSeats() {
+		return seats;
+	}
+
+	public void setSeats(List<Seat> seats) {
+		this.seats = seats;
 	}
 
 	public boolean isActive() {
