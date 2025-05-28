@@ -1,6 +1,8 @@
 package com.example.demo.cinema.entity;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
@@ -28,6 +30,9 @@ public class Showtime {
 
     @Column(nullable = false, length = 50)
     private String experience;
+    
+    @Column(precision = 10, scale = 2) 
+    private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
@@ -103,6 +108,14 @@ public class Showtime {
 		this.experience = experience;
 	}
 
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
 	public Room getRoom() {
 		return room;
 	}
@@ -160,4 +173,5 @@ public class Showtime {
                ", room=" + (room != null ? room.getName() : "null") +
                '}';
     }
+
 }
