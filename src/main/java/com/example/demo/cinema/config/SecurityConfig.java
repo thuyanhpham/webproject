@@ -63,7 +63,7 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/webfonts/**","/static/**"
+                                "/webfonts/**","/static/**", "/demo"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
