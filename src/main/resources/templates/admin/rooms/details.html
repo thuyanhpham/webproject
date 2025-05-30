@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Copy các link CSS -->
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/css.css}" />
+    <!-- ... (các link CSS khác) ... -->
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title th:text="'Admin - Room Details - ' + ${room.name}">Admin - Room Details</title>
+
+    <style>
+        body { background-color: #032055; color: #ccc; }
+        .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
+        .detail-card { background-color: rgba(255,255,255,0.05); border: 1px solid #2d3450; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+        .detail-card h4 { color: #31d7a9; margin-bottom: 15px; border-bottom: 1px solid #2d3450; padding-bottom: 10px;}
+        .detail-card p { margin-bottom: 10px; font-size: 1rem; }
+        .detail-card p strong { color: #a0a3bd; min-width: 120px; display: inline-block; }
+        .table { color: #ccc; border-color: #2d3450; margin-top: 20px;}
+        .table th { color: #e0e0e0; background-color: #11255a; border-bottom-width: 1px; border-color: #3a4164 !important; padding: 10px 15px;}
+        .table td { border-color: #2d3450 !important; vertical-align: middle; padding: 8px 15px;}
+        .color-preview {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            border: 1px solid #555;
+            vertical-align: middle;
+        }
+        .btn-back { display: inline-block; padding: 10px 20px; background: #444; color: #fff; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s ease; border: none; }
+        .btn-back:hover { background: #555; }
+        .btn-configure-seats { display: inline-block; padding: 10px 25px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #001232; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; border: none; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-configure-seats:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
+
+        /* Header styles (copy từ các file khác nếu cần) */
+        .header-section { background: #071240; }
+        .header-section .menu > li > a.active { color: #31d7a9 !important; }
+        /* ... (thêm các style header khác nếu cần) ... */
+         .footer-section { background: #03173a; text-align: center; padding: 20px 0; margin-top: 40px; border-top: 1px solid #1a2c5c;}
+
+    </style>
+</head>
+<body>
+    <!-- Preloader, Overlay, ScrollToTop -->
+    <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
+
+    <!-- Header Admin (Copy từ file list.html của rooms hoặc seat-types và đảm bảo currentURI được sử dụng đúng) -->
+    <header class="header-section" th:replace="~{admin/fragments/header :: adminHeader}"></header>
+
+    <!-- Phần Nội dung Chính: Chi tiết Phòng Chiếu -->
+    <section class="admin-section padding-top padding-bottom">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 10px; margin-bottom:0;">
+                    Room Details: <span th:text="${room.name}">Room Name</span>
+                </h2>
+                <a th:href="@{/admin/rooms}" class="btn-back"><i class="fas fa-arrow-left mr-2"></i> Back to List</a>
+            </div>
+
+            <!-- Thông tin phòng -->
+            <div class="detail-card">
+                <h4>Room Information</h4>
+                <p><strong>ID:</strong> <span th:text="${room.id}">123</span></p>
+                <p><strong>Name:</strong> <span th:text="${room.name}">Room X</span></p>
+                <p><strong>Capacity:</strong> <span th:text="${room.capacity}">150</span> seats</p>
+                <!-- <p th:if="${room.cinema != null}"><strong>Cinema:</strong> <span th:text="${room.cinema.name}">Cinema Complex</span></p> -->
+                <!-- Thêm các thông tin khác của phòng nếu có -->
+            </div>
+
+            <!-- Bảng Chú Thích Loại Ghế -->
+            <div class="detail-card mt-4">
+                <h4>Seat Type Legend (Available Seat Types)</h4>
+                <div th:if="${allSeatTypes != null and not #lists.isEmpty(allSeatTypes)}">
+                    <table class="table table-sm"> <!-- table-sm cho bảng nhỏ gọn hơn -->
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Color</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="seatType : ${allSeatTypes}">
+                                <td th:text="${seatType.name}">Standard</td>
+                                <td th:text="${#numbers.formatDecimal(seatType.price, 0, 'COMMA', 0, 'POINT') + ' VND'}">50,000 VND</td>
+                                <td>
+                                    <span class="color-preview" th:if="${seatType.color != null and !#strings.isEmpty(seatType.color)}"
+                                          th:style="'background-color:' + ${seatType.color}"></span>
+                                    <span th:text="${seatType.color ?: 'N/A'}">#A0A0A0</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:unless="${allSeatTypes != null and not #lists.isEmpty(allSeatTypes)}">
+                    <p>No seat types defined in the system yet. Please add seat types first.</p>
+                </div>
+            </div>
+
+            <!-- Nút để chuyển sang trang cấu hình sơ đồ ghế (Bước tiếp theo của bạn) -->
+            <div class="text-center mt-5">
+                <a th:href="@{/admin/rooms/{roomId}/seat-layout(roomId=${room.id})}" class="btn-configure-seats">
+                    <i class="fas fa-couch mr-2"></i> Configure Seat Layout
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer (Copy từ các file khác) -->
+    <footer class="footer-section" th:replace="~{admin/fragments/footer :: adminFooter}"></footer>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <!-- ... (các script JS khác) ... -->
+    <script th:src="@{/js/main.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+             console.log("Admin room details page loaded.");
+             $('.preloader').fadeOut(500, function() { $(this).remove(); });
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

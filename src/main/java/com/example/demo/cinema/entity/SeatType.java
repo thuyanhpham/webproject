@@ -1,18 +1,48 @@
 package com.example.demo.cinema.entity;
 
-public enum SeatType {
+import java.math.BigDecimal;
 
-	NORMAL("Normal"),
-	VIP("VIP"),
-	COUPLE("couple Seat"),
-	WHEELCHAIR("wheelchair Accessible");
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class SeatType {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	
-	private final String displayName;
-	SeatType(String displayName) {
-		this.displayName = displayName;
+	private String name;
+	private String color;
+	
+	@Column(precision = 10, scale = 2)
+	private BigDecimal price;
+	
+	public Long getId() {
+		return id;
 	}
-	
-	public String getDisplayName() {
-		return displayName;
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+	public BigDecimal getPrice() {
+		return price;
+	}
+	public void setPrice(BigDecimal price) {
+		this.price = price;
 	}
 }
