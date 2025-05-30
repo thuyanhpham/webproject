@@ -2,11 +2,11 @@ package com.example.demo.cinema.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -19,16 +19,22 @@ public class Seat {
 	private Long id;
 	
 	private String rowIdentifier;
-	private int seatNumber;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private SeatType seatType;
 	
 	private boolean isActive = true;
 	
 	@ManyToOne
 	private Room room;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "seat_type_id", nullable = false)
+	private SeatType seatType;
+	
+	@Column(nullable = false)
+	private Integer seatNumber;
+	
+	@Column(length = 10)
+	private String seatLabel;
 	
 	public Long getId() {
 		return id;
@@ -44,14 +50,6 @@ public class Seat {
 
 	public void setRowIdentifier(String rowIdentifier) {
 		this.rowIdentifier = rowIdentifier;
-	}
-
-	public int getSeatNumber() {
-		return seatNumber;
-	}
-
-	public void setSeatNumber(int seatNumber) {
-		this.seatNumber = seatNumber;
 	}
 
 	public SeatType getSeatType() {
@@ -78,7 +76,20 @@ public class Seat {
 		this.room = room;
 	}
 
-	public String getSeatCode() {
-		return rowIdentifier + seatNumber;
+	public Integer getSeatNumber() {
+		return seatNumber;
 	}
+
+	public void setSeatNumber(Integer seatNumber) {
+		this.seatNumber = seatNumber;
+	}
+
+	public String getSeatLabel() {
+		return seatLabel;
+	}
+
+	public void setSeatLabel(String seatLabel) {
+		this.seatLabel = seatLabel;
+	}
+
 }

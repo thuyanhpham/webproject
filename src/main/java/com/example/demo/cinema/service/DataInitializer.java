@@ -3,15 +3,10 @@ package com.example.demo.cinema.service;
 import com.example.demo.cinema.entity.Format;
 import com.example.demo.cinema.entity.Genre;
 import com.example.demo.cinema.entity.Role;
-import com.example.demo.cinema.entity.Room;
-import com.example.demo.cinema.entity.Seat;
-import com.example.demo.cinema.entity.SeatType;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.FormatRepository;
 import com.example.demo.cinema.repository.GenreRepository;
 import com.example.demo.cinema.repository.RoleRepository;
-import com.example.demo.cinema.repository.RoomRepository;
-import com.example.demo.cinema.repository.SeatRepository;
 import com.example.demo.cinema.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +16,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -35,26 +27,20 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoomRepository roomRepository;
     private final GenreRepository genreRepository;
     private final FormatRepository formatRepository;
-    private final SeatRepository seatRepository;
 
     @Autowired 
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
-                           RoomRepository roomRepository,
                            GenreRepository genreRepository,
-                           FormatRepository formatRepository,
-                           SeatRepository seatRepository) {
+                           FormatRepository formatRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roomRepository = roomRepository;
         this.genreRepository = genreRepository;
         this.formatRepository = formatRepository;
-        this.seatRepository = seatRepository;
     }
 
     @Override
@@ -72,15 +58,7 @@ public class DataInitializer implements CommandLineRunner {
              
             String adminUsername = "thuyanhne";
             createAdminUserIfNotExist(adminRole, adminUsername);
-            
-            //Tạo Room
-            createRoomWithSeats("Phòng 1", 10, 12);
-            createRoomWithSeats("Phòng 2", 10, 12);
-            createRoomWithSeats("Phòng 3", 10, 15);
-            createRoomWithSeats("Phòng 4", 8, 11);
-            createRoomWithSeats("Phòng 5", 8, 10);
-            createRoomWithSeats("Phòng 6 (Inactive)", 8, 10, false);
-            
+
             //Tạo Genre
             createGenreIfNotExist("Action");
             createGenreIfNotExist("Adventure");
@@ -114,66 +92,6 @@ public class DataInitializer implements CommandLineRunner {
             throw new RuntimeException("Data initialization failed.", e);
         }
         
-    }
-
-    private void createRoomWithSeats(String name, int rows, int cols) {
-        createRoomWithSeats(name, rows, cols, true);
-    }
-
-    private void createRoomWithSeats(String name, int rows, int cols, boolean isActive) {
-        Room room = findOrCreateRoom(name, rows * cols, isActive);
-        if (room != null) {
-            generateSeatsForRoom(room, rows, cols);
-        }
-    }
-
-    private Room findOrCreateRoom(String roomName, int capacity) {
-        return findOrCreateRoom(roomName, capacity, true);
-    }
-
-    private Room findOrCreateRoom(String roomName, int capacity, boolean isActive) {
-        Optional<Room> roomOpt = roomRepository.findByName(roomName);
-        if (roomOpt.isPresent()) {
-            return roomOpt.get();
-        } else {
-            Room newRoom = new Room();
-            newRoom.setName(roomName);
-            newRoom.setCapacity(capacity);
-            newRoom.setActive(isActive);
-
-            try {
-                Room savedRoom = roomRepository.save(newRoom);
-                return savedRoom;
-            } catch (Exception e) {
-                log.error("!!! Error saving Room '{}': {}", roomName, e.getMessage(), e);
-                return null;
-            }
-        }
-    }
-
-    private void generateSeatsForRoom(Room room, int rowCount, int seatsPerRow) {
-        List<Seat> seats = new ArrayList<>();
-        for (int row = 0; row < rowCount; row++) {
-            char rowChar = (char) ('A' + row);
-            for (int col = 1; col <= seatsPerRow; col++) {
-                Seat seat = new Seat();
-                seat.setRowIdentifier(String.valueOf(rowChar));
-                seat.setSeatNumber(col);
-                seat.setRoom(room);
-                seat.setActive(true);
-
-                if (rowChar == 'G' || rowChar == 'H') {
-                    seat.setSeatType(SeatType.VIP);
-                } else if (rowChar == 'J') {
-                    seat.setSeatType(SeatType.COUPLE);
-                } else {
-                    seat.setSeatType(SeatType.NORMAL);
-                }
-
-                seats.add(seat);
-            }
-        }
-        seatRepository.saveAll(seats);
     }
     
     private Genre createGenreIfNotExist(String name) {
