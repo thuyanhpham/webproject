@@ -18,23 +18,27 @@ public class Seat {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(name = "row_identifier", length = 5, nullable = false)
 	private String rowIdentifier;
+	
+	@Column(name = "seat_number", nullable = false)
+	private Integer seatNumber;
 	
 	private boolean isActive = true;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "room_id", nullable = false)
 	private Room room;
 	
-	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seat_type_id", nullable = false)
+	@JoinColumn(name = "seat_type_id", nullable = true)
 	private SeatType seatType;
-	
-	@Column(nullable = false)
-	private Integer seatNumber;
 	
 	@Column(length = 10)
 	private String seatLabel;
+	
+	@Column(name = "is_available", nullable = false)
+    private boolean isAvailable = true;
 	
 	public Long getId() {
 		return id;
@@ -90,6 +94,14 @@ public class Seat {
 
 	public void setSeatLabel(String seatLabel) {
 		this.seatLabel = seatLabel;
+	}
+
+	public boolean isAvailable() {
+		return isAvailable;
+	}
+
+	public void setAvailable(boolean isAvailable) {
+		this.isAvailable = isAvailable;
 	}
 
 }

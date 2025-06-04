@@ -19,8 +19,8 @@ public class Room {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false)
-    private Integer capacity;
+    @Column(name = "capacity", nullable = false)
+    private Integer capacity = 0;
 
     @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Showtime> showtimes = new HashSet<>();
@@ -40,7 +40,7 @@ public class Room {
 
     public Room(String name, Integer capacity, boolean isActive) {
         this.name = name;
-        this.capacity = capacity;
+        this.capacity = 0;
         this.isActive = isActive;
     }
     

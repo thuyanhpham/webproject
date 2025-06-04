@@ -34,4 +34,8 @@ public class SeatTypeService {
 	public Optional<SeatType> findByNameIgnoreCase(String name) {
 		return seatTypeRepository.findByNameIgnoreCase(name);
 	}
+	
+	public List<SeatType> findAllActive() {
+        return seatTypeRepository.findByIsActiveTrueOrderByNameAsc();
+    }
 }

@@ -21,6 +21,9 @@ public class SeatType {
 	@Column(precision = 10, scale = 2)
 	private BigDecimal price;
 	
+	@Column(name = "is_active", nullable = false)
+	    private boolean isActive = true;
+	
 	public Long getId() {
 		return id;
 	}
@@ -45,4 +48,11 @@ public class SeatType {
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
+	public boolean isActive() {
+		return isActive;
+	}
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
 }
