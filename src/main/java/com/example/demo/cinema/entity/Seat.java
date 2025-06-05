@@ -24,6 +24,10 @@ public class Seat {
 	@Column(name = "seat_number", nullable = false)
 	private Integer seatNumber;
 	
+	@Column(name = "row_order", nullable = false)
+    private Integer rowOrder;
+
+	@Column(name = "is_active", nullable = false)
 	private boolean isActive = true;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -102,6 +106,14 @@ public class Seat {
 
 	public void setAvailable(boolean isAvailable) {
 		this.isAvailable = isAvailable;
+	}
+	
+	public Integer getRowOrder() {
+		return rowOrder;
+	}
+
+	public void setRowOrder(Integer rowOrder) {
+		this.rowOrder = rowOrder;
 	}
 
 }

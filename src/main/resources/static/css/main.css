@@ -9310,153 +9310,40 @@ aside {
 }
 .form-select option {color: #212529;}
 
-.seat-map-container { /* ... */ }
-.seat-row { display: flex; margin-bottom: 5px; justify-content: center; }
-.seat-label { width: 25px; display: inline-block; text-align: center; font-weight: bold; align-self: center;}
-.seat-group { display: flex; margin: 0 10px; } /* Nhóm các ghế lại với nhau */
-.seat {
-    width: 30px; height: 30px; margin: 3px;
-    border: 1px solid #555; background-color: #777; /* Màu ghế mặc định (khả dụng nhưng chưa có type) */
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.7em; color: white; cursor: pointer; user-select: none;
-    border-radius: 4px;
-    box-sizing: border-box;
+/* Đặt ở cuối file CSS của bạn */
+
+#add-seat-row-definition-btn,
+#generateLayoutBtn {
+    /* GIỮ NGUYÊN PADDING DỌC HOẶC KHÔNG SET NẾU MUỐN NÓ THEO MẶC ĐỊNH */
+    /* padding-top: .375rem !important; */ /* Ví dụ: giữ padding dọc của Bootstrap .btn */
+    /* padding-bottom: .375rem !important; */
+
+    /* THU NHỎ PADDING NGANG */
+    padding-left: 10px !important;  /* Điều chỉnh giá trị này */
+    padding-right: 10px !important; /* Điều chỉnh giá trị này */
+
+    /* ĐẢM BẢO NÚT KHÔNG BỊ KÉO GIÃN NGANG */
+    width: auto !important;         /* Cho phép nút co lại theo nội dung */
+    min-width: 0 !important;        /* Bỏ min-width nếu có thể */
+    display: inline-block !important; /* Hoặc display mặc định của button nếu nó không phải block */
+
+    /* Các style khác có thể giữ nguyên từ theme hoặc Bootstrap */
+    /* font-size: 0.8rem !important; */ /* Chỉ thay đổi nếu bạn muốn font nhỏ hơn */
+    /* line-height: 1.5 !important; */  /* Giữ line-height mặc định của button */
 }
-.seat.seat-normal.seat-available { background-color: #6c757d; } /* Xám */
-.seat.seat-vip.seat-available { background-color: #e8ca00; color: #333; } /* Vàng */
-.seat.seat-couple.seat-available { background-color: #ff69b4; } /* Hồng */
-.seat.seat-booked { background-color: #dc3545; color: #fff; cursor: not-allowed; opacity: 0.6; } /* Đỏ */
-.seat.seat-unavailable-admin, .seat.seat-unavailable-system { background-color: #343a40; color: #6c757d; cursor: not-allowed; } /* Xám đậm/Đen */
-.seat.seat-selected-by-user { background-color: #28a745; border-color: #1e7e34; color:white;} /* Xanh lá */
-.seat.seat-gap { visibility: hidden; cursor: default; } /* Lối đi */
-.legend { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; }
-.legend-item { display: flex; align-items: center; font-size: 0.9em;}
-.legend-color { width: 20px; height: 20px; margin-right: 5px; border: 1px solid #ddd; display: inline-block;}
-.seat-map-section { margin-top: 40px; }
-.seat-map-container {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: rgba(10, 25, 50, 0.8);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid #2d3450;
-        }
-        .screen {
-            width: 80%;
-            max-width: 600px;
-            height: 30px;
-            background-color: #fff;
-            color: #032055;
-            text-align: center;
-            line-height: 30px;
-            margin-bottom: 30px;
-            border-radius: 15px 15px 0 0;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
-        }
-        .seat-table {
-            border-collapse: separate;
-            border-spacing: 4px 8px; 
-        }
-        .row-identifier-cell {
-            padding-right: 15px;
-            font-weight: bold;
-            color: #a0a3bd;
-            text-align: center;
-            vertical-align: middle;
-            min-width: 30px; 
-        }
-        .seat-cell { padding: 0; }
-        .seat {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #3a4164;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 5px;
-            cursor: pointer; 
-            font-size: 0.75em;
-            color: #fff;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            position: relative; 
-        }
-        .seat:hover { transform: scale(1.1); }
-        .seat.seat-type-unassigned { background-color: #4a5a80; }
 
-        .seat-type-selector-container {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            background-color: #071240;
-            border: 1px solid #31d7a9;
-            border-radius: 4px;
-            padding: 5px;
-            margin-top: 5px;
-            display: none;
-            min-width: 150px;
-        }
-         .seat-type-selector-container select {
-            width: 100%;
-            background-color: #032055;
-            color: #fff;
-            border: 1px solid #2d3450;
-        }
-/* CSS cho Draggable Seat Types */
-        .seat-type-palette { /* Đã có trong .detail-card */ }
-        .seat-type-palette h5 { color: #31d7a9; margin-bottom: 15px; }
-        .draggable-seat-type {
-            display: inline-block;
-            padding: 8px 15px;
-            margin: 5px;
-            border: 1px solid #555;
-            border-radius: 20px;
-            color: #fff; /* Màu chữ mặc định cho các loại ghế kéo */
-            cursor: grab;
-            user-select: none;
-            text-align: center;
-            min-width: 100px;
-            transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s ease;
-        }
-        .draggable-seat-type:hover { box-shadow: 0 0 10px rgba(49, 215, 169, 0.5); }
-        .draggable-seat-type.dragging { opacity: 0.7; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: grabbing; }
+/* Style cho icon bên trong các button này nếu cần */
+#add-seat-row-definition-btn .fas,
+#generateLayoutBtn .fas {
+    margin-right: 5px !important; /* Khoảng cách giữa icon và text, điều chỉnh nếu cần */
+    /* font-size: 1em !important; */ /* Giữ font-size icon bằng text hoặc nhỏ hơn chút */
+    /* vertical-align: middle; */ /* Giữ cách căn chỉnh dọc mặc định */
+}
 
-        /* CSS cho Sơ đồ ghế và Dropzone */
-        .seat-map-section { margin-top: 30px; }
-        .seat-map-container { margin-top: 15px; padding: 20px; background-color: rgba(0,0,0,0.2); border-radius: 5px; display: flex; flex-direction: column; align-items: center; }
-        .screen { width: 80%; max-width: 500px; height: 25px; background-color: #e0e0e0; color: #032055; text-align: center; line-height: 25px; margin-bottom: 25px; border-radius: 10px 10px 0 0; font-weight: bold; box-shadow: 0 3px 10px rgba(255,255,255,0.15); }
-        .seat-table { border-collapse: separate; border-spacing: 3px 6px; }
-        .row-identifier-cell { padding-right: 10px; font-weight: bold; color: #a0a3bd; text-align: center; vertical-align: middle; min-width: 25px; }
-        .seat-cell { padding: 0; }
-        .seat {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #3a4164;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 4px;
-            cursor: default; /* Sẽ là 'grab' cho draggable, 'pointer' nếu có hành động click khác */
-            font-size: 0.7em;
-            color: #FFFFFF; /* Màu chữ mặc định cho số ghế */
-            transition: background-color 0.3s ease, transform 0.15s ease, border-color 0.3s ease;
-            position: relative;
-            /* Màu nền ban đầu sẽ được set bởi class seat-type-unassigned hoặc class cụ thể từ Thymeleaf */
-        }
-        .seat:not(.seat-booked):hover { transform: scale(1.1); border-color: #31d7a9; } /* Hiệu ứng hover cho ghế có thể tương tác */
-        .seat.seat-booked { background-color: #555 !important; cursor: not-allowed; color: #888; border-color: #444 !important;}
-
-        /* Định nghĩa màu cho các loại ghế bằng CLASS CSS */
-        .seat.seat-type-vip { background-color: #FFD700; color: #333; } /* Vàng Gold cho VIP */
-        .seat.seat-type-normal { background-color: #31D7A9; color: #001232; } /* Xanh lá cho Normal */
-        .seat.seat-type-couple { background-color: #A020F0; color: #FFFFFF; } /* Tím cho Couple */
-        .seat.seat-type-unassigned { background-color: #4a5a80; color: #FFFFFF; } /* Xám xanh cho chưa gán */
-        /* Thêm các loại ghế khác nếu có */
-
-        /* Style cho dropzone khi tương tác */
-        .seat.drop-target { border: 2px dashed #31d7a9 !important; transform: scale(1.1); }
-        .seat.drop-active { /* Có thể thêm style cho tất cả dropzone khi đang có drag operation */ }
+/* ĐẶC BIỆT CHO NÚT "Generate Layout..." nếu nó đang là block */
+#generateLayoutBtn {
+    /* Nếu nút này đang chiếm toàn bộ chiều rộng,
+       bạn cần đảm bảo nó không còn là display: block; hoặc width: 100%; nữa */
+    display: inline-block !important; /* Hoặc giá trị display phù hợp khác */
+    width: auto !important; /* Rất quan trọng */
+}

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort; // Cần import Sort
 import org.springframework.stereotype.Service;
 
 import com.example.demo.cinema.entity.Room;
@@ -16,42 +17,52 @@ import com.example.demo.cinema.repository.SeatTypeRepository;
 @Service
 public class SeatService {
 
-	@Autowired
-	private SeatRepository seatRepository;
+    @Autowired
+    private SeatRepository seatRepository;
+
+    @Autowired // <-- THÊM @Autowired Ở ĐÂY
     private SeatTypeRepository seatTypeRepository;
-	
-	public Seat save(Seat seat) {
-		if (seat.getSeatLabel() == null || seat.getSeatLabel().isBlank()) {
+
+    public Seat save(Seat seat) {
+        if (seat.getSeatLabel() == null || seat.getSeatLabel().isBlank()) {
             seat.setSeatLabel(seat.getRowIdentifier() + seat.getSeatNumber());
         }
         return seatRepository.save(seat);
-	}
-	public List<Seat> saveAll(List<Seat> seats) {
-		seats.forEach(seat -> {
+    }
+
+    public List<Seat> saveAll(List<Seat> seats) {
+        seats.forEach(seat -> {
             if (seat.getSeatLabel() == null || seat.getSeatLabel().isBlank()) {
                 seat.setSeatLabel(seat.getRowIdentifier() + seat.getSeatNumber());
             }
         });
         return seatRepository.saveAll(seats);
-	}
-	public Optional<Seat> findById(Long id) {
-		return seatRepository.findById(id);
-	}
-	public List<Seat> findByRoomOrderByRowIdentifierAscSeatNumberAsc(Room room) {
+    }
+
+    public Optional<Seat> findById(Long id) {
+        return seatRepository.findById(id);
+    }
+
+    // Phương thức này có vẻ dùng RowIdentifier, kiểm tra xem bạn có dùng nó không
+    public List<Seat> findByRoomOrderByRowIdentifierAscSeatNumberAsc(Room room) {
         return seatRepository.findByRoomOrderByRowIdentifierAscSeatNumberAsc(room);
     }
-    
+
+    // Phương thức này cũng dùng RowIdentifier, có thể là một trong hai được dùng hoặc cả hai
     public List<Seat> findByRoomIdOrderByRowIdentifierAscSeatNumberAsc(Long roomId) {
         return seatRepository.findByRoomIdOrderByRowIdentifierAscSeatNumberAsc(roomId);
     }
-	public void deleteById(Long id) {
-		seatRepository.deleteById(id);
-	}
-	
-	public void deleteByRoomId(Long roomId) {
+
+    public void deleteById(Long id) {
+        seatRepository.deleteById(id);
+    }
+
+    public void deleteByRoomId(Long roomId) {
         try {
-            seatRepository.deleteByRoomId(roomId);
+            seatRepository.deleteByRoomId(roomId); // Giả sử repository có phương thức này
         } catch (Exception e) {
+            // Cân nhắc việc log lỗi ở đây thay vì chỉ ném RuntimeException chung chung
+            // log.error("Failed to delete seats for room {}: {}", roomId, e.getMessage());
             throw new RuntimeException("Failed to delete seats for room " + roomId, e);
         }
     }
@@ -60,10 +71,27 @@ public class SeatService {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new ResourceNotFoundException("Seat not found with id: " + seatId));
         
+        // Sẽ không còn NullPointerException ở đây sau khi @Autowired SeatTypeRepository
         SeatType newSeatType = seatTypeRepository.findById(seatTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException("SeatType not found with id: " + seatTypeId));
         
         seat.setSeatType(newSeatType);
         return seatRepository.save(seat);
     }
+
+    // === SỬA PHƯƠNG THỨC NÀY ===
+    // Đây là phương thức mà RoomController đang gọi và gây lỗi
+    public List<Seat> findByRoomIdOrderByRowOrderAscSeatNumberAsc(Long roomId) { // Đổi tên tham số 'id' thành 'roomId' cho nhất quán
+        // Bỏ dòng throw new UnsupportedOperationException(...)
+        
+        // Cách 1: Nếu SeatRepository của bạn có phương thức được đặt tên chính xác
+        // (ví dụ: findByRoomIdAndOrderByRowOrderAscSeatNumberAsc)
+        // return seatRepository.findByRoomIdOrderByRowOrderAscSeatNumberAsc(roomId); 
+        // Tên phương thức này phải khớp chính xác với tên trong SeatRepository interface
+
+        // Cách 2: Nếu SeatRepository chỉ có findByRoomId và bạn muốn tự định nghĩa Sort
+        // Đảm bảo các thuộc tính "rowOrder" và "seatNumber" tồn tại trong Entity Seat
+        return seatRepository.findByRoomId(roomId, Sort.by(Sort.Order.asc("rowOrder"), Sort.Order.asc("seatNumber")));
+    }
 }
+

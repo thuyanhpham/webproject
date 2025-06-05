@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.example.demo.cinema.entity.Room;
 import com.example.demo.cinema.entity.SeatType;
 
 public interface SeatTypeRepository extends JpaRepository<SeatType, Long> {
@@ -14,5 +12,6 @@ public interface SeatTypeRepository extends JpaRepository<SeatType, Long> {
 
 	Optional<SeatType> findByName(String name);
 
-	List<SeatType> findByIsActiveTrueOrderByNameAsc();;
+	List<SeatType> findByIsActiveTrueOrderByNameAsc();
+	Optional<SeatType> findFirstByIsActiveTrue();
 }

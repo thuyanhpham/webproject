@@ -3,12 +3,15 @@ package com.example.demo.cinema.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
+
 public class RoomFormDTO {
 
 	private Long id;
 	private String name;
 	private transient Integer capacity = 0;
-	
+	private String seatAssignmentsJson;
+    private boolean isActive = true; 
 	private List<RowDefinitionDTO> rowDefinitions;
 	
 	public RoomFormDTO() {
@@ -46,5 +49,20 @@ public class RoomFormDTO {
 	public void setRowDefinitions(List<RowDefinitionDTO> rowDefinitions) {
 		this.rowDefinitions = rowDefinitions;
 	}
-	
+
+	public String getSeatAssignmentsJson() {
+		return seatAssignmentsJson;
+	}
+
+	public void setSeatAssignmentsJson(String seatAssignmentsJson) {
+		this.seatAssignmentsJson = seatAssignmentsJson;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 }
