@@ -55,7 +55,7 @@
                         </ul>
                     </li>
                     <li class="menu-item" sec:authorize="isAuthenticated()">
-                        <a href="#">Xin chào, <span sec:authentication="name"></span>!</a>
+                        <a th:href="@{/profile}" th:text="'Xin chào, ' + ${#authentication.name} + '!'">Xin chào, User!</a>
                     </li>
                     <li class="header-button pr-0" sec:authorize="isAuthenticated()">
                         <form class="logout-button-form" th:action="@{/logout}" method="post">
