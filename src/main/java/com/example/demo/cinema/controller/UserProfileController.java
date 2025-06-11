@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,8 +34,11 @@ public class UserProfileController {
     @Autowired
     private UserService userService;
 
-    private static final String UPLOAD_DIR = "E:/avamovie/avatars/";
-
+    //private static final String UPLOAD_DIR = "E:/avamovie/avatars/";
+    
+    @Value("${app.upload.dir}") 
+    private String uploadDir; 
+    
     @GetMapping("/profile")
     public String viewUserProfile(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
@@ -84,13 +88,12 @@ public class UserProfileController {
         User existingUser = userService.findByUsername(authentication.getName()).orElse(null);
         if (existingUser == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng để cập nhật.");
-            return "user/userprofile"; // Nên redirect về trang profile
+            return "user/userprofile"; 
         }
 
-        // Xử lý lỗi validation (nếu có)
-        // Nếu có lỗi, bạn nên trả về form editprofile và flash các lỗi
+        
         if (bindingResult.hasErrors()) {
-            // Đảm bảo các trường không sửa được vẫn có giá trị khi trả về form
+            
             user.setUsername(existingUser.getUsername());
             user.setEmail(existingUser.getEmail());
             user.setCreatedAt(existingUser.getCreatedAt());
@@ -99,56 +102,61 @@ public class UserProfileController {
 
             redirectAttributes.addFlashAttribute("user", user);
             redirectAttributes.addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult);
-            return "redirect:/profile/edit"; // Redirect về form chỉnh sửa với lỗi
+            return "redirect:/profile/edit"; 
         }
 
-        // Cập nhật các trường được phép chỉnh sửa từ form vào existingUser
+        
         existingUser.setFullname(user.getFullname());
         existingUser.setPhone(user.getPhone());
         existingUser.setGender(user.getGender());
         existingUser.setBirthday(user.getBirthday());
 
-        // Xử lý upload avatar
+        
         if (!avatarFile.isEmpty()) {
             try {
                 if (avatarFile.getSize() > 2 * 1024 * 1024) { // 2MB
                     redirectAttributes.addFlashAttribute("avatarError", "Kích thước ảnh tối đa là 2MB.");
-                    redirectAttributes.addFlashAttribute("user", existingUser); // Giữ dữ liệu hiện tại
+                    redirectAttributes.addFlashAttribute("user", existingUser); 
                     return "redirect:/profile/edit";
                 }
 
-                Path uploadPath = Paths.get(UPLOAD_DIR);
+                Path uploadPath = Paths.get(uploadDir); 
+                System.out.println("Attempting to create directory: " + uploadPath.toAbsolutePath());
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
+                    System.out.println("Directory created: " + uploadPath.toAbsolutePath());
+                }else {
+                    System.out.println("Directory already exists: " + uploadPath.toAbsolutePath());
                 }
 
                 String fileName = existingUser.getId() + "_" + System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
                 Path filePath = uploadPath.resolve(fileName);
+                System.out.println("Attempting to save file to: " + filePath.toAbsolutePath());
                 Files.copy(avatarFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
+                System.out.println("File saved successfully to: " + filePath.toAbsolutePath());
+                
                 existingUser.setAvatarUrl("/images/avatars/" + fileName);
+                System.out.println("Avatar URL set to: " + existingUser.getAvatarUrl());
 
             } catch (IOException e) {
                 e.printStackTrace();
+                System.err.println("Error saving avatar: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("errorMessage", "Không thể tải lên ảnh đại diện.");
                 redirectAttributes.addFlashAttribute("user", existingUser);
-                return "redirect:/profile/edit"; // Redirect về form chỉnh sửa với lỗi upload
+                return "redirect:/profile/edit"; 
             }
         }
 
-        // Lưu người dùng đã cập nhật
-        userService.save(existingUser); // Sử dụng save() của UserService để cập nhật
+        
+        userService.save(existingUser); 
 
-        // ****** ĐIỀU CHỈNH QUAN TRỌNG NHẤT TẠI ĐÂY ******
-        // Sau khi lưu thành công, lấy lại đối tượng user từ DB để đảm bảo nó có tất cả các trường
-        // bao gồm cả các trường không được gửi từ form như createdAt, email, username, v.v.
-        // Đây cũng là cách tốt nhất để đảm bảo dữ liệu là mới nhất từ DB.
+        
         User updatedUser = userService.findByUsername(authentication.getName()).orElse(null);
         if (updatedUser != null) {
-            redirectAttributes.addFlashAttribute("user", updatedUser); // Chuyển đối tượng đã được cập nhật từ DB
+            redirectAttributes.addFlashAttribute("user", updatedUser); 
         }
 
         redirectAttributes.addFlashAttribute("successMessage", "Cập nhật hồ sơ thành công!");
-        return "redirect:/profile"; // Redirect về trang hiển thị profile
+        return "redirect:/profile"; 
     }
 }
