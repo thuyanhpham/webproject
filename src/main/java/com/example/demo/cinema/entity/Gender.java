@@ -2,5 +2,18 @@ package com.example.demo.cinema.entity;
 
 public enum Gender {
 
-	MALE, FEMALE, OTHER
+	  MALE("Nam"),
+	    FEMALE("Nữ"),
+	    OTHER("Khác");
+
+	    private final String displayName; 
+
+
+	    Gender(String displayName) {
+	        this.displayName = displayName;
+	    }
+
+	    public String getDisplayName() {
+	        return displayName;
+	    }
 }
