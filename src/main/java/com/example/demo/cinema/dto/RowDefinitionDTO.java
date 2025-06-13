@@ -2,6 +2,7 @@ package com.example.demo.cinema.dto;
 
 public class RowDefinitionDTO {
 
+	private Long id;
 	private String identifier;
 	private Integer numberOfSeats;
 	private Integer order;
@@ -30,6 +31,12 @@ public class RowDefinitionDTO {
 	}
 	public void setSeatTypeId(Long seatTypeId) {
 		this.seatTypeId = seatTypeId;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }

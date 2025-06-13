@@ -23,7 +23,6 @@ public class SeatTypeController {
     public String listSeatTypes(Model model, HttpServletRequest request) {
         model.addAttribute("seatTypes", seatTypeService.findAll());
         model.addAttribute("currentURI", request.getRequestURI());
-
         return "admin/seat-types/list";
     }
 

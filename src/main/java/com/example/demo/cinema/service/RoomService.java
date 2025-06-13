@@ -13,9 +13,6 @@ import com.example.demo.cinema.repository.SeatTypeRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,8 +24,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
-
-    private static final Logger log = LoggerFactory.getLogger(RoomService.class);
 
     private final RoomRepository roomRepository;
     private final SeatService seatService;
@@ -50,7 +45,6 @@ public class RoomService {
     }
 
     public List<Room> getAllRoomsOrderedByName() {
-        log.debug("Fetching all rooms, ordered by name.");
         return roomRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
     
@@ -60,134 +54,130 @@ public class RoomService {
     }
     
     public Optional<Room> findRoomOptionalById(Long id) {
-        log.debug("Finding room by ID (optional): {}", id);
         return roomRepository.findById(id);
     }
 
     public Room findByIdOrThrow(Long id) {
-        log.debug("Finding room by ID or throwing exception: {}", id);
         return roomRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Room not found with ID: {}", id);
                     return new ResourceNotFoundException("Room not found with id: " + id);
                 });
     }
     
     public RoomFormDTO getRoomFormDTOForEdit(Long roomId) {
-        log.info("Preparing RoomFormDTO for editing room ID: {}", roomId);
         Room roomEntity = findByIdOrThrow(roomId);
         RoomFormDTO roomForm = new RoomFormDTO();
         roomForm.setId(roomEntity.getId());
         roomForm.setName(roomEntity.getName());
         roomForm.setActive(roomEntity.isActive());
 
-        List<Seat> seatsInRoom = seatService.findByRoomIdOrderByRowOrderAscSeatNumberAsc(roomEntity.getId());
-        log.debug("Found {} seats for room ID: {}.", seatsInRoom.size(), roomEntity.getId());
+        List<Seat> seatsInRoom = seatService.findByRoomIdOrderByRowOrderAscSeatNumberAsc(roomId);
 
-        // 1. Xây dựng List<RowDefinitionDTO> từ Seat entities
         List<RowDefinitionDTO> rowDefinitionDTOs = new ArrayList<>();
+        Map<String, List<SeatInAssignmentDTO>> seatAssignmentsForJsonMap = new LinkedHashMap<>();
+
         if (!seatsInRoom.isEmpty()) {
-            Map<String, List<Seat>> seatsByRowId = seatsInRoom.stream()
+            Map<String, Map<Integer, List<Seat>>> seatsGroupedByRowAndOrder = seatsInRoom.stream()
                 .collect(Collectors.groupingBy(
                     Seat::getRowIdentifier,
-                    LinkedHashMap::new, // Giữ thứ tự hàng dựa trên seat đầu tiên của mỗi hàng
-                    Collectors.toList()
+                    LinkedHashMap::new,
+                    Collectors.groupingBy(
+                        Seat::getRowOrder,
+                        LinkedHashMap::new, 
+                        Collectors.toList()
+                    )
                 ));
+            
+            List<Map.Entry<String, Map<Integer, List<Seat>>>> sortedRows = new ArrayList<>(seatsGroupedByRowAndOrder.entrySet());
+            sortedRows.sort(Comparator.comparing(entry ->
+                entry.getValue().keySet().stream().min(Integer::compareTo).orElse(Integer.MAX_VALUE)
+            ));
 
-            for (Map.Entry<String, List<Seat>> entry : seatsByRowId.entrySet()) {
-                String rowId = entry.getKey();
-                List<Seat> seatsInThisRow = entry.getValue();
+            for (Map.Entry<String, Map<Integer, List<Seat>>> rowEntry : sortedRows) {
+                String rowIdentifier = rowEntry.getKey();
+                Integer rowOrder = rowEntry.getValue().keySet().stream().findFirst().orElse(0);
+                List<Seat> seatsInThisLogicalRow = rowEntry.getValue().values().stream().flatMap(List::stream)
+                                                    .sorted(Comparator.comparingInt(Seat::getSeatNumber))
+                                                    .collect(Collectors.toList());
 
-                if (!seatsInThisRow.isEmpty()) {
+                if (!seatsInThisLogicalRow.isEmpty()) {
                     RowDefinitionDTO defDTO = new RowDefinitionDTO();
-                    defDTO.setIdentifier(rowId);
-                    defDTO.setNumberOfSeats(seatsInThisRow.size());
-                    defDTO.setOrder(seatsInThisRow.get(0).getRowOrder() != null ? seatsInThisRow.get(0).getRowOrder() : 0);
-
-                    // Xác định seatTypeId "chung" cho RowDefinitionDTO
+                    defDTO.setIdentifier(rowIdentifier);
+                    defDTO.setNumberOfSeats(seatsInThisLogicalRow.size());
+                    defDTO.setOrder(rowOrder);
                     Long commonSeatTypeId = null;
-                    if (seatsInThisRow.get(0).getSeatType() != null) {
-                        commonSeatTypeId = seatsInThisRow.get(0).getSeatType().getId();
-                        for (int i = 1; i < seatsInThisRow.size(); i++) {
-                            Seat currentSeat = seatsInThisRow.get(i);
-                            if (currentSeat.getSeatType() == null || !commonSeatTypeId.equals(currentSeat.getSeatType().getId())) {
-                                commonSeatTypeId = null; break;
+                    if (!seatsInThisLogicalRow.isEmpty() && seatsInThisLogicalRow.get(0).getSeatType() != null) {
+                        commonSeatTypeId = seatsInThisLogicalRow.get(0).getSeatType().getId();
+                        boolean allSame = true;
+                        for (Seat seat : seatsInThisLogicalRow) {
+                            if (seat.getSeatType() == null || !commonSeatTypeId.equals(seat.getSeatType().getId())) {
+                                allSame = false;
+                                break;
                             }
+                        }
+                        if (!allSame) {
+                            commonSeatTypeId = null;
                         }
                     }
                     defDTO.setSeatTypeId(commonSeatTypeId);
                     rowDefinitionDTOs.add(defDTO);
+
+                    List<SeatInAssignmentDTO> seatsInAssignmentRow = seatsInThisLogicalRow.stream()
+                        .map(seat -> {
+                            SeatInAssignmentDTO saDto = new SeatInAssignmentDTO();
+                            saDto.setSeatNumber(seat.getSeatNumber());
+                            saDto.setSeatTypeId(seat.getSeatType() != null ? seat.getSeatType().getId() : null);
+                            return saDto;
+                        })
+                        .collect(Collectors.toList());
+                    seatAssignmentsForJsonMap.computeIfAbsent(rowIdentifier, k -> new ArrayList<>()).addAll(seatsInAssignmentRow);
                 }
             }
-            // Sắp xếp DTOs lại nếu cần (mặc dù LinkedHashMap đã cố gắng giữ thứ tự)
-            rowDefinitionDTOs.sort(Comparator.comparing(RowDefinitionDTO::getOrder, Comparator.nullsLast(Integer::compareTo))
-                                           .thenComparing(RowDefinitionDTO::getIdentifier, yourCustomRowIdentifierComparator()));
         }
         roomForm.setRowDefinitions(rowDefinitionDTOs);
-        log.debug("Built {} RowDefinitionDTOs for edit form.", rowDefinitionDTOs.size());
 
-        // 2. Xây dựng seatAssignmentsJson (List<SeatAssignmentDTO> lồng nhau)
-        List<SeatAssignmentDTO> seatAssignmentsListForJson = new ArrayList<>();
-        if (!rowDefinitionDTOs.isEmpty()) { // Dựa trên DTOs đã tạo ở trên
-             Map<String, List<Seat>> seatsByRowIdMapForJson = seatsInRoom.stream()
-                .collect(Collectors.groupingBy(Seat::getRowIdentifier));
+        List<SeatAssignmentDTO> seatAssignmentsListForJsonFinal = seatAssignmentsForJsonMap.entrySet().stream()
+            .map(entry -> {
+                SeatAssignmentDTO saDto = new SeatAssignmentDTO();
+                saDto.setRowIdentifier(entry.getKey());
+                saDto.setSeats(entry.getValue());
+                return saDto;
+            })
+            .collect(Collectors.toList());
+             seatAssignmentsListForJsonFinal.sort(Comparator.comparing(sa ->
+                rowDefinitionDTOs.stream()
+                    .filter(rd -> rd.getIdentifier().equals(sa.getRowIdentifier()))
+                    .findFirst()
+                    .map(RowDefinitionDTO::getOrder)
+                    .orElse(Integer.MAX_VALUE)
+            ));
 
-            for (RowDefinitionDTO defDto : rowDefinitionDTOs) {
-                String rowId = defDto.getIdentifier();
-                SeatAssignmentDTO rowAssignment = new SeatAssignmentDTO();
-                rowAssignment.setRowIdentifier(rowId);
-                List<Seat> seatsInThisRow = seatsByRowIdMapForJson.getOrDefault(rowId, Collections.emptyList());
-                List<SeatInAssignmentDTO> seatDtosInRow = seatsInThisRow.stream()
-                    .sorted(Comparator.comparingInt(Seat::getSeatNumber))
-                    .map(seat -> {
-                        SeatInAssignmentDTO seatDto = new SeatInAssignmentDTO();
-                        seatDto.setSeatNumber(seat.getSeatNumber());
-                        if (seat.getSeatType() != null) seatDto.setSeatTypeId(seat.getSeatType().getId());
-                        else seatDto.setSeatTypeId(null);
-                        return seatDto;
-                    })
-                    .collect(Collectors.toList());
-                rowAssignment.setSeats(seatDtosInRow);
-                seatAssignmentsListForJson.add(rowAssignment);
-            }
-        }
+
         try {
-            roomForm.setSeatAssignmentsJson(objectMapper.writeValueAsString(seatAssignmentsListForJson));
-            log.debug("Generated seatAssignmentsJson for edit form ({} SeatAssignmentDTOs): {}", seatAssignmentsListForJson.size(), roomForm.getSeatAssignmentsJson().substring(0, Math.min(200, roomForm.getSeatAssignmentsJson().length())));
+            roomForm.setSeatAssignmentsJson(objectMapper.writeValueAsString(seatAssignmentsListForJsonFinal));
         } catch (JsonProcessingException e) {
-            log.error("Error converting seat assignments to JSON for room ID {}: {}", roomId, e.getMessage());
-            roomForm.setSeatAssignmentsJson("[]");
+            roomForm.setSeatAssignmentsJson("[]"); 
         }
         return roomForm;
     }
 
-@Transactional
+    @Transactional
     public Room saveRoomAndLayout(RoomFormDTO roomFormDTO) {
-        log.info("Service: Processing save/update for room DTO: name='{}', id={}. Active: {}", roomFormDTO.getName(), roomFormDTO.getId(), roomFormDTO.isActive());
-
         Room roomEntity;
-        boolean isNewRoom = roomFormDTO.getId() == null;
+        boolean isNewRoom = (roomFormDTO.getId() == null || roomFormDTO.getId() == 0L);
 
         if (isNewRoom) {
-            log.info("Service: Creating a new room.");
             roomEntity = new Room();
         } else {
-            log.info("Service: Updating existing room with ID: {}.", roomFormDTO.getId());
             roomEntity = findByIdOrThrow(roomFormDTO.getId());
-            log.info("Service: Deleting existing seats for room ID: {} before update.", roomEntity.getId());
-            seatService.deleteByRoomId(roomEntity.getId()); // Xóa tất cả Seat entities cũ
-            // Không có RowDefinition entity để xóa khỏi Room
-            log.info("Service: Existing seats cleared for room ID: {}", roomEntity.getId());
+            seatService.deleteByRoomId(roomEntity.getId()); 
         }
 
         roomEntity.setName(roomFormDTO.getName());
         roomEntity.setActive(roomFormDTO.isActive());
-        // roomEntity.setRowDefinitions(null); // Không có trường này trong Room entity nữa
-
-        // Parse seatAssignmentsJson (dạng phẳng từ client) và chuyển thành List<SeatAssignmentDTO> (lồng nhau)
         List<SeatAssignmentDTO> seatAssignmentsNested = parseAndGroupFlatSeatAssignments(roomFormDTO.getSeatAssignmentsJson());
-        Map<String, Map<Integer, Long>> assignedSeatTypesFromClientMap = new HashMap<>();
-        if (seatAssignmentsNested != null && !seatAssignmentsNested.isEmpty()) {
+        Map<String, Map<Integer, Long>> clientAssignedSeatTypes = new HashMap<>();
+        if (seatAssignmentsNested != null) {
             for (SeatAssignmentDTO rowAssignment : seatAssignmentsNested) {
                 Map<Integer, Long> seatsInRowMap = new HashMap<>();
                 if (rowAssignment.getSeats() != null) {
@@ -195,73 +185,60 @@ public class RoomService {
                         seatsInRowMap.put(seatInAssignment.getSeatNumber(), seatInAssignment.getSeatTypeId());
                     }
                 }
-                assignedSeatTypesFromClientMap.put(rowAssignment.getRowIdentifier().trim().toUpperCase(), seatsInRowMap);
+                clientAssignedSeatTypes.put(rowAssignment.getRowIdentifier().trim().toUpperCase(), seatsInRowMap);
             }
-            log.debug("Parsed and grouped assignedSeatTypesFromClientMap: {}", assignedSeatTypesFromClientMap);
-        } else {
-            log.warn("No seat assignments provided or parsed from JSON. Seats will use default or row-defined types.");
         }
 
         List<Seat> seatsToCreate = new ArrayList<>();
         int totalCapacity = 0;
-        List<RowDefinitionDTO> rowDefinitionsFromClientDTO = roomFormDTO.getRowDefinitions();
+        List<RowDefinitionDTO> rowDefinitionsFromClient = roomFormDTO.getRowDefinitions();
 
-        SeatType systemDefaultSeatType = seatTypeRepository.findByName(DEFAULT_SEAT_TYPE_NAME_FOR_NEW_SEATS)
-            .orElseGet(() -> seatTypeRepository.findFirstByIsActiveTrue().orElseThrow(() ->
-                new IllegalStateException("FATAL: No active SeatTypes found and default '" + DEFAULT_SEAT_TYPE_NAME_FOR_NEW_SEATS + "' is missing.")
-            ));
-        log.debug("Service: Using system default SeatType: '{}' (ID: {})", systemDefaultSeatType.getName(), systemDefaultSeatType.getId());
+        final SeatType systemDefaultSeatType = seatTypeRepository.findByName(DEFAULT_SEAT_TYPE_NAME_FOR_NEW_SEATS)
+            .or(() -> seatTypeRepository.findFirstByIsActiveTrue())
+            .orElseThrow(() -> new IllegalStateException("FATAL: Default or any active SeatType not found."));
 
-        if (rowDefinitionsFromClientDTO != null && !rowDefinitionsFromClientDTO.isEmpty()) {
-            rowDefinitionsFromClientDTO.sort(Comparator.comparing(RowDefinitionDTO::getOrder, Comparator.nullsLast(Integer::compareTo))
-                                                    .thenComparing(RowDefinitionDTO::getIdentifier, yourCustomRowIdentifierComparator()));
-            log.debug("Service: Processing {} row definitions from DTO, sorted by order.", rowDefinitionsFromClientDTO.size());
-                 for (RowDefinitionDTO defDTO : rowDefinitionsFromClientDTO) {
+        if (rowDefinitionsFromClient != null && !rowDefinitionsFromClient.isEmpty()) {
+            rowDefinitionsFromClient.sort(Comparator.comparing(RowDefinitionDTO::getOrder, Comparator.nullsLast(Integer::compareTo))
+                                                   .thenComparing(RowDefinitionDTO::getIdentifier, yourCustomRowIdentifierComparator()));
+
+            for (RowDefinitionDTO defDTO : rowDefinitionsFromClient) {
                 if (isValidRowDefinition(defDTO)) {
                     String rowId = defDTO.getIdentifier().trim().toUpperCase();
                     Integer rowOrder = defDTO.getOrder();
 
-                    final SeatType effectivelyFinalRowDefaultType;
+                    final SeatType rowDefaultTypeFromClientDTO;
                     if (defDTO.getSeatTypeId() != null) {
-                        SeatType foundType = seatTypeRepository.findById(defDTO.getSeatTypeId()).orElse(null);
-                        if (foundType == null) {
-                             log.warn("SeatTypeId {} defined in RowDefinitionDTO for row {} not found. Defaulting to null for this row's default.", defDTO.getSeatTypeId(), rowId);
-                             effectivelyFinalRowDefaultType = null;
-                        } else {
-                            effectivelyFinalRowDefaultType = foundType;
+                        rowDefaultTypeFromClientDTO = seatTypeRepository.findById(defDTO.getSeatTypeId()).orElse(null);
+                        if (rowDefaultTypeFromClientDTO == null) {
                         }
                     } else {
-                        effectivelyFinalRowDefaultType = null;
+                        rowDefaultTypeFromClientDTO = null;
                     }
 
-                    Map<Integer, Long> specificAssignmentsForThisRow = assignedSeatTypesFromClientMap.getOrDefault(rowId, Collections.emptyMap());
+                    Map<Integer, Long> specificAssignmentsForThisRow = clientAssignedSeatTypes.getOrDefault(rowId, Collections.emptyMap());
 
                     for (int i = 1; i <= defDTO.getNumberOfSeats(); i++) {
-                        // === TẠO BẢN SAO FINAL CHO i ===
-                        final int currentSeatNumberInLoop = i; // Biến này là effectively final cho lambda
-
+                        final int currentSeatNumber = i;
                         Seat seat = new Seat();
-                        seat.setRoom(roomEntity);
+                        seat.setRoom(roomEntity); 
                         seat.setRowIdentifier(rowId);
-                        seat.setSeatNumber(currentSeatNumberInLoop); // Sử dụng bản sao
+                        seat.setSeatNumber(currentSeatNumber);
                         seat.setRowOrder(rowOrder);
-                        seat.setSeatLabel(rowId + currentSeatNumberInLoop); // Sử dụng bản sao
+                        seat.setSeatLabel(rowId + currentSeatNumber);
                         seat.setAvailable(true);
                         seat.setActive(true);
 
-                        Long specificSeatTypeId = specificAssignmentsForThisRow.get(currentSeatNumberInLoop); // Sử dụng bản sao
+                        Long specificSeatTypeId = specificAssignmentsForThisRow.get(currentSeatNumber);
                         SeatType finalSeatType;
 
-                        if (specificSeatTypeId != null) {
-                            final Long capturedSeatTypeId = specificSeatTypeId;
-                            finalSeatType = seatTypeRepository.findById(capturedSeatTypeId)
-                                .orElseGet(() -> { // Lambda expression
-                                    log.warn("SeatType with ID {} (from specific assignment for {}_{}) not found. Falling back.",
-                                             capturedSeatTypeId, rowId, currentSeatNumberInLoop); // SỬ DỤNG currentSeatNumberInLoop
-                                    return effectivelyFinalRowDefaultType != null ? effectivelyFinalRowDefaultType : systemDefaultSeatType;
+                        if (specificSeatTypeId != null) { 
+                            final Long capturedId = specificSeatTypeId;
+                            finalSeatType = seatTypeRepository.findById(capturedId)
+                                .orElseGet(() -> {
+                                    return rowDefaultTypeFromClientDTO != null ? rowDefaultTypeFromClientDTO : systemDefaultSeatType;
                                 });
-                        } else if (effectivelyFinalRowDefaultType != null) {
-                            finalSeatType = effectivelyFinalRowDefaultType;
+                        } else if (rowDefaultTypeFromClientDTO != null) { 
+                            finalSeatType = rowDefaultTypeFromClientDTO;
                         } else {
                             finalSeatType = systemDefaultSeatType;
                         }
@@ -269,54 +246,31 @@ public class RoomService {
                         seatsToCreate.add(seat);
                         totalCapacity++;
                     }
-                } else {
-                    log.warn("Service: Invalid row definition DTO skipped: {}", defDTO);
                 }
             }
-            
-        } else {
-             log.warn("No row definitions provided in DTO for room: {}", roomFormDTO.getName());
-        }
+        } 
 
-        // Lưu Room Entity trước để có ID (nếu là mới)
-        // Các thay đổi như name, active đã được set.
-        // Capacity sẽ được set và lưu ở cuối.
         if (isNewRoom) {
-             roomEntity = roomRepository.save(roomEntity);
-             // Cập nhật room reference cho các Seat (nếu cần, mặc dù đã set ở trên,
-             // nhưng nếu ID của roomEntity thay đổi sau khi save, cần cập nhật lại)
-             final Room persistedRoom = roomEntity; // final cho lambda/stream
-             seatsToCreate.forEach(seat -> seat.setRoom(persistedRoom));
+            roomEntity = roomRepository.save(roomEntity);
+            final Room persistedRoom = roomEntity;
+            seatsToCreate.forEach(seat -> seat.setRoom(persistedRoom));
         }
-
-
         roomEntity.setCapacity(totalCapacity);
-        Room finalSavedRoom = roomRepository.save(roomEntity); // Lưu Room với capacity
-
+        Room finalSavedRoom = roomRepository.save(roomEntity);
         if (!seatsToCreate.isEmpty()) {
-            // Nếu roomEntity không phải mới, ID đã có, seats đã được set room ref đúng.
-            // Nếu roomEntity mới, ID đã được lấy sau lần save đầu, seats đã được cập nhật room ref.
             seatService.saveAll(seatsToCreate);
-            log.info("Service: Created/Updated {} seats for room ID: {}", seatsToCreate.size(), finalSavedRoom.getId());
-        } else {
-            log.info("Service: No seats to create/update for room ID: {}", finalSavedRoom.getId());
         }
-
-        log.info("Service: Room '{}' (ID: {}) finalized save/update with capacity {}. Layout contains {} seats.",
-                 finalSavedRoom.getName(), finalSavedRoom.getId(), finalSavedRoom.getCapacity(), seatsToCreate.size());
         return finalSavedRoom;
     }
     
     private List<SeatAssignmentDTO> parseAndGroupFlatSeatAssignments(String flatSeatAssignmentsJson) {
         if (!StringUtils.hasText(flatSeatAssignmentsJson) || "null".equals(flatSeatAssignmentsJson.trim()) || "[]".equals(flatSeatAssignmentsJson.trim())) {
-            log.warn("flatSeatAssignmentsJson is empty, null, or an empty array. No seat assignments to parse and group.");
             return Collections.emptyList();
         }
         List<Map<String, Object>> flatParsedList;
         try {
             flatParsedList = objectMapper.readValue(flatSeatAssignmentsJson, new TypeReference<List<Map<String, Object>>>() {});
         } catch (JsonProcessingException e) {
-            log.error("Error parsing flatSeatAssignmentsJson: {}. JSON: {}", e.getMessage(), flatSeatAssignmentsJson.substring(0, Math.min(flatSeatAssignmentsJson.length(), 200)));
             return Collections.emptyList();
         }
         Map<String, List<SeatInAssignmentDTO>> groupedByRow = flatParsedList.stream()
@@ -331,7 +285,6 @@ public class RoomService {
                     } else if (seatNumObj instanceof Number) {
                         seatInDto.setSeatNumber(((Number) seatNumObj).intValue());
                     } else {
-                        log.warn("Invalid seatNumber format: {} for row {}", seatNumObj, map.get("rowIdentifier"));
                         return null;
                     }
                     Object seatTypeIdObj = map.get("seatTypeId");
@@ -341,10 +294,7 @@ public class RoomService {
                         } else if (seatTypeIdObj instanceof Long) {
                             seatInDto.setSeatTypeId((Long) seatTypeIdObj);
                         } else if (seatTypeIdObj instanceof String && !((String) seatTypeIdObj).isEmpty()){
-                             try { seatInDto.setSeatTypeId(Long.parseLong((String) seatTypeIdObj)); }
-                             catch (NumberFormatException ignored) {
-                                 log.warn("Could not parse seatTypeId string: '{}' for row {}, seatNum {}", seatTypeIdObj, map.get("rowIdentifier"), seatNumObj);
-                             }
+                            seatInDto.setSeatTypeId(Long.parseLong((String) seatTypeIdObj));
                          }
                     }
                     return seatInDto;
@@ -365,14 +315,10 @@ public class RoomService {
     @Transactional
     public void deleteRoomById(Long id) {
         if (!roomRepository.existsById(id)) {
-            log.warn("Attempted to delete non-existent room with ID: {}", id);
             throw new ResourceNotFoundException("Room not found with id: " + id + " for deletion.");
         }
-        log.info("Service: Attempting to delete seats for room ID: {}", id);
         seatService.deleteByRoomId(id);
-        log.info("Service: Deleting room with ID: {}", id);
         roomRepository.deleteById(id);
-        log.info("Service: Successfully deleted room with ID: {}", id);
     }
 
     private boolean isValidRowDefinition(RowDefinitionDTO def) {
@@ -383,7 +329,6 @@ public class RoomService {
     }
 
     private Comparator<String> yourCustomRowIdentifierComparator() {
-        // ... (giữ nguyên)
         return (s1, s2) -> {
             if (s1 == null && s2 == null) return 0;
             if (s1 == null) return -1;
@@ -396,25 +341,11 @@ public class RoomService {
     }
 
     public boolean isColorDark(String colorCode) {
-        // Logic của bạn để xác định màu tối
-        // Ví dụ:
         if (colorCode == null || colorCode.isEmpty()) {
-            return false; // Hoặc true, tùy theo logic mặc định của bạn
+            return false; 
         }
-        // Chuyển sang chữ thường để so sánh không phân biệt hoa thường
         String lowerColorCode = colorCode.toLowerCase();
-
-        // Các mã màu tối phổ biến (ví dụ)
         Set<String> darkColors = Set.of("#000000", "black", "#333333", "darkblue");
-
-        // Hoặc logic phức tạp hơn dựa trên giá trị RGB
-        // Ví dụ: tính độ sáng (luminance)
-        // int r = Integer.parseInt(colorCode.substring(1, 3), 16);
-        // int g = Integer.parseInt(colorCode.substring(3, 5), 16);
-        // int b = Integer.parseInt(colorCode.substring(5, 7), 16);
-        // double luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        // return luminance < 0.5; // Ngưỡng độ sáng, bạn có thể điều chỉnh
-
         return darkColors.contains(lowerColorCode);
     }
 }

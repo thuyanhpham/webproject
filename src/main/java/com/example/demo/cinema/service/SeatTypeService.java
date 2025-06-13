@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.cinema.entity.SeatType;
 import com.example.demo.cinema.repository.SeatTypeRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service 
 public class SeatTypeService {
 
@@ -35,7 +37,9 @@ public class SeatTypeService {
 		return seatTypeRepository.findByNameIgnoreCase(name);
 	}
 	
+	@Transactional
 	public List<SeatType> findAllActive() {
-        return seatTypeRepository.findByIsActiveTrueOrderByNameAsc();
-    }
+		List<SeatType> types = seatTypeRepository.findByIsActiveTrueOrderByNameAsc();
+		return types;
+	}
 }

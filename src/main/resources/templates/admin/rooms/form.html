@@ -24,101 +24,11 @@
     <title th:text="${roomForm.id == null || roomForm.id == 0} ? 'Admin - Add Room' : 'Admin - Edit Room (' + ${roomForm.name != null ? roomForm.name : ''} + ')'">Admin - Room Form</title>
 
     <style>
-        /* General Theme Styles (Keep yours) */
         .header-section { background: #071240; }
         .header-section .menu > li > a.active { color: #31d7a9 !important; }
         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
         .logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
-
-        /* Row Definition Styles */
-        .row-definition { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; align-items: flex-start; padding-bottom: 10px; border-bottom: 1px dashed #2d3450;}
-        .row-definition:last-child { border-bottom: none; }
-        .row-definition > div { display: flex; flex-direction: column; }
-        .row-definition input[type="text"], .row-definition input[type="number"] { flex-grow: 1; }
-        .row-definition .row-identifier-input-container { min-width: 100px; flex-basis: 150px; }
-        .row-definition .seats-per-row-input-container { min-width: 100px; flex-basis: 150px;}
-        .row-definition .row-order-input-container { min-width: 100px; flex-basis: 120px;}
-        .row-definition .remove-btn-container { display: flex; align-items: center; padding-top: 26px; /* Adjust if needed */ }
-        .btn-remove-row { color: #dc3545; cursor: pointer; font-size: 1.2em; padding: 5px; line-height: 1;}
-        .btn-remove-row:hover { color: #ff4343; }
-        .required-star { color: #ff4d4f; margin-left: 2px; font-weight: bold; }
-        .field-error { font-size: 0.8em; display: block; min-height: 1em; }
-
-
-        /* Seat Assignment Styles */
-        .seat-type-palette-form div.draggable-seat-type { padding: 8px 12px; margin: 5px; border-radius: 5px; color: white; cursor: grab; display: inline-block; text-align: center; min-width: 90px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9em; }
-        .seat-type-palette-form div.draggable-seat-type.dragging { opacity: 0.7; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transform: scale(1.1); }
-        .seat-layout-preview-container { background-color: rgba(0,0,0,0.1); padding: 15px; border-radius: 5px; border: 1px dashed #2d3450; margin-top: 10px; min-height: 100px; }
-        .seat-layout-preview-container .screen-preview { background-color: #222; color: white; padding: 8px; margin-bottom: 15px; border-radius: 3px; font-weight: bold; text-align: center; letter-spacing: 1px; font-size: 0.9em; }
-        .seat-layout-preview-container .seat-row-preview { display: flex; align-items: center; margin-bottom: 5px; }
-        .seat-layout-preview-container .row-identifier-preview { font-weight: bold; color: #a0a3bd; min-width: 30px; text-align: right; margin-right: 10px; }
-        .seat-layout-preview-container .seat-cell-preview { width: 30px; height: 30px; border: 1px solid #555; margin: 2px; display: flex; align-items: center; justify-content: center; font-size: 0.75em; border-radius: 3px; background-color: #6c757d; color: white; transition: background-color 0.2s ease, transform 0.1s ease; }
-        .seat-layout-preview-container .seat-cell-preview.drop-active { border-color: #31d7a9; border-style: dashed; }
-        .seat-layout-preview-container .seat-cell-preview.drop-target { background-color: rgba(49, 215, 169, 0.4) !important; transform: scale(1.05); }
-        .no-layout-message { color: #888; text-align: center; padding: 20px;}
-
-        /* Checkbox Is Active */
-        .form-check-input.custom-small-checkbox { width: 0.85em; height: 0.85em; margin-top: 0.25em; transform: scale(0.9); transform-origin: left center; margin-right: 0.3em;}
-        .form-check-label.custom-small-checkbox-label { font-size: 0.9em; padding-left: 0.1em; vertical-align: text-bottom;}
-
-        /* Compact Buttons (Chiều ngang vừa text, chiều cao giữ nguyên) */
-        #add-seat-row-definition-btn,
-        #generateLayoutBtn {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-            width: auto !important;
-            min-width: 0 !important;
-            display: inline-block !important;
-        }
-        #add-seat-row-definition-btn .fas,
-        #generateLayoutBtn .fas {
-            margin-right: 5px !important;
-        }
-        #generateLayoutBtn { /* Đảm bảo nút này không chiếm full width nếu nó có style block */
-            display: inline-block !important;
-        }
-
-        /* Final Save and Cancel Buttons */
-        #finalSaveBtn,
-        a.btn-cancel {
-            display: inline-block !important;
-            width: auto !important;
-            min-width: 0 !important;
-            padding: 8px 16px !important; /* Điều chỉnh padding này để cân đối */
-            font-size: 0.9rem !important;
-            line-height: 1.5 !important;
-            text-align: center;
-            vertical-align: middle;
-            border-radius: 4px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            margin: 0 5px;
-        }
-        #finalSaveBtn {
-            background-color: #31d7a9 !important;
-            color: #0d1422 !important;
-            border-color: #31d7a9 !important;
-            font-weight: bold;
-        }
-        #finalSaveBtn:hover, #finalSaveBtn:focus {
-            background-color: #28b990 !important;
-            border-color: #28b990 !important;
-            color: #ffffff !important;
-        }
-        #finalSaveBtn .fas { margin-right: 6px; }
-
-        a.btn-cancel {
-            background-color: #6c757d !important; /* Bootstrap secondary color */
-            color: #ffffff !important;
-            border-color: #6c757d !important;
-        }
-        a.btn-cancel:hover, a.btn-cancel:focus {
-            background-color: #5a6268 !important;
-            border-color: #545b62 !important;
-            color: #ffffff !important;
-        }
 
     </style>
 </head>
@@ -156,19 +66,24 @@
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
 
                 <div id="step1_defineRoom">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Room Name <span class="required-star">*</span></label>
-                        <input type="text" class="form-control form-input-custom" id="name" th:field="*{name}">
-                        <div class="text-danger field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-                    </div>
+                     <div class="row"> <!-- Bọc trong một .row -->
+                        <div class="col-md-6"> <!-- Cột cho Room Name -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Room Name <span class="required-star">*</span></label>
+                                <input type="text" class="form-control form-input-custom" id="name" th:field="*{name}">
+                                <div class="text-danger field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6"> <!-- Cột cho Total Capacity -->
+                            <div class="mb-3">
+                                <label for="capacityDisplay" class="form-label">Total Capacity (Preview)</label>
+                                <input type="number" class="form-control form-input-custom" id="capacityDisplay" name="displayCapacity" readonly value="0">
+                                <small class="form-text" style="color: #888;">Calculated automatically from defined rows.</small>
+                            </div>
+                        </div>
+                    </div> <!-- Kết thúc .row -->
 
-                    <div class="mb-3">
-                        <label for="capacityDisplay" class="form-label">Total Capacity (Preview)</label>
-                        <input type="number" class="form-control form-input-custom" id="capacityDisplay" name="displayCapacity" readonly value="0">
-                        <small class="form-text" style="color: #888;">Calculated automatically from defined rows.</small>
-                    </div>
-
-                     <div class="mb-3 form-check">
+                    <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input custom-small-checkbox" id="active" th:field="*{active}">
                         <label class="form-check-label custom-small-checkbox-label" for="active">Is Active</label>
                     </div>
@@ -180,27 +95,34 @@
                                 <div th:each="rowDef, iterStat : *{rowDefinitions}" class="row-definition" th:attr="data-row-index=${iterStat.index}">
                                     <input type="hidden" th:field="*{rowDefinitions[__${iterStat.index}__].id}" />
                                     <div class="row-identifier-input-container">
-                                        <label th:for="'rowDefinitions' + ${iterStat.index} + '.identifier'" class="form-label">Row ID <span class="required-star">*</span></label>
-                                        <input type="text" class="form-control form-control-sm row-identifier-input form-input-custom"
-                                                th:field="*{rowDefinitions[__${iterStat.index}__].identifier}"
-                                                placeholder="e.g., A" style="text-transform: uppercase;"/>
-                                        <div class="text-danger field-error small" th:if="${#fields.hasErrors('rowDefinitions[__${iterStat.index}__].identifier')}" th:errors="*{rowDefinitions[__${iterStat.index}__].identifier}"></div>
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'Identifier'" class="form-label">Row ID <span class="required-star">*</span></label>
+                                        <input type="text" th:id="'rowDefinitions' + ${iterStat.index} + 'Identifier'" class="form-control form-control-sm row-identifier-input form-input-custom"
+                                            th:field="*{rowDefinitions[__${iterStat.index}__].identifier}"
+                                            placeholder="e.g., A" style="text-transform: uppercase;"/>
                                     </div>
                                     <div class="seats-per-row-input-container">
-                                        <label th:for="'rowDefinitions' + ${iterStat.index} + '.numberOfSeats'" class="form-label"># Seats <span class="required-star">*</span></label>
-                                        <input type="number" class="form-control form-control-sm seats-per-row-input form-input-custom"
-                                                th:field="*{rowDefinitions[__${iterStat.index}__].numberOfSeats}"
-                                                placeholder="# Seats" min="1"/>
-                                        <div class="text-danger field-error small" th:if="${#fields.hasErrors('rowDefinitions[__${iterStat.index}__].numberOfSeats')}" th:errors="*{rowDefinitions[__${iterStat.index}__].numberOfSeats}"></div>
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'NumberOfSeats'" class="form-label"># Seats <span class="required-star">*</span></label>
+                                        <input type="number" th:id="'rowDefinitions' + ${iterStat.index} + 'NumberOfSeats'" class="form-control form-control-sm seats-per-row-input form-input-custom"
+                                            th:field="*{rowDefinitions[__${iterStat.index}__].numberOfSeats}"
+                                            placeholder="# Seats" min="1" max="15"/>
                                     </div>
                                     <div class="row-order-input-container">
-                                        <label th:for="'rowDefinitions' + ${iterStat.index} + '.order'" class="form-label">Order <span class="required-star">*</span></label>
-                                        <input type="number" class="form-control form-control-sm row-order-input form-input-custom"
-                                                th:field="*{rowDefinitions[__${iterStat.index}__].order}"
-                                                placeholder="Order" min="0"/>
-                                        <div class="text-danger field-error small" th:if="${#fields.hasErrors('rowDefinitions[__${iterStat.index}__].order')}" th:errors="*{rowDefinitions[__${iterStat.index}__].order}"></div>
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'Order'" class="form-label">Order <span class="required-star">*</span></label>
+                                        <input type="number" th:id="'rowDefinitions' + ${iterStat.index} + 'Order'" class="form-control form-control-sm row-order-input form-input-custom"
+                                            th:field="*{rowDefinitions[__${iterStat.index}__].order}"
+                                            placeholder="Order" min="0"/>
                                     </div>
-                                    <input type="hidden" th:field="*{rowDefinitions[__${iterStat.index}__].seatTypeId}" />
+
+                                    <div class="row-default-seattype-container">
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'SeatTypeId'" class="form-label">Default Seat Type</label>
+                                        <select th:id="'rowDefinitions' + ${iterStat.index} + 'SeatTypeId'" class="form-select form-select-sm form-input-custom row-default-seat-type-select"
+                                                th:field="*{rowDefinitions[__${iterStat.index}__].seatTypeId}">
+                                            <option value="">-- System Default --</option>
+                                            <option th:each="type : ${availableSeatTypes}"
+                                                    th:value="${type.id}"
+                                                    th:text="${type.name}"></option>
+                                        </select>
+                                    </div>
                                     <div class="remove-btn-container">
                                         <i class="fas fa-times btn-remove-row" title="Remove this row"></i>
                                     </div>
@@ -270,55 +192,51 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
-            console.log("Admin room form page loaded.");
+            if (typeof interact !== 'function') {
+                $('#generateLayoutBtn').prop('disabled', true).css('opacity', 0.5);
+                return;
+            }
             const seatRowsContainer = $('#seat-rows-container');
-
-            const initialRowDefinitionsFromServer = /*[[${roomForm != null && roomForm.rowDefinitions != null ? roomForm.rowDefinitions : null}]]*/ null;
-            const initialSeatAssignmentsJson = /*[[${roomForm.seatAssignmentsJson}]]*/ null; // JSON lồng nhau từ server
-
-            let nextRowIndex = initialRowDefinitionsFromServer ? initialRowDefinitionsFromServer.length : 0;
-
             const seatLayoutPreviewTarget = $('#seat-rows-preview-target');
             const noLayoutMessage = $('#seatLayoutPreview .no-layout-message');
+            const screenPreviewDiv = $('#seatLayoutPreview .screen-preview');
             const seatAssignmentSection = $('#seatAssignmentSection');
             const finalSaveBtn = $('#finalSaveBtn');
             const generateLayoutBtn = $('#generateLayoutBtn');
-            const addRowBtn = $('#add-seat-row-definition-btn'); // Lấy reference nút add row
+            const addRowBtn = $('#add-seat-row-definition-btn');
+            const capacityDisplayInput = $('#capacityDisplay');
+            const seatAssignmentsHiddenInput = $('#seatAssignmentsField');
+            const roomForm = $('#roomForm');
+            const globalErrorDiv = $('#roomForm .global-error');
 
-            let seatAssignments = {}; // Đối tượng để lưu trữ các gán ghế hiện tại
-            let currentGeneratedRowDefinitions = []; // Danh sách các định nghĩa hàng sau khi "Generate Layout"
+            const initialRowDefinitionsFromServer = /*[[${roomForm?.rowDefinitions != null ? roomForm.rowDefinitions : #lists.newList()}]]*/ [];
+            const initialSeatAssignmentsJson = /*[[${roomForm?.seatAssignmentsJson != null ? roomForm.seatAssignmentsJson : '[]'}]]*/ '[]';
+            const initialAvailableSeatTypesRaw = /*[[${availableSeatTypes}]]*/ null;
+            const availableSeatTypes = initialAvailableSeatTypesRaw === null ? [] : initialAvailableSeatTypesRaw;
 
-            const availableSeatTypes = /*[[${availableSeatTypes}]]*/ [];
-            console.log("Available Seat Types on Load:", JSON.stringify(availableSeatTypes));
-            console.log("Initial Row Definitions from Server:", JSON.stringify(initialRowDefinitionsFromServer));
-            console.log("Initial Seat Assignments JSON (nested from service):", initialSeatAssignmentsJson);
+            let nextRowIndex = initialRowDefinitionsFromServer.length;
+            let seatAssignments = {};
+            let currentGeneratedRowDefinitions = [];
 
-            // Hàm kiểm tra màu tối/sáng, đặt ở đầu để các hàm khác có thể gọi
             function isColorDark(hexColor) {
-                if (!hexColor || typeof hexColor !== 'string') return true; // Default là tối nếu không có màu hoặc sai kiểu
+                if (!hexColor || typeof hexColor !== 'string') return true; 
                 let color = hexColor.startsWith('#') ? hexColor.substring(1) : hexColor;
 
-                // Handle shorthand hex (e.g., #000)
                 if (color.length === 3) {
                     color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
                 }
 
                 if (color.length !== 6) {
-                    console.warn("Invalid hex color format encountered:", hexColor);
-                    // Có thể thử phân tích cú pháp RGB nếu cần, hoặc mặc định là tối
                     return true;
                 }
 
                 const r = parseInt(color.substring(0, 2), 16);
                 const g = parseInt(color.substring(2, 4), 16);
                 const b = parseInt(color.substring(4, 6), 16);
-
-                // Sử dụng công thức Luma (Rec. 709) để tính độ sáng
                 const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b);
-                return luma < 128; // Ngưỡng độ sáng (0-255)
+                return luma < 128;
             }
 
-            // Cập nhật màu chữ cho draggable seat types dựa trên isColorDark khi tải trang
             $('.draggable-seat-type').each(function() {
                 const bgColor = $(this).data('seat-type-color') || $(this).css('background-color');
                 if (isColorDark(bgColor)) {
@@ -335,7 +253,6 @@
                     if (!isNaN(seats) && seats > 0) tempCap += seats;
                 });
                 $('#capacityDisplay').val(tempCap);
-                console.log("Calculated temp capacity from INPUTS:", tempCap);
             }
 
             function calculateCapacityFromGeneratedLayout() {
@@ -344,223 +261,286 @@
                     currentGeneratedRowDefinitions.forEach(def => { if (def && !isNaN(def.numberOfSeats)) tempCap += parseInt(def.numberOfSeats); });
                 }
                 $('#capacityDisplay').val(tempCap);
-                console.log("Recalculated capacity from generated layout:", tempCap);
             }
 
             // Hàm tạo HTML cho một hàng định nghĩa
-            function createRowDefinitionHTML(index, identifier = '', seats = 10, order = 0, existingRowDefId = '') {
+            function createRowDefinitionHTML(index, identifier = '', seats = 10, order = 0, existingRowDefId = '', seatTypeIdForRow = null) {
+                const seatTypeIdValue = (seatTypeIdForRow !== null && seatTypeIdForRow !== undefined && String(seatTypeIdForRow).toLowerCase() !== "null" && String(seatTypeIdForRow) !== "") ? String(seatTypeIdForRow) : '';
+                let seatTypeOptionsHTML = '<option value="">-- System Default --</option>';
+
+                if (Array.isArray(availableSeatTypes) && availableSeatTypes.length > 0) {
+                    availableSeatTypes.forEach(type => {
+                        if (type && typeof type.id !== 'undefined' && type.id !== null &&
+                            typeof type.name === 'string' && type.name.trim() !== '') {
+
+                            const typeIdForOption = String(type.id);
+                            const selected = (typeIdForOption === seatTypeIdValue && typeIdValue !== '') ? 'selected' : '';
+                            seatTypeOptionsHTML += `<option value="${typeIdForOption}" ${selected}>${type.name}</option>`;
+                        }
+                    });
+                } 
                 return `
-                <div class="row-definition" data-row-index="${index}">
-                    <input type="hidden" name="rowDefinitions[${index}].id" value="${existingRowDefId}">
-                    <div class="row-identifier-input-container">
-                        <label for="rowDefinitions${index}.identifier" class="form-label">Row ID <span class="required-star">*</span></label>
-                        <input type="text" id="rowDefinitions${index}.identifier" name="rowDefinitions[${index}].identifier"
-                               class="form-control form-control-sm row-identifier-input form-input-custom"
-                               value="${identifier}" placeholder="e.g., A" required style="text-transform: uppercase;"/>
-                        <div class="text-danger small field-error"></div>
-                    </div>
-                    <div class="seats-per-row-input-container">
-                        <label for="rowDefinitions${index}.numberOfSeats" class="form-label"># Seats <span class="required-star">*</span></label>
-                        <input type="number" id="rowDefinitions${index}.numberOfSeats" name="rowDefinitions[${index}].numberOfSeats"
-                               class="form-control form-control-sm seats-per-row-input form-input-custom"
-                               value="${seats}" placeholder="# Seats" min="1" required/>
-                        <div class="text-danger small field-error"></div>
-                    </div>
-                    <div class="row-order-input-container">
-                        <label for="rowDefinitions${index}.order" class="form-label">Order <span class="required-star">*</span></label>
-                        <input type="number" id="rowDefinitions${index}.order" name="rowDefinitions[${index}].order"
-                               class="form-control form-control-sm row-order-input form-input-custom"
-                               value="${order}" placeholder="Order" min="0" required/>
-                        <div class="text-danger small field-error"></div>
-                    </div>
-                    <input type="hidden" name="rowDefinitions[${index}].seatTypeId" value="">
-                    <div class="remove-btn-container"> <i class="fas fa-times btn-remove-row" title="Remove this row"></i> </div>
-                </div>`;
+            <div class="row-definition" data-row-index="${index}">
+                <input type="hidden" name="rowDefinitions[${index}].id" value="${existingRowDefId || ''}">
+                <div class="row-identifier-input-container">
+                    <label for="rowDefinitions${index}Identifier" class="form-label">Row ID <span class="required-star">*</span></label>
+                    <input type="text" id="rowDefinitions${index}Identifier" name="rowDefinitions[${index}].identifier" class="form-control form-control-sm row-identifier-input form-input-custom" value="${identifier}" placeholder="e.g., A" required style="text-transform: uppercase;"/>
+                    <div class="text-danger small field-error"></div>
+                </div>
+                <div class="seats-per-row-input-container">
+                    <label for="rowDefinitions${index}NumberOfSeats" class="form-label"># Seats <span class="required-star">*</span></label>
+                    <input type="number" id="rowDefinitions${index}NumberOfSeats" name="rowDefinitions[${index}].numberOfSeats" class="form-control form-control-sm seats-per-row-input form-input-custom" value="${seats}" placeholder="# Seats" min="1" max="15" required/>
+                    <div class="text-danger small field-error"></div>
+                </div>
+                <div class="row-order-input-container">
+                    <label for="rowDefinitions${index}Order" class="form-label">Order <span class="required-star">*</span></label>
+                    <input type="number" id="rowDefinitions${index}Order" name="rowDefinitions[${index}].order" class="form-control form-control-sm row-order-input form-input-custom" value="${order}" placeholder="Order" min="0" required/>
+                    <div class="text-danger small field-error"></div>
+                </div>
+                <div class="row-default-seattype-container">
+                    <label for="rowDefinitions${index}SeatTypeId" class="form-label">Default Seat Type</label>
+                    <select id="rowDefinitions${index}SeatTypeId" name="rowDefinitions[${index}].seatTypeId" class="form-select form-select-sm form-input-custom row-default-seat-type-select">
+                        ${seatTypeOptionsHTML}
+                    </select>
+                </div>
+                <div class="remove-btn-container"> <i class="fas fa-times btn-remove-row" title="Remove this row"></i> </div>
+            </div>`;
             }
+             addRowBtn.on('click', function () {
+                    let maxOrder = -1;
+                    seatRowsContainer.find('.row-order-input').each(function() {
+                        const val = parseInt($(this).val());
+                        if (!isNaN(val) && val > maxOrder) maxOrder = val;
+                    });
+                    const newOrder = seatRowsContainer.find('.row-definition').length === 0 ? 0 : maxOrder + 1;
+                    const validNextRowIndex = Number.isFinite(nextRowIndex) ? nextRowIndex : seatRowsContainer.find('.row-definition').length;
+                    const defaultIdentifier = String.fromCharCode(65 + validNextRowIndex);
+                    const newRowHTML = createRowDefinitionHTML(validNextRowIndex, defaultIdentifier, 10, newOrder, '', null);
+                    seatRowsContainer.append(newRowHTML);
+                    nextRowIndex = validNextRowIndex + 1; 
+                    calculateTempCapacityFromInputs();
+            });
 
-            // Hàm chuyển sang Step 1 (Define Rows)
-            function switchToStep1() {
-                console.log("Switching to Step 1: Define Rows");
-                seatAssignmentSection.slideUp(); // Ẩn phần gán ghế
-                finalSaveBtn.fadeOut().prop('disabled', true); // Ẩn và vô hiệu hóa nút Save
-                // Bật lại các input ở Step 1
-                $('#step1_defineRoom').find('input:not([type=hidden]), select, textarea').prop('readonly', false);
-                $('#step1_defineRoom').find('.btn-remove-row').prop('disabled', false).show();
-                addRowBtn.prop('disabled', false).show(); // Hiện nút Add row
-                generateLayoutBtn.text('Generate Layout & Proceed to Assign Types').removeClass('btn-warning').addClass('btn-info');
-                calculateTempCapacityFromInputs(); // Cập nhật capacity từ các input hiện tại
-            }
+            seatRowsContainer.on('click', '.btn-remove-row', function () {
+                if (confirm('Are you sure you want to remove this row definition?')) { 
+                    const removedRowIndex = $(this).closest('.row-definition').data('row-index'); 
+                    $(this).closest('.row-definition').remove();
+                    calculateTempCapacityFromInputs();
 
-            // Hàm chuyển sang Step 2 (Assign Seat Types)
-            function switchToStep2() {
-                console.log("Switching to Step 2: Assign Seat Types");
-                seatAssignmentSection.slideDown(); // Hiện phần gán ghế
-                finalSaveBtn.fadeIn().prop('disabled', false); // Hiện và kích hoạt nút Save
-                // Khóa các input ở Step 1
-                $('#step1_defineRoom').find('input:not([type=hidden]), select, textarea').prop('readonly', true);
-                $('#step1_defineRoom').find('.btn-remove-row').prop('disabled', true).hide();
-                addRowBtn.prop('disabled', true).hide(); // Ẩn nút Add row
-                generateLayoutBtn.text('Re-generate Layout (Resets Assignments)').removeClass('btn-info').addClass('btn-warning');
-                calculateCapacityFromGeneratedLayout(); // Cập nhật capacity từ layout đã tạo
-            }
-
-
-            generateLayoutBtn.on('click', function () {
-                console.log("Generate Layout button clicked.");
-                if (seatAssignmentSection.is(':visible')) {
-                    if (!confirm('Re-generating the layout will reset all current seat assignments. Are you sure?')) {
-                        console.log("Layout regeneration cancelled by user.");
-                        return; // Ngừng nếu người dùng hủy
+                    if (seatAssignmentSection.is(':visible')) {
+                        generateLayoutBtn.click();
                     }
                 }
-                // Reset dữ liệu gán ghế khi generate layout mới
-                currentGeneratedRowDefinitions = [];
-                seatAssignments = {};
+            });
+            
+            function switchToStep1() {
+                seatAssignmentSection.slideUp();
+                finalSaveBtn.fadeOut().prop('disabled', true);
+                seatRowsContainer.find('input:not([type=hidden]), select, textarea').prop('readonly', false);
+                seatRowsContainer.find('.btn-remove-row').prop('disabled', false).show();
+                addRowBtn.prop('disabled', false).show();
+                generateLayoutBtn.text('Generate Layout & Proceed to Assign Types').removeClass('btn-warning btn-danger').addClass('btn-info').prop('disabled', false); 
+                calculateTempCapacityFromInputs();
+            }
 
-                let isValidStructure = true;
-                let rowIdentifiersSet = new Set();
-                let hasDefinedRows = false;
+            function switchToStep2() {
+                seatAssignmentSection.slideDown(function() { 
+                });
+                finalSaveBtn.fadeIn().prop('disabled', false);
+                seatRowsContainer.find('input:not([type=hidden]), select, textarea').prop('readonly', true);
+                seatRowsContainer.find('.btn-remove-row').prop('disabled', true).hide();
+                addRowBtn.prop('disabled', true).hide();
+                generateLayoutBtn.text('Re-generate Layout (Resets Assignments)').removeClass('btn-info').addClass('btn-warning').prop('disabled', false);
+            }
 
-                seatRowsContainer.find('.row-definition').each(function (idx) {
+            generateLayoutBtn.on('click', function () {
+                if (seatAssignmentSection.is(':visible')) {
+                    if (!confirm('Re-generating the layout will reset all current seat assignments and row definitions will be unlocked. Are you sure?')) {
+                        return;
+                    }
+                    currentGeneratedRowDefinitions = []; seatAssignments = {};
+                    seatLayoutPreviewTarget.empty();
+                    if(noLayoutMessage && noLayoutMessage.length) noLayoutMessage.show();
+                    if(screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.hide();
+                    if(capacityDisplayInput && capacityDisplayInput.length) capacityDisplayInput.val(0);
+                    switchToStep1();
+                    return;
+                }
+
+                currentGeneratedRowDefinitions = []; seatAssignments = {};
+                let isValidStructure = true, rowIdentifiersSet = new Set(), hasDefinedRows = false;
+
+                seatRowsContainer.find('.row-definition').each(function () {
                     hasDefinedRows = true;
                     const $rowDef = $(this);
                     const identifierInput = $rowDef.find('.row-identifier-input');
                     const seatsInput = $rowDef.find('.seats-per-row-input');
                     const orderInput = $rowDef.find('.row-order-input');
+                    const seatTypeIdDropdown = $rowDef.find('.row-default-seat-type-select');
+                    let seatTypeIdFromDTOValue = seatTypeIdDropdown.length ? seatTypeIdDropdown.val() : null;
+                    if (seatTypeIdFromDTOValue === "") seatTypeIdFromDTOValue = null;
 
-                    // Xóa lỗi cũ và reset border
-                    identifierInput.closest('.row-identifier-input-container').find('.field-error').text('');
-                    seatsInput.closest('.seats-per-row-input-container').find('.field-error').text('');
-                    orderInput.closest('.row-order-input-container').find('.field-error').text('');
-                    $rowDef.css('border', ''); // Reset border style
-
+                    $rowDef.find('.field-error').text(''); $rowDef.css('border', '');
                     const identifier = identifierInput.val().trim().toUpperCase();
                     const numberOfSeats = parseInt(seatsInput.val());
                     const order = parseInt(orderInput.val());
-                    const existingRowId = $rowDef.find(`input[name^="rowDefinitions"][name$=".id"]`).val(); // Lấy ID đã có
-
+                    const existingRowId = $rowDef.find('input[name$=".id"]').val();
                     let rowIsValid = true;
+
                     if (!identifier) { rowIsValid = false; isValidStructure = false; identifierInput.closest('.row-identifier-input-container').find('.field-error').text('Row ID is required.'); }
                     else if (rowIdentifiersSet.has(identifier)) { rowIsValid = false; isValidStructure = false; identifierInput.closest('.row-identifier-input-container').find('.field-error').text('Row ID must be unique.'); }
                     else { rowIdentifiersSet.add(identifier); }
+                    if (isNaN(numberOfSeats) || numberOfSeats < 1) {
+                        rowIsValid = false; isValidStructure = false;
+                        seatsInput.closest('.seats-per-row-input-container').find('.field-error').text('Seats must be > 0.');
+                    } else if (numberOfSeats > 15) {
+                        rowIsValid = false; isValidStructure = false;
+                        seatsInput.closest('.seats-per-row-input-container').find('.field-error').text('Max 15 seats per row.');
+                    }
+                     if (isNaN(order) || order < 0) { rowIsValid = false; isValidStructure = false; orderInput.closest('.row-order-input-container').find('.field-error').text('Order must be >= 0.'); }
 
-                    if (isNaN(numberOfSeats) || numberOfSeats < 1) { rowIsValid = false; isValidStructure = false; seatsInput.closest('.seats-per-row-input-container').find('.field-error').text('Seats must be > 0.'); }
-                    if (isNaN(order) || order < 0) { rowIsValid = false; isValidStructure = false; orderInput.closest('.row-order-input-container').find('.field-error').text('Order must be >= 0.'); }
-
-                    if (!rowIsValid) { $rowDef.css('border', '1px solid red'); }
                     else {
                         currentGeneratedRowDefinitions.push({
-                            id: existingRowId || null, identifier, numberOfSeats, order
+                            id: existingRowId || null, identifier, numberOfSeats, order,
+                            seatTypeIdFromDTO: seatTypeIdFromDTOValue
                         });
                     }
                 });
 
                 if (!isValidStructure || !hasDefinedRows || (currentGeneratedRowDefinitions.length === 0 && hasDefinedRows)) {
-                    const globalErrorContainer = $('#roomForm .global-error');
-                    if (globalErrorContainer.length) {
-                        globalErrorContainer.html('<p>Please correct errors in row definitions (highlighted in red).</p>').show();
-                    } else {
-                        alert(!hasDefinedRows ? 'Please define at least one row.' : 'Please correct errors in row definitions.');
-                    }
-                    switchToStep1(); // Về lại step 1
+                    const message = !hasDefinedRows ? 'Please define at least one row.' : 'Please correct errors in row definitions (highlighted in red).';
+                    if (globalErrorDiv.length) globalErrorDiv.html(`<p>${message}</p>`).show();
+                    else alert(message);
+                    finalSaveBtn.fadeOut().prop('disabled', true); 
                     return;
                 }
-                $('#roomForm .global-error').hide(); // Ẩn lỗi chung nếu thành công
-
+                if (globalErrorDiv.length) globalErrorDiv.hide();
                 currentGeneratedRowDefinitions.sort((a, b) => a.order - b.order);
-                console.log('Validated and Sorted Row Definitions for Layout:', JSON.stringify(currentGeneratedRowDefinitions));
-
                 renderSeatLayoutPreviewDOM(currentGeneratedRowDefinitions);
-                switchToStep2(); // Chuyển sang Step 2
+                switchToStep2();
             });
 
             function renderSeatLayoutPreviewDOM(rowDefinitionsData) {
                 seatLayoutPreviewTarget.empty();
-                seatLayoutPreviewTarget.parent().find('.screen-preview').hide(); // Ẩn screen mặc định
-                noLayoutMessage.show(); // Hiển thị thông báo không có layout mặc định
+                seatAssignments = {};
+                let hasVisibleRows = false;
 
-                let hasRenderedRows = false;
+                if (screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.hide(); else console.warn("SCRIPT - render: screenPreviewDiv not found");
+                if (noLayoutMessage && noLayoutMessage.length) noLayoutMessage.show(); else console.warn("SCRIPT - render: noLayoutMessage not found");
+
                 if (!Array.isArray(rowDefinitionsData) || rowDefinitionsData.length === 0) {
-                    console.log("No row definitions provided for rendering layout.");
-                    return;
-                }
-
-                rowDefinitionsData.forEach(def => {
-                    if (def.identifier && def.numberOfSeats > 0) {
-                        hasRenderedRows = true;
-                        const $seatRowPreview = $('<div>').addClass('seat-row-preview');
-                        $seatRowPreview.append($('<div>').addClass('row-identifier-preview').text(def.identifier));
-                        const $seatCellsContainer = $('<div>').addClass('d-flex flex-wrap');
-
-                        for (let i = 0; i < def.numberOfSeats; i++) {
-                            const seatNumber = i + 1;
-                            const seatKey = `${def.identifier}_${seatNumber}`;
-                            const $seatCell = $('<div>')
-                                .addClass('seat-cell-preview dropzone') // Đảm bảo class 'dropzone'
-                                .attr('title', `Seat: ${def.identifier}${seatNumber} (Unassigned)`)
-                                .text(seatNumber)
-                                .data({
-                                    'seat-key': seatKey,
-                                    'seat-identifier': def.identifier,
-                                    'seat-number': seatNumber,
-                                    'seat-number-display': seatNumber
-                                });
-                            $seatCellsContainer.append($seatCell);
-                            // Khởi tạo trạng thái ghế trong seatAssignments là "Unassigned"
-                            seatAssignments[seatKey] = {
-                                rowIdentifier: def.identifier, seatNumber: seatNumber, typeId: null, typeName: 'Unassigned', color: '#6c757d'
-                            };
-                        }
-                        $seatRowPreview.append($seatCellsContainer);
-                        seatLayoutPreviewTarget.append($seatRowPreview);
-                    }
-                });
-
-                if (hasRenderedRows) {
-                    noLayoutMessage.hide();
-                    seatLayoutPreviewTarget.parent().find('.screen-preview').show();
-                    console.log("Layout rendered. Initializing dropzones for preview elements.");
-                    initializeDropzonesForPreview(); // Quan trọng: Khởi tạo dropzone sau khi DOM được tạo
                 } else {
-                    noLayoutMessage.show();
-                    seatLayoutPreviewTarget.parent().find('.screen-preview').hide();
-                    console.log("No valid rows to render in preview.");
+                    rowDefinitionsData.forEach(def => { 
+                        if (def.identifier && def.numberOfSeats > 0) {
+                            hasVisibleRows = true;
+                            const $seatRowPreview = $('<div>').addClass('seat-row-preview');
+                            $seatRowPreview.append($('<div>').addClass('row-identifier-preview').text(def.identifier));
+                            const $seatCellsContainer = $('<div>').addClass('d-flex flex-wrap');
+
+                            const rowDefaultSeatType = availableSeatTypes.find(st => String(st.id) === String(def.seatTypeIdFromDTO));
+                            const isRowDefaultCouple = rowDefaultSeatType ? !!rowDefaultSeatType.isCouple : false;
+
+                            for (let i = 0; i < def.numberOfSeats; i++) { 
+                                const seatNumber = i + 1; 
+                                const seatKey = `${def.identifier}_${seatNumber}`;
+
+                                let initialTypeId = null;
+                                let initialTypeName = 'Unassigned';
+                                let initialColor = '#6c757d';
+                                let initialIsPartOfCouple = false;
+
+                                if (rowDefaultSeatType) {
+                                    if (isRowDefaultCouple) {
+                                        if (i % 2 === 0 && (i + 1) < def.numberOfSeats) { 
+                                            initialTypeId = rowDefaultSeatType.id;
+                                            initialTypeName = rowDefaultSeatType.name;
+                                            initialColor = rowDefaultSeatType.color;
+                                            initialIsPartOfCouple = true;
+                                        } else if (i % 2 !== 0) { 
+                                            const prevSeatKey = `${def.identifier}_${seatNumber - 1}`;
+                                            if (seatAssignments[prevSeatKey] &&
+                                                seatAssignments[prevSeatKey].isPartOfCouple &&
+                                                String(seatAssignments[prevSeatKey].typeId) === String(rowDefaultSeatType.id)) {
+                                                initialTypeId = rowDefaultSeatType.id;
+                                                initialTypeName = rowDefaultSeatType.name;
+                                                initialColor = rowDefaultSeatType.color;
+                                                initialIsPartOfCouple = true;
+                                            }
+                                        }
+                                    } else { 
+                                        initialTypeId = rowDefaultSeatType.id;
+                                        initialTypeName = rowDefaultSeatType.name;
+                                        initialColor = rowDefaultSeatType.color;
+                                        initialIsPartOfCouple = false;
+                                    }
+                                }
+
+                                seatAssignments[seatKey] = {
+                                    rowIdentifier: def.identifier,
+                                    seatNumber: seatNumber,
+                                    typeId: initialTypeId,
+                                    typeName: initialTypeName,
+                                    color: initialColor,
+                                    isPartOfCouple: initialIsPartOfCouple
+                                };
+
+                                const $seatCell = $('<div>')
+                                    .addClass('seat-cell-preview dropzone')
+                                    .attr('title', `Seat: ${def.identifier}${seatNumber} (${initialTypeName})`)
+                                    .text(initialTypeId ? String(initialTypeName).substring(0, 1).toUpperCase() : seatNumber)
+                                    .css('background-color', initialColor)
+                                    .data({
+                                        'seat-key': seatKey,
+                                        'seat-identifier': def.identifier,
+                                        'seat-number': seatNumber,
+                                        'seat-number-display': seatNumber
+                                    });
+
+                                if (isColorDark(initialColor)) {
+                                    $seatCell.css('color', 'white');
+                                } else {
+                                    $seatCell.css('color', 'black');
+                                }
+                                $seatCellsContainer.append($seatCell);
+                            }
+                            $seatRowPreview.append($seatCellsContainer);
+                            seatLayoutPreviewTarget.append($seatRowPreview);
+                        }
+                    });
                 }
+
+                if (hasVisibleRows) {
+                    if (noLayoutMessage && noLayoutMessage.length) noLayoutMessage.hide();
+                    if (screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.show();
+                    setTimeout(initializeDropzonesForPreview, 50); 
+                } else {
+                    if (noLayoutMessage && noLayoutMessage.length) noLayoutMessage.show();
+                    if (screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.hide();
+                    console.log("SCRIPT: No valid rows to render in preview.");
+                }
+                calculateCapacityFromGeneratedLayout();
             }
 
-
             function initializeDraggableSeatTypes() {
-                // Kiểm tra xem interact đã được tải chưa
                 if (typeof interact === 'undefined') {
-                    console.error("! InteractJS is NOT loaded when trying to initializeDraggableSeatTypes. Cannot initialize draggable elements.");
                     return;
                 }
                 interact('.seat-type-palette-form .draggable-seat-type').draggable({
                     inertia: true,
-                    modifiers: [
-                        interact.modifiers.restrictRect({
-                            restriction: 'parent',
-                            endOnly: true
-                        })
-                    ],
                     autoScroll: true,
                     listeners: {
                         start(event) {
                             $(event.target).addClass('dragging');
-                            console.log("Drag started on:", $(event.target).data('seat-type-name'));
                         },
                         move: dragMoveListener,
                         end(event) {
                             $(event.target).removeClass('dragging');
-                            // Reset position of the dragged element
                             event.target.style.transform = 'translate(0px, 0px)';
                             event.target.setAttribute('data-x', 0);
                             event.target.setAttribute('data-y', 0);
-                            console.log("Drag ended for:", $(event.target).data('seat-type-name'));
                         }
                     }
                 });
-                console.log("Draggable seat types initialized for .seat-type-palette-form .draggable-seat-type");
             }
 
             function dragMoveListener(event) {
@@ -574,140 +554,182 @@
             }
 
             function initializeDropzonesForPreview() {
-    if (typeof interact === 'undefined') {
-        console.error("! InteractJS is NOT loaded when trying to initializeDropzonesForPreview. Cannot initialize dropzone elements.");
-        return;
-    }
-    const selector = '#seatLayoutPreview .seat-cell-preview.dropzone';
-    const elements = $(selector); // jQuery object
-
-    if (elements.length === 0) {
-        console.error("InitializeDropzones: No elements found with selector: " + selector + ". Ensure layout is rendered before this call.");
-        return; // Không có gì để khởi tạo
-    }
-    console.log(`InitializeDropzones: Found ${elements.length} elements. Initializing dropzones using selector: ${selector}`);
-
-    // Thử truyền DOM elements thay vì selector string, có thể ổn định hơn
-    interact(elements.get()) // elements.get() trả về một mảng các DOM elements
-        .dropzone({
-        accept: '.draggable-seat-type',
-        overlap: 'pointer',
-
-        ondropactivate: function (event) {
-            // LOG QUAN TRỌNG: Kiểm tra xem sự kiện này có được kích hoạt không
-            console.log("--- ONDROPACTIVATE FIRED on seat: " + $(event.target).data('seat-key') + " --- Related target (draggable): " + $(event.relatedTarget).data('seat-type-name'));
-            event.target.classList.add('drop-active');
-        },
-        ondragenter: function (event) {
-            console.log("--- ONDRAGENTER FIRED on seat: " + $(event.target).data('seat-key') + " ---");
-            event.target.classList.add('drop-target');
-        },
-        ondragleave: function (event) {
-            console.log("--- ONDRAGLEAVE FIRED on seat: " + $(event.target).data('seat-key') + " ---");
-            event.target.classList.remove('drop-target');
-        },
-        ondrop: function (event) {
-            // LOG QUAN TRỌNG: Kiểm tra xem sự kiện này có được kích hoạt không
-            console.log("--- ONDROP EVENT FIRED! --- Seat: " + $(event.target).data('seat-key') + ", Type: " + $(event.relatedTarget).data('seat-type-name'));
-
-            const dropzoneSeatDiv = $(event.target);
-            const draggableTypeDiv = $(event.relatedTarget);
-
-            const seatKey = dropzoneSeatDiv.data('seat-key');
-            const newSeatTypeId = draggableTypeDiv.data('seat-type-id') === "" ? null : draggableTypeDiv.data('seat-type-id');
-            const newSeatTypeName = draggableTypeDiv.data('seat-type-name') || 'Unassigned';
-            const newSeatTypeColor = draggableTypeDiv.data('seat-type-color') || '#6c757d';
-
-            console.log(`Dropped: typeId=${newSeatTypeId}, typeName=${newSeatTypeName}, color=${newSeatTypeColor} onto seatKey=${seatKey}`);
-
-            // Cập nhật giao diện ghế
-            if (newSeatTypeId === null || newSeatTypeName.toLowerCase() === 'unassign') {
-                dropzoneSeatDiv.text(dropzoneSeatDiv.data('seat-number-display'));
-                dropzoneSeatDiv.css({'background-color': '#6c757d', 'color': 'white'});
-                dropzoneSeatDiv.attr('title', `Seat: ${dropzoneSeatDiv.data('seat-identifier')}${dropzoneSeatDiv.data('seat-number-display')} (Unassigned)`);
-                seatAssignments[seatKey] = {
-                    rowIdentifier: dropzoneSeatDiv.data('seat-identifier'),
-                    seatNumber: dropzoneSeatDiv.data('seat-number'),
-                    typeId: null, typeName: 'Unassigned', color: '#6c757d'
-                };
-            } else {
-                dropzoneSeatDiv.text(String(newSeatTypeName).substring(0, 1).toUpperCase());
-                dropzoneSeatDiv.css('background-color', newSeatTypeColor);
-                if (isColorDark(newSeatTypeColor)) { // Gọi hàm JS isColorDark
-                    dropzoneSeatDiv.css('color', 'white');
-                } else {
-                    dropzoneSeatDiv.css('color', 'black');
+                if (typeof interact !== 'function') {
+                    $('#seatAssignmentSection').prepend('<p class="interact-error-message" style="color:red; text-align:center;">Drop functionality may not work (InteractJS issue).</p>');
+                    return;
                 }
-                dropzoneSeatDiv.attr('title', `Seat: ${dropzoneSeatDiv.data('seat-identifier')}${dropzoneSeatDiv.data('seat-number-display')} (${newSeatTypeName})`);
-                seatAssignments[seatKey] = {
-                    rowIdentifier: dropzoneSeatDiv.data('seat-identifier'),
-                    seatNumber: dropzoneSeatDiv.data('seat-number'),
-                    typeId: newSeatTypeId, typeName: newSeatTypeName, color: newSeatTypeColor
-                };
-            }
-            console.log('Updated seatAssignments for key', seatKey, ':', seatAssignments[seatKey]);
-            // Cập nhật lại JSON ẩn để submit
-            $('#seatAssignmentsField').val(JSON.stringify(Object.values(seatAssignments).map(sa => ({
-                rowIdentifier: sa.rowIdentifier,
-                seatNumber: sa.seatNumber,
-                seatTypeId: (sa.typeId === "" || sa.typeId === undefined) ? null : sa.typeId
-            }))));
-            console.log("Updated hidden #seatAssignmentsField with new assignments.");
-        },
-        ondropdeactivate: function (event) {
-            console.log("--- ONDROPDEACTIVATE FIRED on seat: " + $(event.target).data('seat-key') + " ---");
-            event.target.classList.remove('drop-active', 'drop-target');
-        }
-    });
-    console.log('InteractJS dropzone listeners potentially attached (check individual element logs).');
-}
 
+                const selector = '#seatLayoutPreview .seat-cell-preview.dropzone';
+                const elementsToInit = $(selector).get(); 
 
-            // Xử lý thêm hàng mới
-            addRowBtn.on('click', function () {
-                let maxOrder = -1;
-                seatRowsContainer.find('.row-order-input').each(function() {
-                    const val = parseInt($(this).val());
-                    if (!isNaN(val) && val > maxOrder) maxOrder = val;
-                });
-                const newOrder = seatRowsContainer.find('.row-definition').length === 0 ? 0 : maxOrder + 1;
-                const defaultId = String.fromCharCode(65 + nextRowIndex);
-                seatRowsContainer.append(createRowDefinitionHTML(nextRowIndex, defaultId, 10, newOrder, '')); // ID rỗng cho hàng mới
-                nextRowIndex++;
-                console.log(`Added new row definition. nextRowIndex is now ${nextRowIndex}`);
-                calculateTempCapacityFromInputs();
-            });
+                if (elementsToInit.length === 0) {
+                    return;
+                }
 
-            // Xử lý xóa hàng
-            seatRowsContainer.on('click', '.btn-remove-row', function () {
-                if (confirm('Are you sure?')) {
-                    const removedRowIndex = $(this).closest('.row-definition').data('row-index');
-                    $(this).closest('.row-definition').remove();
-                    console.log(`Removed row definition with data-row-index: ${removedRowIndex}`);
-                    calculateTempCapacityFromInputs();
-                    // Cần reset layout nếu đang ở step 2 để loại bỏ các ghế của hàng này khỏi preview và seatAssignments
-                    if (seatAssignmentSection.is(':visible')) {
-                        console.log("Row removed while in Step 2. Forcing layout regeneration.");
-                        generateLayoutBtn.click(); // Tự động click generate layout để cập nhật
+                interact('.seat-cell-preview.dropzone') 
+                    .dropzone({
+                    accept: '.draggable-seat-type',
+                    overlap: 'pointer',
+
+                    ondropactivate: function (event) {
+                        event.target.classList.add('drop-active');
+                    },
+                    ondragenter: function (event) { 
+                        const dropzoneSeatDiv = $(event.target);
+                        const draggableTypeDiv = $(event.relatedTarget);
+
+                        const draggedColor = draggableTypeDiv.data('seat-type-color') || '#3498db'; 
+                        const draggedTypeName = draggableTypeDiv.data('seat-type-name') || '';
+                        const draggedIsCouple = !!availableSeatTypes.find(st => String(st.id) === String(draggableTypeDiv.data('seat-type-id')))?.isCouple;
+
+                        dropzoneSeatDiv.addClass('drop-target'); 
+                        dropzoneSeatDiv.css('background-color', draggedColor);
+                        dropzoneSeatDiv.text(String(draggedTypeName).substring(0, 1).toUpperCase());
+                        if (isColorDark(draggedColor)) {
+                            dropzoneSeatDiv.css('color', 'white');
+                        } else {
+                            dropzoneSeatDiv.css('color', 'black');
+                        }
+
+                        if (draggedIsCouple) {
+                            const targetSeatNumber = parseInt(dropzoneSeatDiv.data('seat-number'));
+                            if (targetSeatNumber % 2 !== 0) { 
+                                const neighborSeatNumber = targetSeatNumber + 1;
+                                const neighborSeatKey = `${dropzoneSeatDiv.data('seat-identifier')}_${neighborSeatNumber}`;
+                                const $neighborCell = $(`.seat-cell-preview[data-seat-key="${neighborSeatKey}"]`);
+                                if ($neighborCell.length && !$neighborCell.hasClass('occupied-by-another-drag')) { 
+                                    $neighborCell.addClass('drop-target-neighbor') 
+                                                .css('background-color', draggedColor)
+                                                .text(String(draggedTypeName).substring(0, 1).toUpperCase());
+                                    if (isColorDark(draggedColor)) $neighborCell.css('color', 'white'); else $neighborCell.css('color', 'black');
+                                }
+                            }
+                        }
+                    },
+                    ondragleave: function (event) {
+                        const dropzoneSeatDiv = $(event.target);
+                        const seatKey = dropzoneSeatDiv.data('seat-key');
+                        const currentAssignment = seatAssignments[seatKey]; 
+
+                        dropzoneSeatDiv.removeClass('drop-target');
+
+                        if (currentAssignment) {
+                            dropzoneSeatDiv.css('background-color', currentAssignment.color);
+                            dropzoneSeatDiv.text(currentAssignment.typeId ? String(currentAssignment.typeName).substring(0, 1).toUpperCase() : dropzoneSeatDiv.data('seat-number-display'));
+                            if (isColorDark(currentAssignment.color)) {
+                                dropzoneSeatDiv.css('color', 'white');
+                            } else {
+                                dropzoneSeatDiv.css('color', 'black');
+                            }
+                        }
+
+                        const draggableTypeDiv = $(event.relatedTarget);
+                        const draggedIsCouple = !!availableSeatTypes.find(st => String(st.id) === String(draggableTypeDiv.data('seat-type-id')))?.isCouple;
+                        if (draggedIsCouple) {
+                            const targetSeatNumber = parseInt(dropzoneSeatDiv.data('seat-number'));
+                            if (targetSeatNumber % 2 !== 0) {
+                                const neighborSeatNumber = targetSeatNumber + 1;
+                                const neighborSeatKey = `${dropzoneSeatDiv.data('seat-identifier')}_${neighborSeatNumber}`;
+                                const $neighborCell = $(`.seat-cell-preview[data-seat-key="${neighborSeatKey}"]`);
+                                const neighborAssignment = seatAssignments[neighborSeatKey];
+                                if ($neighborCell.length && neighborAssignment) {
+                                    $neighborCell.removeClass('drop-target-neighbor')
+                                                .css('background-color', neighborAssignment.color)
+                                                .text(neighborAssignment.typeId ? String(neighborAssignment.typeName).substring(0, 1).toUpperCase() : $neighborCell.data('seat-number-display'));
+                                    if (isColorDark(neighborAssignment.color)) $neighborCell.css('color', 'white'); else $neighborCell.css('color', 'black');
+                                }
+                            }
+                        }
+                    },
+                    ondrop: function (event) {
+                        const dropzoneSeatDiv = $(event.target);
+                        const draggableTypeDiv = $(event.relatedTarget);
+                        const targetSeatKey = dropzoneSeatDiv.data('seat-key');
+                        const targetRowIdentifier = dropzoneSeatDiv.data('seat-identifier');
+                        const targetSeatNumber = parseInt(dropzoneSeatDiv.data('seat-number'));
+
+                        let droppedSeatTypeIdRaw = draggableTypeDiv.attr('data-seat-type-id');
+                        if (droppedSeatTypeIdRaw === undefined) droppedSeatTypeIdRaw = draggableTypeDiv.data('seat-type-id');
+                        const droppedSeatTypeId = (droppedSeatTypeIdRaw === "" || droppedSeatTypeIdRaw === undefined || String(droppedSeatTypeIdRaw).toLowerCase() === "null") ? null : droppedSeatTypeIdRaw;
+                        const droppedSeatTypeObject = availableSeatTypes.find(st => String(st.id) === String(droppedSeatTypeId));
+                        const droppedIsCouple = droppedSeatTypeObject ? !!droppedSeatTypeObject.isCouple : false;
+
+                        function updateSingleSeat(seatKeyToUpdate, typeToApply, isPartOfNewCouple = false) {
+                            if (!seatAssignments[seatKeyToUpdate]) {
+                                return;
+                            }
+                            const typeId = typeToApply ? typeToApply.id : null;
+                            const typeName = typeToApply ? typeToApply.name : 'Unassigned';
+                            const typeColor = typeToApply ? typeToApply.color : '#6c757d';
+
+                            seatAssignments[seatKeyToUpdate].typeId = typeId;
+                            seatAssignments[seatKeyToUpdate].typeName = typeName;
+                            seatAssignments[seatKeyToUpdate].color = typeColor;
+                            seatAssignments[seatKeyToUpdate].isPartOfCouple = isPartOfNewCouple;
+
+                            const $cell = $(`.seat-cell-preview[data-seat-key="${seatKeyToUpdate}"]`);
+                            if ($cell.length) {
+                                $cell.text(typeId ? String(typeName).substring(0, 1).toUpperCase() : $cell.data('seat-number-display'))
+                                    .css('background-color', typeColor)
+                                    .attr('title', `Seat: ${$cell.data('seat-identifier')}${$cell.data('seat-number-display')} (${typeName})`);
+                                if (isColorDark(typeColor)) $cell.css('color', 'white'); else $cell.css('color', 'black');
+                            }
+                        }
+
+                        if (seatAssignments[targetSeatKey] && seatAssignments[targetSeatKey].isPartOfCouple) {
+                            const oldPairPartnerNumber = targetSeatNumber % 2 === 0 ? targetSeatNumber - 1 : targetSeatNumber + 1;
+                            const oldPairPartnerKey = `${targetRowIdentifier}_${oldPairPartnerNumber}`;
+
+                            if (seatAssignments[oldPairPartnerKey] && seatAssignments[oldPairPartnerKey].isPartOfCouple) {
+                                updateSingleSeat(oldPairPartnerKey, null, false); 
+                            }
+                            updateSingleSeat(targetSeatKey, null, false);
+                        }
+
+                        if (droppedIsCouple) {
+                            if (targetSeatNumber % 2 !== 0) { 
+                                const neighborSeatNumber = targetSeatNumber + 1;
+                                const neighborSeatKey = `${targetRowIdentifier}_${neighborSeatNumber}`;
+
+                                if (seatAssignments[neighborSeatKey]) { 
+                                    if(seatAssignments[neighborSeatKey].isPartOfCouple){
+                                        const neighborOldPairPartnerNumber = neighborSeatNumber % 2 === 0 ? neighborSeatNumber - 1 : neighborSeatNumber + 1;
+                                        if(neighborOldPairPartnerNumber !== targetSeatNumber){
+                                        updateSingleSeat(`${targetRowIdentifier}_${neighborOldPairPartnerNumber}`, null, false);
+                                        }
+                                    }
+                                    updateSingleSeat(targetSeatKey, droppedSeatTypeObject, true); 
+                                    updateSingleSeat(neighborSeatKey, droppedSeatTypeObject, true); 
+                                } else {
+                                    updateSingleSeat(targetSeatKey, null, false);
+                                }
+                            } else { 
+                                updateSingleSeat(targetSeatKey, null, false); 
+                            }
+                        } else { 
+                            updateSingleSeat(targetSeatKey, droppedSeatTypeObject, false); 
+                        }
+
+                        const finalAssignmentsForSubmit = Object.values(seatAssignments).map(sa => ({
+                            rowIdentifier: sa.rowIdentifier, seatNumber: sa.seatNumber,
+                            typeId: (sa.typeId === "" || sa.typeId === undefined || String(sa.typeId).toLowerCase() === "null") ? null : sa.typeId
+                        }));
+                        seatAssignmentsHiddenInput.val(JSON.stringify(finalAssignmentsForSubmit));
                     }
-                }
-            });
+                });
+            }
 
-            // Hàm tải dữ liệu hiện có cho chế độ chỉnh sửa hoặc thêm hàng mặc định cho form mới
             function loadExistingDataForEdit() {
                 const isEditMode = /*[[${roomForm.id != null && roomForm.id != 0}]]*/ false;
                 const hasExistingRowsInDOM = seatRowsContainer.find('.row-definition').length > 0;
 
                 if (isEditMode) {
-                    console.log("Edit mode detected.");
                     if (hasExistingRowsInDOM && initialSeatAssignmentsJson && initialSeatAssignmentsJson !== "[]") {
-                        console.log("Edit mode: Attempting to auto-generate layout and apply assignments.");
-                        // Sắp xếp initialRowDefinitionsFromServer trước khi dùng
                         currentGeneratedRowDefinitions = initialRowDefinitionsFromServer.sort((a,b) => a.order - b.order).map(def => ({
-                            id: def.id, identifier: def.identifier, numberOfSeats: def.numberOfSeats, order: def.order,
-                            // seatTypeIdFromDTO này không dùng trực tiếp trong renderSeatLayoutPreviewDOM,
-                            // mà dùng để khởi tạo seatAssignments ban đầu nếu cần.
-                            // Tuy nhiên, logic hiện tại gán typeId cho từng ghế từ initialSeatAssignmentsJson
+                            id: def.id, 
+                            identifier: def.identifier, 
+                            numberOfSeats: def.numberOfSeats, 
+                            order: def.order,
                             seatTypeIdFromDTO: (def.seatTypeId === "" || def.seatTypeId === undefined || def.seatTypeId === null) ? null : def.seatTypeId
                         }));
 
@@ -715,14 +737,13 @@
 
                         try {
                             const assignmentsFromServer = JSON.parse(initialSeatAssignmentsJson);
-                            console.log("Applying initial seat assignments from server JSON:", assignmentsFromServer);
                             assignmentsFromServer.forEach(rowAssignment => {
                                 if (rowAssignment.seats) {
                                     rowAssignment.seats.forEach(seatInAssign => {
                                         const seatKey = `${rowAssignment.rowIdentifier}_${seatInAssign.seatNumber}`;
-                                        if (seatAssignments[seatKey]) { // Đảm bảo ghế tồn tại trong layout hiện tại
-                                            const seatType = availableSeatTypes.find(st => st.id == seatInAssign.seatTypeId); // So sánh giá trị, không kiểu
+                                        if (seatAssignments[seatKey]) { 
                                             const typeIdToAssign = (seatInAssign.seatTypeId === "" || seatInAssign.seatTypeId === undefined || seatInAssign.seatTypeId === null) ? null : seatInAssign.seatTypeId;
+                                            const seatType = availableSeatTypes.find(st => String(st.id) === String(typeIdToAssign));
 
                                             seatAssignments[seatKey].typeId = typeIdToAssign;
                                             seatAssignments[seatKey].typeName = seatType ? seatType.name : (typeIdToAssign ? 'Unknown Type' : 'Unassigned');
@@ -733,7 +754,7 @@
                                                 if (typeIdToAssign) {
                                                     $seatCell.text(String(seatAssignments[seatKey].typeName).substring(0,1).toUpperCase()).css('background-color', seatAssignments[seatKey].color);
                                                     if (isColorDark(seatAssignments[seatKey].color)) $seatCell.css('color', 'white'); else $seatCell.css('color', 'black');
-                                                } else { // Unassign
+                                                } else { 
                                                     $seatCell.text($seatCell.data('seat-number-display')).css({'background-color': '#6c757d', 'color': 'white'});
                                                 }
                                                 $seatCell.attr('title', `Seat: ${$seatCell.data('seat-identifier')}${$seatCell.data('seat-number-display')} (${seatAssignments[seatKey].typeName})`);
@@ -742,60 +763,41 @@
                                     });
                                 }
                             });
-                            console.log("Applied initial seat assignments from server to UI. Current seatAssignments object:", seatAssignments);
                         } catch (e) {
-                            console.error("Error parsing/applying initialSeatAssignmentsJson:", e);
-                            // Nếu có lỗi, quay về Step 1
                             switchToStep1();
                             return;
                         }
-                        switchToStep2(); // Chuyển sang Step 2 sau khi load dữ liệu
+                        switchToStep2();
                     } else if (!hasExistingRowsInDOM && initialRowDefinitionsFromServer && initialRowDefinitionsFromServer.length > 0) {
-                        // Trường hợp edit form nhưng Thymeleaf không render được row nào (có thể do lỗi backend hoặc Thymeleaf)
-                        // Lúc này, cần tự động render lại các row từ JS nếu có dữ liệu từ server
-                        console.warn("Edit mode detected, but no rows rendered by Thymeleaf. Rendering from initialRowDefinitionsFromServer.");
                         initialRowDefinitionsFromServer.forEach((def, index) => {
                              seatRowsContainer.append(createRowDefinitionHTML(index, def.identifier, def.numberOfSeats, def.order, def.id));
                         });
-                        nextRowIndex = initialRowDefinitionsFromServer.length; // Cập nhật nextRowIndex
+                        nextRowIndex = initialRowDefinitionsFromServer.length;
                         switchToStep1();
                     } else {
-                        console.log("Edit mode, but no initial data for layout or no rows defined, defaulting to Step 1.");
-                        // Nếu là form edit nhưng không có hàng nào cả, thì thêm 1 hàng mặc định
                         if (!hasExistingRowsInDOM) {
                             addRowBtn.click();
                         }
                         switchToStep1();
                     }
                 } else {
-                    console.log("Add New mode detected.");
-                    // Nếu là form Add New và chưa có hàng nào, thêm một hàng mặc định
                     if (!hasExistingRowsInDOM) {
-                        console.log("Add New form and no rows present, adding one default row.");
                         addRowBtn.click();
                     }
-                    switchToStep1(); // Luôn bắt đầu ở Step 1 cho form Add New
+                    switchToStep1(); 
                 }
-                calculateTempCapacityFromInputs(); // Cập nhật capacity ban đầu
+                calculateTempCapacityFromInputs(); 
             }
 
-            // --- INITIALIZATION CALLS ---
             initializeDraggableSeatTypes();
-            // Gọi loadExistingDataForEdit sau khi tất cả các hàm đã được định nghĩa
             loadExistingDataForEdit();
 
-            // Logic submit form
             $('#roomForm').on('submit', function(e) {
-                // Kiểm tra lại nếu form chưa ở Step 2
                 if (seatAssignmentSection.is(':hidden') || finalSaveBtn.is(':hidden') || finalSaveBtn.prop('disabled')) {
-                    alert('Please generate the layout (and optionally assign seat types) before saving.');
                     e.preventDefault();
                     return false;
                 }
 
-                // Cập nhật các input ẩn .seatTypeId trong các .row-definition
-                // (Mặc dù hiện tại UI không cho phép client thay đổi trực tiếp seatTypeId của RowDefinitionDTO)
-                // Các trường này có thể dùng để lưu trữ seatTypeId mặc định cho cả hàng nếu có
                 currentGeneratedRowDefinitions.forEach((def) => {
                     const $rowDiv = seatRowsContainer.find(`.row-definition`).filter(function() {
                         return $(this).find('.row-identifier-input').val().trim().toUpperCase() === def.identifier &&
@@ -804,31 +806,20 @@
 
                     if ($rowDiv.length) {
                         const originalIndex = $rowDiv.data('row-index');
-                        // Gán seatTypeId mặc định cho rowDefinition nếu cần, ví dụ từ một seat assignment phổ biến nhất trong hàng đó
-                        // Hiện tại chúng ta không có logic này, nên có thể để trống hoặc null
                         $rowDiv.find(`input[name="rowDefinitions[${originalIndex}].seatTypeId"]`).val('');
                     }
                 });
 
-                // Chuẩn bị dữ liệu seatAssignments để gửi lên server
                 const finalAssignments = Object.values(seatAssignments).map(sa => ({
                     rowIdentifier: sa.rowIdentifier,
                     seatNumber: sa.seatNumber,
-                    // Đảm bảo typeId là null nếu không có, hoặc giá trị đã gán
                     seatTypeId: (sa.typeId === "" || sa.typeId === undefined) ? null : sa.typeId
                 }));
 
-                // Gán JSON vào input ẩn để gửi đi
                 $('#seatAssignmentsField').val(JSON.stringify(finalAssignments));
-
-                console.log("Submitting form...");
-                console.log("Row Definitions (from form inputs, submitted via Spring Data Binding):", currentGeneratedRowDefinitions);
-                console.log("Seat Assignments JSON (to be submitted via hidden field):", JSON.stringify(finalAssignments));
-                // Form sẽ submit bình thường sau khi dòng này
             });
         });
         /*]]>*/
     </script>
 </body>
 </html>
-

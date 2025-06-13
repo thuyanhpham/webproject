@@ -80,41 +80,7 @@
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
-    <!-- Header Admin -->
-    <header class="header-section">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo">
-                    <a th:href="@{/admin}">
-                        <img th:src="@{/images/logo.png}" alt="logo">
-                         <span style="color: white; margin-left: 10px; font-weight: bold;">Admin Panel</span>
-                    </a>
-                </div>
-                <ul class="menu">
-                    <li><a th:href="@{/admin}" th:classappend="${currentURI != null and (currentURI == '/admin' or currentURI == '/admin/')} ? 'active' : ''">Dashboard</a></li>
-                    <li class="menu-item-has-children" th:classappend="${currentURI != null and (#strings.startsWith(currentURI, '/admin/users') or #strings.startsWith(currentURI, '/admin/movies') or #strings.startsWith(currentURI, '/admin/bookings'))} ? 'active' : ''">
-                        <a href="#">Management</a>
-                        <ul class="submenu">
-                             <li><a th:href="@{/admin/users}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/users')} ? 'active' : ''">Users</a></li>
-                            <li><a th:href="@{/admin/movies}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/movies')} ? 'active' : ''">Movies</a></li>
-                            <li><a th:href="@{/admin/bookings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/bookings')} ? 'active' : ''">Bookings</a></li>
-                        </ul>
-                    </li>
-                    <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li>
-                    <li><a th:href="@{/home}" target="_blank">View Site</a></li>
-                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span>
-						<form class="logout-button-form" th:action="@{/logout}" method="post">
-						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						    <button class="logout-button-styled" type="submit">LOG OUT</button>
-						</form>
-                    </li>
-                </ul>
-                <div class="header-bar d-lg-none"><span></span><span></span><span></span></div>
-            </div>
-        </div>
-    </header>
-    <!-- ==========Header Admin Section========== -->
+    <header class="header-section" th:replace="~{fragments/admin-header :: header}"></header>
 
     <!-- Phần Nội dung Chính: Form Thêm/Sửa Suất Chiếu -->
     <section class="admin-section padding-top padding-bottom">

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort; // Cần import Sort
+import org.springframework.data.domain.Sort; 
 import org.springframework.stereotype.Service;
 
 import com.example.demo.cinema.entity.Room;
@@ -20,7 +20,7 @@ public class SeatService {
     @Autowired
     private SeatRepository seatRepository;
 
-    @Autowired // <-- THÊM @Autowired Ở ĐÂY
+    @Autowired
     private SeatTypeRepository seatTypeRepository;
 
     public Seat save(Seat seat) {
@@ -43,12 +43,10 @@ public class SeatService {
         return seatRepository.findById(id);
     }
 
-    // Phương thức này có vẻ dùng RowIdentifier, kiểm tra xem bạn có dùng nó không
     public List<Seat> findByRoomOrderByRowIdentifierAscSeatNumberAsc(Room room) {
         return seatRepository.findByRoomOrderByRowIdentifierAscSeatNumberAsc(room);
     }
 
-    // Phương thức này cũng dùng RowIdentifier, có thể là một trong hai được dùng hoặc cả hai
     public List<Seat> findByRoomIdOrderByRowIdentifierAscSeatNumberAsc(Long roomId) {
         return seatRepository.findByRoomIdOrderByRowIdentifierAscSeatNumberAsc(roomId);
     }
@@ -59,10 +57,8 @@ public class SeatService {
 
     public void deleteByRoomId(Long roomId) {
         try {
-            seatRepository.deleteByRoomId(roomId); // Giả sử repository có phương thức này
+            seatRepository.deleteByRoomId(roomId);
         } catch (Exception e) {
-            // Cân nhắc việc log lỗi ở đây thay vì chỉ ném RuntimeException chung chung
-            // log.error("Failed to delete seats for room {}: {}", roomId, e.getMessage());
             throw new RuntimeException("Failed to delete seats for room " + roomId, e);
         }
     }
@@ -71,7 +67,6 @@ public class SeatService {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new ResourceNotFoundException("Seat not found with id: " + seatId));
         
-        // Sẽ không còn NullPointerException ở đây sau khi @Autowired SeatTypeRepository
         SeatType newSeatType = seatTypeRepository.findById(seatTypeId)
                 .orElseThrow(() -> new ResourceNotFoundException("SeatType not found with id: " + seatTypeId));
         
@@ -79,18 +74,7 @@ public class SeatService {
         return seatRepository.save(seat);
     }
 
-    // === SỬA PHƯƠNG THỨC NÀY ===
-    // Đây là phương thức mà RoomController đang gọi và gây lỗi
-    public List<Seat> findByRoomIdOrderByRowOrderAscSeatNumberAsc(Long roomId) { // Đổi tên tham số 'id' thành 'roomId' cho nhất quán
-        // Bỏ dòng throw new UnsupportedOperationException(...)
-        
-        // Cách 1: Nếu SeatRepository của bạn có phương thức được đặt tên chính xác
-        // (ví dụ: findByRoomIdAndOrderByRowOrderAscSeatNumberAsc)
-        // return seatRepository.findByRoomIdOrderByRowOrderAscSeatNumberAsc(roomId); 
-        // Tên phương thức này phải khớp chính xác với tên trong SeatRepository interface
-
-        // Cách 2: Nếu SeatRepository chỉ có findByRoomId và bạn muốn tự định nghĩa Sort
-        // Đảm bảo các thuộc tính "rowOrder" và "seatNumber" tồn tại trong Entity Seat
+    public List<Seat> findByRoomIdOrderByRowOrderAscSeatNumberAsc(Long roomId) { 
         return seatRepository.findByRoomId(roomId, Sort.by(Sort.Order.asc("rowOrder"), Sort.Order.asc("seatNumber")));
     }
 }

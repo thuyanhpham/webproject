@@ -17,6 +17,8 @@ public class SeatType {
 	
 	private String name;
 	private String color;
+	@Column(name = "is_couple")
+    private boolean isCouple;
 	
 	@Column(precision = 10, scale = 2)
 	private BigDecimal price;
@@ -53,6 +55,12 @@ public class SeatType {
 	}
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+	public boolean isCouple() {
+		return isCouple;
+	}
+	public void setCouple(boolean isCouple) {
+		this.isCouple = isCouple;
 	}
 	
 }
