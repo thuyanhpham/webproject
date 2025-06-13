@@ -840,12 +840,70 @@ input[type="submit"] {
   position: relative;
 }
 
-.section-header-1::before, .footer-section::before, .banner-section::before, .speaker-banner::before, .widget-1.widget-check .add-check-area a i::after, .widget-1.widget-check .add-check-area a i::before, .widget-1.widget-check .form-group label::before, .side-shape::after, .side-shape::before, .newslater-container::after, .search-tab .tab-area::before, .movie-details .summery-review .tab-menu li::after, .movie-details .summery-review .tab-menu li::before, .screen::after, .screen::before, .screen-area .subtitle::after, .screen-area .subtitle::before, .checkout-widget .payment-option li.active a::after, .checkout-widget .payment-option li.active a::before, .checkout-widget.checkout-card .payment-card-form .form-group.check-group label::after, .checkout-widget.checkout-card .payment-card-form .form-group.check-group label::before, .event-about-thumb::after, .event-about-thumb::before, .statistics-section::after, .ticket--item .ticket-content ul li::before, .apps-wrapper .apps-bg, .counter--area .counter-item::after, .counter--area .counter-item::before, .account-area .account-form .form-group.checkgroup input::after, .account-area .or span::after, .account-area .or span::before, .contact-container .bg-thumb, .post-item.post-details .post-content .content .post-header blockquote::before {
+.section-header-1::before, .footer-section::before, 
+.banner-section::before, .speaker-banner::before, 
+.widget-1.widget-check .add-check-area a i::after, 
+.widget-1.widget-check .add-check-area a i::before, 
+.widget-1.widget-check .form-group label::before, 
+.side-shape::after, .side-shape::before, .newslater-container::after, 
+.search-tab .tab-area::before, .movie-details .summery-review .tab-menu li::after, 
+.movie-details .summery-review .tab-menu li::before, .screen::after, .screen::before, 
+.screen-area .subtitle::after, .screen-area .subtitle::before, 
+.checkout-widget .payment-option li.active a::after, 
+.checkout-widget .payment-option li.active a::before, 
+.checkout-widget.checkout-card .payment-card-form .form-group.check-group label::after, 
+.checkout-widget.checkout-card .payment-card-form .form-group.check-group label::before, 
+.event-about-thumb::after, .event-about-thumb::before, .statistics-section::after, 
+.ticket--item .ticket-content ul li::before, .apps-wrapper .apps-bg, .counter--area 
+.counter-item::after, .counter--area .counter-item::before, 
+.account-area .account-form .form-group.checkgroup input::after, 
+.account-area .or span::after, .account-area .or span::before, .contact-container .bg-thumb, 
+.post-item.post-details .post-content .content .post-header blockquote::before {
   position: absolute;
   content: '';
 }
 
-.section-header-1, .section-header-2, .section-header-2 .tab-menu, .footer-top, .footer-bottom-area, .footer-bottom .links, .social-icons, .header-wrapper, .details-banner-content .social-and-duration, .details-banner-content .social-and-duration .duration-area, .details-banner-content .social-share, .book-wrapper, .book-wrapper .left-side, .book-wrapper .left-side .item .item-header, .book-wrapper .left-side .item .item-header .thumb, .widget-1.widget-facility ul li a, .widget-1 .widget-header, .widget-1.widget-check .form-group, .widget-1.widget-tags ul, .booking-summery ul li .subtitle, .booking-summery ul li .info, .proceed-area .subtitle, .widget-tags ul, .widget-categories ul li a, .widget-post .widget-slider .item .content .meta-post, .widget-post .slider-nav, .movie-rating-percent, .movie-rating-percent li, .movie-rating-percent li .thumb, .movie-list, .movie-list .movie-content .movie-tags, .movie-list .movie-content .book-area .book-ticket, .movie-list .movie-content .book-area .book-ticket .react-item .thumb, .movie-list .movie-content .book-area .book-ticket .react-item, .movie-list .movie-content .book-area .book-ticket .react-item a, .ticket-tab-menu, .ticket-search-form, .ticket-search-form .form-group, .filter-main, .filter-main .left, .filter-main .left .item, .grid-button, .movie-details .summery-review .tab-menu, .movie-details .item .header, .movie-details .item .header .navigation, .movie-review-item, .movie-review-item .author, .seat-plan-wrapper li, .seat-plan-wrapper li .movie-name, .seat-plan-wrapper li .movie-schedule, .window-warning, .seat-area .seat-line, .seat-area .seat-line ul, .proceed-to-book, .page-title-area, .page-title-area .date-item, .grid--area .filter, .grid--area .grid-area, .grid--area .grid-item .grid-inner .grid-thumb .offer-tag, .grid--area .grid-item .grid-inner .grid-thumb .offer-remainder, .checkout-widget .payment-option, .checkout-widget .payment-option li a, .checkout-widget.checkout-card .payment-card-form, .checkout-widget.checkout-card .payment-card-form .form-group.check-group, .checkout-contact-form, .sponsor-tab .tab-menu, .sponsor-slider .sponsor-thumb, .stat-item, .countdown, .event-search-top, .event-search-top .right, .event-search-bottom, .event-search-bottom .contact-side, .event-search-bottom .contact-side .item, .ticket--area .ticket-item .hot, .event-cart, .ticket--item .hot, .speaker-wrapper, .speak-con-area, .speak-con-area .item, .phisophy-list li, .phisophy-list li .thumb, .client-section .owl-dots, .tour-content .list-tour li, .tour-content .list-tour li .thumb, .about-counter, .about-counter .counter-item .counter-content, .app-button, .counter--area, .account-area .account-form .form-group.checkgroup, .section-404, .contact-counter-item .contact-counter-content .counter-item, .contact-info, .contact-info .info-area, .contact-info .info-area .info-item, .post-item .post-content .post-header .meta-post, .post-item .post-content .entry-content, .post-item .post-content .entry-content .left, .post-item .post-content .entry-content .left .authors, .post-item.post-details .post-content, .post-item.post-details .post-content .content .tags-area, .post-item.post-details .post-content .content .tags-area .tags, .blog-author, .comment-area li {
+.section-header-1, .section-header-2, .section-header-2 .tab-menu, .footer-top, 
+.footer-bottom-area, .footer-bottom .links, .social-icons, .header-wrapper, 
+.details-banner-content .social-and-duration, 
+.details-banner-content .social-and-duration .duration-area, .details-banner-content .social-share, 
+.book-wrapper, .book-wrapper .left-side, .book-wrapper .left-side .item .item-header, 
+.book-wrapper .left-side .item .item-header .thumb, .widget-1.widget-facility ul li a, 
+.widget-1 .widget-header, .widget-1.widget-check .form-group, .widget-1.widget-tags ul, 
+.booking-summery ul li .subtitle, .booking-summery ul li .info, .proceed-area .subtitle, 
+.widget-tags ul, .widget-categories ul li a, .widget-post .widget-slider .item .content .meta-post, 
+.widget-post .slider-nav, .movie-rating-percent, .movie-rating-percent li, 
+.movie-rating-percent li .thumb, .movie-list, .movie-list .movie-content .movie-tags, 
+.movie-list .movie-content .book-area .book-ticket, 
+.movie-list .movie-content .book-area .book-ticket .react-item .thumb, 
+.movie-list .movie-content .book-area .book-ticket .react-item, 
+.movie-list .movie-content .book-area .book-ticket .react-item a, .ticket-tab-menu, 
+.ticket-search-form, .ticket-search-form .form-group, .filter-main, .filter-main .left, 
+.filter-main .left .item, .grid-button, .movie-details .summery-review .tab-menu, 
+.movie-details .item .header, .movie-details .item .header .navigation, .movie-review-item, 
+.movie-review-item .author, .seat-plan-wrapper li, .seat-plan-wrapper li .movie-name, 
+.seat-plan-wrapper li .movie-schedule, .window-warning, .seat-area .seat-line, 
+.seat-area .seat-line ul, .proceed-to-book, .page-title-area, .page-title-area .date-item, 
+.grid--area .filter, .grid--area .grid-area, 
+.grid--area .grid-item .grid-inner .grid-thumb .offer-tag, 
+.grid--area .grid-item .grid-inner .grid-thumb .offer-remainder, 
+.checkout-widget .payment-option, .checkout-widget .payment-option li a, 
+.checkout-widget.checkout-card .payment-card-form, 
+.checkout-widget.checkout-card .payment-card-form .form-group.check-group, 
+.checkout-contact-form, .sponsor-tab .tab-menu, .sponsor-slider .sponsor-thumb, 
+.stat-item, .countdown, .event-search-top, .event-search-top .right, .event-search-bottom, 
+.event-search-bottom .contact-side, .event-search-bottom .contact-side .item, 
+.ticket--area .ticket-item .hot, .event-cart, .ticket--item .hot, .speaker-wrapper, 
+.speak-con-area, .speak-con-area .item, .phisophy-list li, .phisophy-list li .thumb, 
+.client-section .owl-dots, .tour-content .list-tour li, .tour-content .list-tour li .thumb, 
+.about-counter, .about-counter .counter-item .counter-content, .app-button, .counter--area, 
+.account-area .account-form .form-group.checkgroup, .section-404, 
+.contact-counter-item .contact-counter-content .counter-item, .contact-info, 
+.contact-info .info-area, .contact-info .info-area .info-item, 
+.post-item .post-content .post-header .meta-post, .post-item .post-content .entry-content, 
+.post-item .post-content .entry-content .left, .post-item .post-content .entry-content .left .authors, 
+.post-item.post-details .post-content, .post-item.post-details .post-content .content .tags-area, 
+.post-item.post-details .post-content .content .tags-area .tags, .blog-author, .comment-area li {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -853,7 +911,10 @@ input[type="submit"] {
       flex-wrap: wrap;
 }
 
-.event-banner-section::after, .proceed-book::before, .faq-item .faq-title .right-icon::after, .faq-item .faq-title .right-icon::before, .gallery-item .gallery-thumb a, .gallery-item::before, .speak-con-wrapper::before, .sports-ticket::before, .sports-ticket::after, .client-section::after, .contact-container .bg-thumb::before, .contact-info .info-area::before {
+.event-banner-section::after, .proceed-book::before, .faq-item .faq-title .right-icon::after, 
+.faq-item .faq-title .right-icon::before, .gallery-item .gallery-thumb a, .gallery-item::before, 
+.speak-con-wrapper::before, .sports-ticket::before, .sports-ticket::after, .client-section::after, 
+.contact-container .bg-thumb::before, .contact-info .info-area::before {
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
@@ -2063,7 +2124,8 @@ input[type="submit"] {
   margin-bottom: 0;
 }
 
-.details-banner.hero-area .details-banner-wrapper .details-banner-content .tags a, .details-banner.hero-area .details-banner-wrapper .details-banner-content .tags span {
+.details-banner.hero-area .details-banner-wrapper .details-banner-content .tags a, 
+.details-banner.hero-area .details-banner-wrapper .details-banner-content .tags span {
   font-size: 16px;
 }
 
@@ -2071,19 +2133,22 @@ input[type="submit"] {
   text-transform: capitalize;
 }
 
-.details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags a, .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span {
+.details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags a, 
+.details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span {
   font-size: 20px;
   text-transform: capitalize;
   color: #d0dbff;
 }
 
 @media (max-width: 575px) {
-  .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags a, .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span {
+  .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags a,
+   .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span {
     font-size: 16px;
   }
 }
 
-.details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags a::after, .details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span::after {
+.details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags a::after, 
+.details-banner.hero-area .details-banner-wrapper .details-banner-content.style-two .tags span::after {
   content: "|";
   font-size: 18px;
 }
@@ -3716,7 +3781,9 @@ input[type="submit"] {
   color: #ffffff;
 }
 
-.filter-main .left .item .select-bar .list li:hover, .filter-main .left .item .select-bar .list li.focus, .filter-main .left .item .select-bar .list li.selected {
+.filter-main .left .item .select-bar .list li:hover, 
+.filter-main .left .item .select-bar .list li.focus, 
+.filter-main .left .item .select-bar .list li.selected {
   background: transparent;
 }
 
@@ -9242,3 +9309,292 @@ aside {
     background-color: #ffffff;
 }
 .form-select option {color: #212529;}
+
+/* Đặt ở cuối file CSS của bạn */
+
+#add-seat-row-definition-btn,
+#generateLayoutBtn {
+    /* GIỮ NGUYÊN PADDING DỌC HOẶC KHÔNG SET NẾU MUỐN NÓ THEO MẶC ĐỊNH */
+    /* padding-top: .375rem !important; */ /* Ví dụ: giữ padding dọc của Bootstrap .btn */
+    /* padding-bottom: .375rem !important; */
+
+    /* THU NHỎ PADDING NGANG */
+    padding-left: 10px !important;  /* Điều chỉnh giá trị này */
+    padding-right: 10px !important; /* Điều chỉnh giá trị này */
+
+    /* ĐẢM BẢO NÚT KHÔNG BỊ KÉO GIÃN NGANG */
+    width: auto !important;         /* Cho phép nút co lại theo nội dung */
+    min-width: 0 !important;        /* Bỏ min-width nếu có thể */
+    display: inline-block !important; /* Hoặc display mặc định của button nếu nó không phải block */
+
+    /* Các style khác có thể giữ nguyên từ theme hoặc Bootstrap */
+    /* font-size: 0.8rem !important; */ /* Chỉ thay đổi nếu bạn muốn font nhỏ hơn */
+    /* line-height: 1.5 !important; */  /* Giữ line-height mặc định của button */
+}
+
+/* Style cho icon bên trong các button này nếu cần */
+#add-seat-row-definition-btn .fas,
+#generateLayoutBtn .fas {
+    margin-right: 5px !important; /* Khoảng cách giữa icon và text, điều chỉnh nếu cần */
+    /* font-size: 1em !important; */ /* Giữ font-size icon bằng text hoặc nhỏ hơn chút */
+    /* vertical-align: middle; */ /* Giữ cách căn chỉnh dọc mặc định */
+}
+
+/* ĐẶC BIỆT CHO NÚT "Generate Layout..." nếu nó đang là block */
+#generateLayoutBtn {
+    width: auto !important; /* Rất quan trọng */
+}
+.row-definition {
+    display: flex;
+    flex-wrap: nowrap; /* Ép tất cả lên một hàng, dùng @media query cho responsive nếu cần */
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: flex-end; /* Căn các item con theo đường base */
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #2d3450;
+}
+.row-definition:last-child {
+    border-bottom: none;
+}
+
+/* Style cho CẢ 5 container con trực tiếp để chúng chia sẻ không gian */
+.row-definition > div:not(input[type=hidden]) { /* Áp dụng cho tất cả div con, trừ input ẩn */
+    display: flex;
+    flex-direction: column; /* Các label và input/select bên trong sẽ xếp dọc */
+}
+
+/* Áp dụng flex-grow cho 4 container input/select đầu tiên */
+.row-definition > .row-identifier-input-container,
+.row-definition > .seats-per-row-input-container,
+.row-definition > .row-order-input-container,
+.row-definition > .row-default-seattype-container {
+    flex: 1 1 0; /* flex-grow: 1, flex-shrink: 1, flex-basis: 0 */
+                 /* Điều này sẽ làm cho 4 cột này cố gắng chia sẻ không gian bằng nhau */
+    min-width: 100px; /* Đặt chiều rộng tối thiểu, điều chỉnh cho phù hợp */
+                      /* Ví dụ: 100px cho ID, 80px cho Seats/Order, 150px cho Select */
+}
+
+/* Điều chỉnh min-width cụ thể hơn nếu cần */
+.row-definition > .row-identifier-input-container { min-width: 120px; }
+.row-definition > .seats-per-row-input-container { min-width: 90px; }
+.row-definition > .row-order-input-container { min-width: 90px; }
+.row-definition > .row-default-seattype-container { min-width: 160px; }
+
+
+/* Style cho container của nút xóa */
+.row-definition > .remove-btn-container {
+    flex-shrink: 0; /* Ngăn nút xóa bị co lại */
+    /* align-self: center; đã được xử lý bởi align-items: flex-end của cha */
+    padding-left: 5px; /* Thêm chút đệm bên trái nút xóa */
+    /* padding-bottom đã có ở dưới để căn chỉnh */
+}
+
+/* CSS cho nút xóa để căn chỉnh với đáy của input/select */
+.row-definition .remove-btn-container {
+    /* Bỏ padding-top đã có nếu dùng align-items: flex-end cho .row-definition */
+    /* padding-top: 26px; */
+    /* Để căn giữa nút X với các input, chúng ta cần đảm bảo nó có cùng "baseline"
+       hoặc điều chỉnh padding-bottom của nó (hoặc padding-top của các label khác) */
+    padding-bottom: 0.375rem; /* Thử nghiệm giá trị này, tương đương padding-bottom của input/select */
+                               /* Hoặc đặt chiều cao cố định cho remove-btn-container và dùng display:flex; align-items:center; justify-content:center; */
+}
+.btn-remove-row {
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+
+/* --- Style cho label --- */
+.row-definition .form-label {
+    color: #a0a3bd;
+    margin-bottom: 0.3rem;
+    font-size: 0.80em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Style chung cho input và select --- */
+/* Đảm bảo chúng có cùng chiều cao và style */
+.row-definition .form-input-custom, /* Áp dụng cho các input type text/number */
+.row-definition .form-select.row-default-seat-type-select { /* Áp dụng cho select */
+    background-color: #0A1E3C;
+    color: #E0E0E0 !important;
+    border: 1px solid #2d3450;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem; /* Giống .form-control-sm */
+    font-size: .875rem;      /* Giống .form-control-sm */
+    line-height: 1.5;        /* Giống .form-control-sm */
+    height: calc(1.5em + .5rem + 2px); /* Chiều cao tính toán của .form-control-sm */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.row-definition .form-select.row-default-seat-type-select option {
+    background-color: #0A1E3C;
+    color: #E0E0E0; /* Đảm bảo màu chữ option cũng sáng */
+}
+
+/* Nếu bạn dùng nice-select, bạn cần ghi đè style của nó để đồng bộ chiều cao và màu sắc */
+.row-definition .nice-select.row-default-seat-type-select {
+    background-color: #0A1E3C !important;
+    border: 1px solid #2d3450 !important;
+    width: 100% !important;
+    float: none !important;
+    line-height: 1.5 !important; /* Đồng bộ line-height */
+    padding-top: 0 !important; /* nice-select có thể có padding riêng */
+    padding-bottom: 0 !important;
+    height: calc(1.5em + .5rem + 2px) !important; /* Đồng bộ chiều cao */
+    font-size: .875rem !important;
+}
+.row-definition .nice-select.row-default-seat-type-select .current {
+    color: #E0E0E0 !important;
+    padding-top: 0.25rem; /* Điều chỉnh padding cho text bên trong .current */
+    padding-left: 0.5rem;
+}
+.row-definition .nice-select.row-default-seat-type-select .list {
+    background-color: #0A1E3C !important;
+}
+.row-definition .nice-select.row-default-seat-type-select .option {
+     color: #E0E0E0 !important;
+     font-size: .875rem;
+}
+.row-definition .nice-select.row-default-seat-type-select .option:hover,
+.row-definition .nice-select.row-default-seat-type-select .option.focus,
+.row-definition .nice-select.row-default-seat-type-select .option.selected.focus {
+    background-color: #1A3652 !important;
+}
+
+.row-definition .required-star {
+    color: #ff4d4f;
+}
+
+        /* Seat Assignment Styles */
+        .seat-type-palette-form div.draggable-seat-type { padding: 8px 12px; margin: 5px; border-radius: 5px; color: white; cursor: grab; display: inline-block; text-align: center; min-width: 90px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9em; }
+        .seat-type-palette-form div.draggable-seat-type.dragging { opacity: 0.7; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transform: scale(1.1); }
+        .seat-layout-preview-container {
+            background-color: rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px dashed #2d3450;
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+            /* Sử dụng Flexbox để căn chỉnh các con bên trong (SCREEN và các hàng ghế) */
+            display: flex;
+            flex-direction: column; /* Xếp SCREEN rồi đến các hàng ghế theo chiều dọc */
+            align-items: center;    /* Căn giữa tất cả các item con (SCREEN, seat-rows-preview-target) theo chiều ngang */
+        }
+        .seat-layout-preview-container .screen-preview {
+            background-color: #222;
+            color: white;
+            padding: 5px 30px; /* Tăng padding ngang cho screen một chút */
+            margin-bottom: 15px;
+            border-radius: 3px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 1.5px;
+            font-size: 1em;
+            width: 70%;
+            max-width: 600px; /* Giới hạn chiều rộng tối đa của thanh SCREEN */
+        }
+        #seat-rows-preview-target {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .seat-layout-preview-container .seat-row-preview {
+            display: flex; /* Để row-identifier-preview và các seat-cell-preview nằm trên 1 hàng */
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .seat-layout-preview-container .row-identifier-preview {
+            font-weight: bold;
+            color: #a0a3bd;
+            min-width: 35px;
+            text-align: right;
+            margin-right: 12px;
+        }
+        .seat-layout-preview-container .seat-cell-preview {
+            width: 35px;        /* Tăng chiều rộng ô ghế */
+            height: 35px;       /* Tăng chiều cao ô ghế */
+            border: 1px solid #555;
+            margin: 3px;        /* Tăng khoảng cách giữa các ô ghế */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;   /* Tăng kích thước số/chữ trong ô ghế */
+            border-radius: 4px;  /* Bo góc nhẹ hơn một chút nếu muốn */
+            background-color: #6c757d;
+            color: white;
+            transition: background-color 0.2s ease, transform 0.1s ease, border-color 0.2s ease;
+            cursor: default; /* Sẽ được ghi đè bởi InteractJS khi là dropzone */
+        }
+        .seat-layout-preview-container .seat-cell-preview.drop-active { border-color: #31d7a9; border-style: dashed; }
+        .seat-layout-preview-container .seat-cell-preview.drop-target { background-color: rgba(49, 215, 169, 0.4) !important; transform: scale(1.05); }
+        .no-layout-message { color: #888; text-align: center; padding: 20px;}
+
+        /* Checkbox Is Active */
+        .form-check-input.custom-small-checkbox { width: 0.85em; height: 0.85em; margin-top: 0.25em; transform: scale(0.9); transform-origin: left center; margin-right: 0.3em;}
+        .form-check-label.custom-small-checkbox-label { font-size: 0.9em; padding-left: 0.1em; vertical-align: text-bottom;}
+
+        /* Compact Buttons (Chiều ngang vừa text, chiều cao giữ nguyên) */
+        #add-seat-row-definition-btn,
+        #generateLayoutBtn {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+            width: auto !important;
+            min-width: 0 !important;
+            display: inline-block !important;
+        }
+        #add-seat-row-definition-btn .fas,
+        #generateLayoutBtn .fas {
+            margin-right: 5px !important;
+        }
+        #generateLayoutBtn { /* Đảm bảo nút này không chiếm full width nếu nó có style block */
+            display: inline-block !important;
+        }
+
+        /* Final Save and Cancel Buttons */
+        #finalSaveBtn,
+        a.btn-cancel {
+            display: inline-block !important;
+            width: auto !important;
+            min-width: 0 !important;
+            padding: 8px 16px !important; /* Điều chỉnh padding này để cân đối */
+            font-size: 0.9rem !important;
+            line-height: 1.5 !important;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            margin: 0 5px;
+        }
+        #finalSaveBtn {
+            background-color: #31d7a9 !important;
+            color: #0d1422 !important;
+            border-color: #31d7a9 !important;
+            font-weight: bold;
+        }
+        #finalSaveBtn:hover, #finalSaveBtn:focus {
+            background-color: #28b990 !important;
+            border-color: #28b990 !important;
+            color: #ffffff !important;
+        }
+        #finalSaveBtn .fas { margin-right: 6px; }
+
+        a.btn-cancel {
+            background-color: #6c757d !important; /* Bootstrap secondary color */
+            color: #ffffff !important;
+            border-color: #6c757d !important;
+        }
+        a.btn-cancel:hover, a.btn-cancel:focus {
+            background-color: #5a6268 !important;
+            border-color: #545b62 !important;
+            color: #ffffff !important;
+        }

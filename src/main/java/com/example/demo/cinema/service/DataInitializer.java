@@ -3,12 +3,10 @@ package com.example.demo.cinema.service;
 import com.example.demo.cinema.entity.Format;
 import com.example.demo.cinema.entity.Genre;
 import com.example.demo.cinema.entity.Role;
-import com.example.demo.cinema.entity.Room;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.FormatRepository;
 import com.example.demo.cinema.repository.GenreRepository;
 import com.example.demo.cinema.repository.RoleRepository;
-import com.example.demo.cinema.repository.RoomRepository;
 import com.example.demo.cinema.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoomRepository roomRepository;
     private final GenreRepository genreRepository;
     private final FormatRepository formatRepository;
 
@@ -37,13 +34,11 @@ public class DataInitializer implements CommandLineRunner {
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
-                           RoomRepository roomRepository,
                            GenreRepository genreRepository,
                            FormatRepository formatRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roomRepository = roomRepository;
         this.genreRepository = genreRepository;
         this.formatRepository = formatRepository;
     }
@@ -63,15 +58,7 @@ public class DataInitializer implements CommandLineRunner {
              
             String adminUsername = "thuyanhne";
             createAdminUserIfNotExist(adminRole, adminUsername);
-            
-            //Tạo Room
-            findOrCreateRoom("Phòng 1", 100);
-            findOrCreateRoom("Phòng 2", 120);
-            findOrCreateRoom("Phòng 3", 148);
-            findOrCreateRoom("Phòng 4", 89);
-            findOrCreateRoom("Phòng 5", 83);
-            findOrCreateRoom("Phòng 6 (Inactive)", 80, false);
-            
+
             //Tạo Genre
             createGenreIfNotExist("Action");
             createGenreIfNotExist("Adventure");
@@ -105,30 +92,6 @@ public class DataInitializer implements CommandLineRunner {
             throw new RuntimeException("Data initialization failed.", e);
         }
         
-    }
-
-    private Room findOrCreateRoom(String roomName, int capacity) {
-    	return findOrCreateRoom(roomName, capacity, true);
-    }
-    
-    private Room findOrCreateRoom(String roomName, int capacity, boolean isActive) {
-    	Optional<Room> roomOpt = roomRepository.findByName(roomName);
-    	if (roomOpt.isPresent()) {
-    		return roomOpt.get();
-    	} else {
-    		Room newRoom = new Room();
-    		newRoom.setName(roomName);
-    		newRoom.setCapacity(capacity);
-    		newRoom.setActive(isActive);
-    		
-    		try {
-    			Room savedRoom = roomRepository.save(newRoom);
-    			return savedRoom;
-    		} catch (Exception e) {
-    			log.error("!!! Error saving Room '{}': {}", roomName, e.getMessage(), e);
-    			return null;
-    		}
-    	}
     }
     
     private Genre createGenreIfNotExist(String name) {

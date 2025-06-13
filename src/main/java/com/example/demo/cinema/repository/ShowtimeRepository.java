@@ -39,4 +39,10 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
            "(s.showDate < :today OR (s.showDate = :today AND s.startTime < :time)) " +
            "AND s.deleted = false")
     int markOldShowtimesAsDeleted(@Param("today") LocalDate today, @Param("time") LocalTime time);
+    
+    @Query("SELECT sh FROM Showtime sh " +
+           "JOIN FETCH sh.movie m " +
+           "JOIN FETCH sh.room r LEFT JOIN FETCH r.seats s " + 
+           "WHERE sh.id = :showtimeId AND sh.deleted = false") 
+    Optional<Showtime> findByIdWithMovieAndRoomAndSeats(@Param("showtimeId") Long showtimeId);
 }

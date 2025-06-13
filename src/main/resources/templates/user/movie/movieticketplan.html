@@ -161,14 +161,13 @@
                             <div class="movie-schedule">
                                 <div th:if="${showtimes != null and not #lists.isEmpty(showtimes)}">
                                     <div class="item" th:each="showtime : ${showtimes}">
-                                        <a th:href="@{/movie-seat-plan}"
-                                           th:attr="data-showtime-id=${showtime.id}"
-                                           class="showtime-link"
-                                           th:title="'Select seats for ' + ${#temporals.format(showtime.startTime, 'HH:mm')} + ' - ' + ${showtime.experience} + (${showtime.room?.name != null ? ' - Room ' + showtime.room.name : ''})">
-                                            <span th:text="${#temporals.format(showtime.startTime, 'HH:mm')}">00:00</span>
-                                            <small th:text="'(' + ${showtime.experience} + ')'">(Experience)</small>
-                                            <small th:if="${showtime.room?.name != null}" th:text="' - ' + ${showtime.room.name}"> - Room Name</small>
-                                        </a>
+                                        <a th:href="@{/movie-seat-plan(showtimeId=${showtime.id})}"
+										   class="showtime-link"
+										   th:title="'Select seats for ' + ${#temporals.format(showtime.startTime, 'HH:mm')} + ' - ' + ${showtime.experience} + (${showtime.room?.name != null ? ' - Room ' + showtime.room.name : ''})">
+										    <span th:text="${#temporals.format(showtime.startTime, 'HH:mm')}">00:00</span>
+										    <small th:text="'(' + ${showtime.experience} + ')'">(Experience)</small>
+										    <small th:if="${showtime.room?.name != null}" th:text="' - ' + ${showtime.room.name}"> - Room Name</small>
+										</a>
                                     </div>
                                 </div>
                                 <div th:unless="${not #lists.isEmpty(showtimes)}">
