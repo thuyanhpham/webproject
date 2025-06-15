@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/css.css}" />
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
+    <link rel="stylesheet" th:href="@{/css/odometer.css}" />
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title th:text="${roomForm.id == null || roomForm.id == 0} ? 'Admin - Add Room' : 'Admin - Edit Room (' + ${roomForm.name != null ? roomForm.name : ''} + ')'">Admin - Room Form</title>
+
+    <style>
+        .header-section { background: #071240; }
+        .header-section .menu > li > a.active { color: #31d7a9 !important; }
+        .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+        .logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
+        .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+
+    </style>
+</head>
+<body>
+    <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
+
+    <header class="header-section" th:replace="~{fragments/admin-header :: header}"></header>
+
+    <section class="admin-section padding-top padding-bottom">
+        <div class="container">
+            <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;">
+                <span th:text="${roomForm.id == null || roomForm.id == 0} ? 'Add New Room' : 'Edit Room'"></span>
+                <span th:if="${roomForm.id != null && roomForm.id != 0}" th:text="' (' + ${roomForm.name} + ')'"></span>
+            </h2>
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <form id="roomForm" th:action="@{/admin/rooms/save}" th:object="${roomForm}" method="post" class="mt-4">
+                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger global-error" role="alert">
+                    <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{seatAssignmentsJson}" id="seatAssignmentsField" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>
+
+                <div id="step1_defineRoom">
+                     <div class="row"> <!-- Bọc trong một .row -->
+                        <div class="col-md-6"> <!-- Cột cho Room Name -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Room Name <span class="required-star">*</span></label>
+                                <input type="text" class="form-control form-input-custom" id="name" th:field="*{name}">
+                                <div class="text-danger field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6"> <!-- Cột cho Total Capacity -->
+                            <div class="mb-3">
+                                <label for="capacityDisplay" class="form-label">Total Capacity (Preview)</label>
+                                <input type="number" class="form-control form-input-custom" id="capacityDisplay" name="displayCapacity" readonly value="0">
+                                <small class="form-text" style="color: #888;">Calculated automatically from defined rows.</small>
+                            </div>
+                        </div>
+                    </div> <!-- Kết thúc .row -->
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input custom-small-checkbox" id="active" th:field="*{active}">
+                        <label class="form-check-label custom-small-checkbox-label" for="active">Is Active</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5 style="color: #31d7a9;">Define Seat Rows</h5>
+                        <div id="seat-rows-container">
+                            <th:block th:if="*{rowDefinitions != null and not #lists.isEmpty(rowDefinitions)}">
+                                <div th:each="rowDef, iterStat : *{rowDefinitions}" class="row-definition" th:attr="data-row-index=${iterStat.index}">
+                                    <input type="hidden" th:field="*{rowDefinitions[__${iterStat.index}__].id}" />
+                                    <div class="row-identifier-input-container">
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'Identifier'" class="form-label">Row ID <span class="required-star">*</span></label>
+                                        <input type="text" th:id="'rowDefinitions' + ${iterStat.index} + 'Identifier'" class="form-control form-control-sm row-identifier-input form-input-custom"
+                                            th:field="*{rowDefinitions[__${iterStat.index}__].identifier}"
+                                            placeholder="e.g., A" style="text-transform: uppercase;"/>
+                                    </div>
+                                    <div class="seats-per-row-input-container">
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'NumberOfSeats'" class="form-label"># Seats <span class="required-star">*</span></label>
+                                        <input type="number" th:id="'rowDefinitions' + ${iterStat.index} + 'NumberOfSeats'" class="form-control form-control-sm seats-per-row-input form-input-custom"
+                                            th:field="*{rowDefinitions[__${iterStat.index}__].numberOfSeats}"
+                                            placeholder="# Seats" min="1" max="15"/>
+                                    </div>
+                                    <div class="row-order-input-container">
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'Order'" class="form-label">Order <span class="required-star">*</span></label>
+                                        <input type="number" th:id="'rowDefinitions' + ${iterStat.index} + 'Order'" class="form-control form-control-sm row-order-input form-input-custom"
+                                            th:field="*{rowDefinitions[__${iterStat.index}__].order}"
+                                            placeholder="Order" min="0"/>
+                                    </div>
+
+                                    <div class="row-default-seattype-container">
+                                        <label th:for="'rowDefinitions' + ${iterStat.index} + 'SeatTypeId'" class="form-label">Default Seat Type</label>
+                                        <select th:id="'rowDefinitions' + ${iterStat.index} + 'SeatTypeId'" class="form-select form-select-sm form-input-custom row-default-seat-type-select"
+                                                th:field="*{rowDefinitions[__${iterStat.index}__].seatTypeId}">
+                                            <option value="">-- System Default --</option>
+                                            <option th:each="type : ${availableSeatTypes}"
+                                                    th:value="${type.id}"
+                                                    th:text="${type.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="remove-btn-container">
+                                        <i class="fas fa-times btn-remove-row" title="Remove this row"></i>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <button type="button" id="add-seat-row-definition-btn" class="btn btn-outline-light btn-sm mt-2 btn-compact">
+                            <i class="fas fa-plus"></i> Add Row Definition
+                        </button>
+                        <div class="text-danger field-error mt-2" th:if="${#fields.hasErrors('rowDefinitions')}" th:errors="*{rowDefinitions}"></div>
+                    </div>
+
+                    <div class="my-4 text-center">
+                        <button type="button" id="generateLayoutBtn" class="btn btn-info btn-compact">
+                            <i class="fas fa-cogs"></i> Generate Layout & Proceed to Assign Types
+                        </button>
+                    </div>
+                </div>
+
+                <div id="seatAssignmentSection" style="display: none;">
+                    <hr class="my-4" style="border-top: 1px solid #2d3450;">
+                    <h4 style="color: #31d7a9;">Assign Seat Types</h4>
+                    <p class="text-muted"><small>Drag a seat type from the palette and drop it onto a seat in the layout below.</small></p>
+                    <div class="seat-type-palette-form mb-3">
+                        <div class="draggable-seat-type"
+                             th:each="type : ${availableSeatTypes}"
+                             th:text="${type.name}"
+                             th:style="${ (type.color != null ? 'background-color:' + type.color + ';' : 'background-color: #888;') + ' ' + (type.color != null and @roomService.isColorDark(type.color) ? 'color:white;' : 'color:black;') }"
+                             th:attr="data-seat-type-id=${type.id}, data-seat-type-name=${type.name}, data-seat-type-color=${type.color != null ? type.color : '#888888'}">
+                        </div>
+                        <div class="draggable-seat-type" style="background-color: #6c757d; color:white;" data-seat-type-id="" data-seat-type-name="Unassign" data-seat-type-color="#6c757d">Unassign</div>
+                    </div>
+                    <div class="seat-layout-preview-container" id="seatLayoutPreview">
+                        <div class="screen-preview" style="display:none;">SCREEN</div>
+                        <div id="seat-rows-preview-target">
+                            <p class="no-layout-message">Layout will be generated here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 text-center">
+                    <button type="submit" id="finalSaveBtn" class="btn-save" style="display: none;">
+                        <i class="fas fa-save"></i> Save Room & Final Layout
+                    </button>
+                    <a th:href="@{/admin/rooms}" class="btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/contentInt.js}"></script>
+    <script th:src="@{/js/chunk-7ac80a40.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            if (typeof interact !== 'function') {
+                $('#generateLayoutBtn').prop('disabled', true).css('opacity', 0.5);
+                return;
+            }
+            const seatRowsContainer = $('#seat-rows-container');
+            const seatLayoutPreviewTarget = $('#seat-rows-preview-target');
+            const noLayoutMessage = $('#seatLayoutPreview .no-layout-message');
+            const screenPreviewDiv = $('#seatLayoutPreview .screen-preview');
+            const seatAssignmentSection = $('#seatAssignmentSection');
+            const finalSaveBtn = $('#finalSaveBtn');
+            const generateLayoutBtn = $('#generateLayoutBtn');
+            const addRowBtn = $('#add-seat-row-definition-btn');
+            const capacityDisplayInput = $('#capacityDisplay');
+            const seatAssignmentsHiddenInput = $('#seatAssignmentsField');
+            const roomForm = $('#roomForm');
+            const globalErrorDiv = $('#roomForm .global-error');
+
+            const initialRowDefinitionsFromServer = /*[[${roomForm?.rowDefinitions != null ? roomForm.rowDefinitions : #lists.newList()}]]*/ [];
+            const initialSeatAssignmentsJson = /*[[${roomForm?.seatAssignmentsJson != null ? roomForm.seatAssignmentsJson : '[]'}]]*/ '[]';
+            const initialAvailableSeatTypesRaw = /*[[${availableSeatTypes}]]*/ null;
+            const availableSeatTypes = initialAvailableSeatTypesRaw === null ? [] : initialAvailableSeatTypesRaw;
+
+            let nextRowIndex = initialRowDefinitionsFromServer.length;
+            let seatAssignments = {};
+            let currentGeneratedRowDefinitions = [];
+
+            function isColorDark(hexColor) {
+                if (!hexColor || typeof hexColor !== 'string') return true; 
+                let color = hexColor.startsWith('#') ? hexColor.substring(1) : hexColor;
+
+                if (color.length === 3) {
+                    color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+                }
+
+                if (color.length !== 6) {
+                    return true;
+                }
+
+                const r = parseInt(color.substring(0, 2), 16);
+                const g = parseInt(color.substring(2, 4), 16);
+                const b = parseInt(color.substring(4, 6), 16);
+                const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+                return luma < 128;
+            }
+
+            $('.draggable-seat-type').each(function() {
+                const bgColor = $(this).data('seat-type-color') || $(this).css('background-color');
+                if (isColorDark(bgColor)) {
+                    $(this).css('color', 'white');
+                } else {
+                    $(this).css('color', 'black');
+                }
+            });
+
+            function calculateTempCapacityFromInputs() {
+                let tempCap = 0;
+                seatRowsContainer.find('.seats-per-row-input').each(function () {
+                    const seats = parseInt($(this).val());
+                    if (!isNaN(seats) && seats > 0) tempCap += seats;
+                });
+                $('#capacityDisplay').val(tempCap);
+            }
+
+            function calculateCapacityFromGeneratedLayout() {
+                let tempCap = 0;
+                if (Array.isArray(currentGeneratedRowDefinitions)) {
+                    currentGeneratedRowDefinitions.forEach(def => { if (def && !isNaN(def.numberOfSeats)) tempCap += parseInt(def.numberOfSeats); });
+                }
+                $('#capacityDisplay').val(tempCap);
+            }
+
+            // Hàm tạo HTML cho một hàng định nghĩa
+            function createRowDefinitionHTML(index, identifier = '', seats = 10, order = 0, existingRowDefId = '', seatTypeIdForRow = null) {
+                const seatTypeIdValue = (seatTypeIdForRow !== null && seatTypeIdForRow !== undefined && String(seatTypeIdForRow).toLowerCase() !== "null" && String(seatTypeIdForRow) !== "") ? String(seatTypeIdForRow) : '';
+                let seatTypeOptionsHTML = '<option value="">-- System Default --</option>';
+
+                if (Array.isArray(availableSeatTypes) && availableSeatTypes.length > 0) {
+                    availableSeatTypes.forEach(type => {
+                        if (type && typeof type.id !== 'undefined' && type.id !== null &&
+                            typeof type.name === 'string' && type.name.trim() !== '') {
+
+                            const typeIdForOption = String(type.id);
+                            const selected = (typeIdForOption === seatTypeIdValue && typeIdValue !== '') ? 'selected' : '';
+                            seatTypeOptionsHTML += `<option value="${typeIdForOption}" ${selected}>${type.name}</option>`;
+                        }
+                    });
+                } 
+                return `
+            <div class="row-definition" data-row-index="${index}">
+                <input type="hidden" name="rowDefinitions[${index}].id" value="${existingRowDefId || ''}">
+                <div class="row-identifier-input-container">
+                    <label for="rowDefinitions${index}Identifier" class="form-label">Row ID <span class="required-star">*</span></label>
+                    <input type="text" id="rowDefinitions${index}Identifier" name="rowDefinitions[${index}].identifier" class="form-control form-control-sm row-identifier-input form-input-custom" value="${identifier}" placeholder="e.g., A" required style="text-transform: uppercase;"/>
+                    <div class="text-danger small field-error"></div>
+                </div>
+                <div class="seats-per-row-input-container">
+                    <label for="rowDefinitions${index}NumberOfSeats" class="form-label"># Seats <span class="required-star">*</span></label>
+                    <input type="number" id="rowDefinitions${index}NumberOfSeats" name="rowDefinitions[${index}].numberOfSeats" class="form-control form-control-sm seats-per-row-input form-input-custom" value="${seats}" placeholder="# Seats" min="1" max="15" required/>
+                    <div class="text-danger small field-error"></div>
+                </div>
+                <div class="row-order-input-container">
+                    <label for="rowDefinitions${index}Order" class="form-label">Order <span class="required-star">*</span></label>
+                    <input type="number" id="rowDefinitions${index}Order" name="rowDefinitions[${index}].order" class="form-control form-control-sm row-order-input form-input-custom" value="${order}" placeholder="Order" min="0" required/>
+                    <div class="text-danger small field-error"></div>
+                </div>
+                <div class="row-default-seattype-container">
+                    <label for="rowDefinitions${index}SeatTypeId" class="form-label">Default Seat Type</label>
+                    <select id="rowDefinitions${index}SeatTypeId" name="rowDefinitions[${index}].seatTypeId" class="form-select form-select-sm form-input-custom row-default-seat-type-select">
+                        ${seatTypeOptionsHTML}
+                    </select>
+                </div>
+                <div class="remove-btn-container"> <i class="fas fa-times btn-remove-row" title="Remove this row"></i> </div>
+            </div>`;
+            }
+             addRowBtn.on('click', function () {
+                    let maxOrder = -1;
+                    seatRowsContainer.find('.row-order-input').each(function() {
+                        const val = parseInt($(this).val());
+                        if (!isNaN(val) && val > maxOrder) maxOrder = val;
+                    });
+                    const newOrder = seatRowsContainer.find('.row-definition').length === 0 ? 0 : maxOrder + 1;
+                    const validNextRowIndex = Number.isFinite(nextRowIndex) ? nextRowIndex : seatRowsContainer.find('.row-definition').length;
+                    const defaultIdentifier = String.fromCharCode(65 + validNextRowIndex);
+                    const newRowHTML = createRowDefinitionHTML(validNextRowIndex, defaultIdentifier, 10, newOrder, '', null);
+                    seatRowsContainer.append(newRowHTML);
+                    nextRowIndex = validNextRowIndex + 1; 
+                    calculateTempCapacityFromInputs();
+            });
+
+            seatRowsContainer.on('click', '.btn-remove-row', function () {
+                if (confirm('Are you sure you want to remove this row definition?')) { 
+                    const removedRowIndex = $(this).closest('.row-definition').data('row-index'); 
+                    $(this).closest('.row-definition').remove();
+                    calculateTempCapacityFromInputs();
+
+                    if (seatAssignmentSection.is(':visible')) {
+                        generateLayoutBtn.click();
+                    }
+                }
+            });
+            
+            function switchToStep1() {
+                seatAssignmentSection.slideUp();
+                finalSaveBtn.fadeOut().prop('disabled', true);
+                seatRowsContainer.find('input:not([type=hidden]), select, textarea').prop('readonly', false);
+                seatRowsContainer.find('.btn-remove-row').prop('disabled', false).show();
+                addRowBtn.prop('disabled', false).show();
+                generateLayoutBtn.text('Generate Layout & Proceed to Assign Types').removeClass('btn-warning btn-danger').addClass('btn-info').prop('disabled', false); 
+                calculateTempCapacityFromInputs();
+            }
+
+            function switchToStep2() {
+                seatAssignmentSection.slideDown(function() { 
+                });
+                finalSaveBtn.fadeIn().prop('disabled', false);
+                seatRowsContainer.find('input:not([type=hidden]), select, textarea').prop('readonly', true);
+                seatRowsContainer.find('.btn-remove-row').prop('disabled', true).hide();
+                addRowBtn.prop('disabled', true).hide();
+                generateLayoutBtn.text('Re-generate Layout (Resets Assignments)').removeClass('btn-info').addClass('btn-warning').prop('disabled', false);
+            }
+
+            generateLayoutBtn.on('click', function () {
+                if (seatAssignmentSection.is(':visible')) {
+                    if (!confirm('Re-generating the layout will reset all current seat assignments and row definitions will be unlocked. Are you sure?')) {
+                        return;
+                    }
+                    currentGeneratedRowDefinitions = []; seatAssignments = {};
+                    seatLayoutPreviewTarget.empty();
+                    if(noLayoutMessage && noLayoutMessage.length) noLayoutMessage.show();
+                    if(screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.hide();
+                    if(capacityDisplayInput && capacityDisplayInput.length) capacityDisplayInput.val(0);
+                    switchToStep1();
+                    return;
+                }
+
+                currentGeneratedRowDefinitions = []; seatAssignments = {};
+                let isValidStructure = true, rowIdentifiersSet = new Set(), hasDefinedRows = false;
+
+                seatRowsContainer.find('.row-definition').each(function () {
+                    hasDefinedRows = true;
+                    const $rowDef = $(this);
+                    const identifierInput = $rowDef.find('.row-identifier-input');
+                    const seatsInput = $rowDef.find('.seats-per-row-input');
+                    const orderInput = $rowDef.find('.row-order-input');
+                    const seatTypeIdDropdown = $rowDef.find('.row-default-seat-type-select');
+                    let seatTypeIdFromDTOValue = seatTypeIdDropdown.length ? seatTypeIdDropdown.val() : null;
+                    if (seatTypeIdFromDTOValue === "") seatTypeIdFromDTOValue = null;
+
+                    $rowDef.find('.field-error').text(''); $rowDef.css('border', '');
+                    const identifier = identifierInput.val().trim().toUpperCase();
+                    const numberOfSeats = parseInt(seatsInput.val());
+                    const order = parseInt(orderInput.val());
+                    const existingRowId = $rowDef.find('input[name$=".id"]').val();
+                    let rowIsValid = true;
+
+                    if (!identifier) { rowIsValid = false; isValidStructure = false; identifierInput.closest('.row-identifier-input-container').find('.field-error').text('Row ID is required.'); }
+                    else if (rowIdentifiersSet.has(identifier)) { rowIsValid = false; isValidStructure = false; identifierInput.closest('.row-identifier-input-container').find('.field-error').text('Row ID must be unique.'); }
+                    else { rowIdentifiersSet.add(identifier); }
+                    if (isNaN(numberOfSeats) || numberOfSeats < 1) {
+                        rowIsValid = false; isValidStructure = false;
+                        seatsInput.closest('.seats-per-row-input-container').find('.field-error').text('Seats must be > 0.');
+                    } else if (numberOfSeats > 15) {
+                        rowIsValid = false; isValidStructure = false;
+                        seatsInput.closest('.seats-per-row-input-container').find('.field-error').text('Max 15 seats per row.');
+                    }
+                     if (isNaN(order) || order < 0) { rowIsValid = false; isValidStructure = false; orderInput.closest('.row-order-input-container').find('.field-error').text('Order must be >= 0.'); }
+
+                    else {
+                        currentGeneratedRowDefinitions.push({
+                            id: existingRowId || null, identifier, numberOfSeats, order,
+                            seatTypeIdFromDTO: seatTypeIdFromDTOValue
+                        });
+                    }
+                });
+
+                if (!isValidStructure || !hasDefinedRows || (currentGeneratedRowDefinitions.length === 0 && hasDefinedRows)) {
+                    const message = !hasDefinedRows ? 'Please define at least one row.' : 'Please correct errors in row definitions (highlighted in red).';
+                    if (globalErrorDiv.length) globalErrorDiv.html(`<p>${message}</p>`).show();
+                    else alert(message);
+                    finalSaveBtn.fadeOut().prop('disabled', true); 
+                    return;
+                }
+                if (globalErrorDiv.length) globalErrorDiv.hide();
+                currentGeneratedRowDefinitions.sort((a, b) => a.order - b.order);
+                renderSeatLayoutPreviewDOM(currentGeneratedRowDefinitions);
+                switchToStep2();
+            });
+
+            function renderSeatLayoutPreviewDOM(rowDefinitionsData) {
+                seatLayoutPreviewTarget.empty();
+                seatAssignments = {};
+                let hasVisibleRows = false;
+
+                if (screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.hide(); else console.warn("SCRIPT - render: screenPreviewDiv not found");
+                if (noLayoutMessage && noLayoutMessage.length) noLayoutMessage.show(); else console.warn("SCRIPT - render: noLayoutMessage not found");
+
+                if (!Array.isArray(rowDefinitionsData) || rowDefinitionsData.length === 0) {
+                } else {
+                    rowDefinitionsData.forEach(def => { 
+                        if (def.identifier && def.numberOfSeats > 0) {
+                            hasVisibleRows = true;
+                            const $seatRowPreview = $('<div>').addClass('seat-row-preview');
+                            $seatRowPreview.append($('<div>').addClass('row-identifier-preview').text(def.identifier));
+                            const $seatCellsContainer = $('<div>').addClass('d-flex flex-wrap');
+
+                            const rowDefaultSeatType = availableSeatTypes.find(st => String(st.id) === String(def.seatTypeIdFromDTO));
+                            const isRowDefaultCouple = rowDefaultSeatType ? !!rowDefaultSeatType.isCouple : false;
+
+                            for (let i = 0; i < def.numberOfSeats; i++) { 
+                                const seatNumber = i + 1; 
+                                const seatKey = `${def.identifier}_${seatNumber}`;
+
+                                let initialTypeId = null;
+                                let initialTypeName = 'Unassigned';
+                                let initialColor = '#6c757d';
+                                let initialIsPartOfCouple = false;
+
+                                if (rowDefaultSeatType) {
+                                    if (isRowDefaultCouple) {
+                                        if (i % 2 === 0 && (i + 1) < def.numberOfSeats) { 
+                                            initialTypeId = rowDefaultSeatType.id;
+                                            initialTypeName = rowDefaultSeatType.name;
+                                            initialColor = rowDefaultSeatType.color;
+                                            initialIsPartOfCouple = true;
+                                        } else if (i % 2 !== 0) { 
+                                            const prevSeatKey = `${def.identifier}_${seatNumber - 1}`;
+                                            if (seatAssignments[prevSeatKey] &&
+                                                seatAssignments[prevSeatKey].isPartOfCouple &&
+                                                String(seatAssignments[prevSeatKey].typeId) === String(rowDefaultSeatType.id)) {
+                                                initialTypeId = rowDefaultSeatType.id;
+                                                initialTypeName = rowDefaultSeatType.name;
+                                                initialColor = rowDefaultSeatType.color;
+                                                initialIsPartOfCouple = true;
+                                            }
+                                        }
+                                    } else { 
+                                        initialTypeId = rowDefaultSeatType.id;
+                                        initialTypeName = rowDefaultSeatType.name;
+                                        initialColor = rowDefaultSeatType.color;
+                                        initialIsPartOfCouple = false;
+                                    }
+                                }
+
+                                seatAssignments[seatKey] = {
+                                    rowIdentifier: def.identifier,
+                                    seatNumber: seatNumber,
+                                    typeId: initialTypeId,
+                                    typeName: initialTypeName,
+                                    color: initialColor,
+                                    isPartOfCouple: initialIsPartOfCouple
+                                };
+
+                                const $seatCell = $('<div>')
+                                    .addClass('seat-cell-preview dropzone')
+                                    .attr('title', `Seat: ${def.identifier}${seatNumber} (${initialTypeName})`)
+                                    .text(initialTypeId ? String(initialTypeName).substring(0, 1).toUpperCase() : seatNumber)
+                                    .css('background-color', initialColor)
+                                    .data({
+                                        'seat-key': seatKey,
+                                        'seat-identifier': def.identifier,
+                                        'seat-number': seatNumber,
+                                        'seat-number-display': seatNumber
+                                    });
+
+                                if (isColorDark(initialColor)) {
+                                    $seatCell.css('color', 'white');
+                                } else {
+                                    $seatCell.css('color', 'black');
+                                }
+                                $seatCellsContainer.append($seatCell);
+                            }
+                            $seatRowPreview.append($seatCellsContainer);
+                            seatLayoutPreviewTarget.append($seatRowPreview);
+                        }
+                    });
+                }
+
+                if (hasVisibleRows) {
+                    if (noLayoutMessage && noLayoutMessage.length) noLayoutMessage.hide();
+                    if (screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.show();
+                    setTimeout(initializeDropzonesForPreview, 50); 
+                } else {
+                    if (noLayoutMessage && noLayoutMessage.length) noLayoutMessage.show();
+                    if (screenPreviewDiv && screenPreviewDiv.length) screenPreviewDiv.hide();
+                    console.log("SCRIPT: No valid rows to render in preview.");
+                }
+                calculateCapacityFromGeneratedLayout();
+            }
+
+            function initializeDraggableSeatTypes() {
+                if (typeof interact === 'undefined') {
+                    return;
+                }
+                interact('.seat-type-palette-form .draggable-seat-type').draggable({
+                    inertia: true,
+                    autoScroll: true,
+                    listeners: {
+                        start(event) {
+                            $(event.target).addClass('dragging');
+                        },
+                        move: dragMoveListener,
+                        end(event) {
+                            $(event.target).removeClass('dragging');
+                            event.target.style.transform = 'translate(0px, 0px)';
+                            event.target.setAttribute('data-x', 0);
+                            event.target.setAttribute('data-y', 0);
+                        }
+                    }
+                });
+            }
+
+            function dragMoveListener(event) {
+                const target = event.target;
+                const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+                target.style.transform = `translate(${x}px, ${y}px)`;
+                target.setAttribute('data-x', x);
+                target.setAttribute('data-y', y);
+            }
+
+            function initializeDropzonesForPreview() {
+                if (typeof interact !== 'function') {
+                    $('#seatAssignmentSection').prepend('<p class="interact-error-message" style="color:red; text-align:center;">Drop functionality may not work (InteractJS issue).</p>');
+                    return;
+                }
+
+                const selector = '#seatLayoutPreview .seat-cell-preview.dropzone';
+                const elementsToInit = $(selector).get(); 
+
+                if (elementsToInit.length === 0) {
+                    return;
+                }
+
+                interact('.seat-cell-preview.dropzone') 
+                    .dropzone({
+                    accept: '.draggable-seat-type',
+                    overlap: 'pointer',
+
+                    ondropactivate: function (event) {
+                        event.target.classList.add('drop-active');
+                    },
+                    ondragenter: function (event) { 
+                        const dropzoneSeatDiv = $(event.target);
+                        const draggableTypeDiv = $(event.relatedTarget);
+
+                        const draggedColor = draggableTypeDiv.data('seat-type-color') || '#3498db'; 
+                        const draggedTypeName = draggableTypeDiv.data('seat-type-name') || '';
+                        const draggedIsCouple = !!availableSeatTypes.find(st => String(st.id) === String(draggableTypeDiv.data('seat-type-id')))?.isCouple;
+
+                        dropzoneSeatDiv.addClass('drop-target'); 
+                        dropzoneSeatDiv.css('background-color', draggedColor);
+                        dropzoneSeatDiv.text(String(draggedTypeName).substring(0, 1).toUpperCase());
+                        if (isColorDark(draggedColor)) {
+                            dropzoneSeatDiv.css('color', 'white');
+                        } else {
+                            dropzoneSeatDiv.css('color', 'black');
+                        }
+
+                        if (draggedIsCouple) {
+                            const targetSeatNumber = parseInt(dropzoneSeatDiv.data('seat-number'));
+                            if (targetSeatNumber % 2 !== 0) { 
+                                const neighborSeatNumber = targetSeatNumber + 1;
+                                const neighborSeatKey = `${dropzoneSeatDiv.data('seat-identifier')}_${neighborSeatNumber}`;
+                                const $neighborCell = $(`.seat-cell-preview[data-seat-key="${neighborSeatKey}"]`);
+                                if ($neighborCell.length && !$neighborCell.hasClass('occupied-by-another-drag')) { 
+                                    $neighborCell.addClass('drop-target-neighbor') 
+                                                .css('background-color', draggedColor)
+                                                .text(String(draggedTypeName).substring(0, 1).toUpperCase());
+                                    if (isColorDark(draggedColor)) $neighborCell.css('color', 'white'); else $neighborCell.css('color', 'black');
+                                }
+                            }
+                        }
+                    },
+                    ondragleave: function (event) {
+                        const dropzoneSeatDiv = $(event.target);
+                        const seatKey = dropzoneSeatDiv.data('seat-key');
+                        const currentAssignment = seatAssignments[seatKey]; 
+
+                        dropzoneSeatDiv.removeClass('drop-target');
+
+                        if (currentAssignment) {
+                            dropzoneSeatDiv.css('background-color', currentAssignment.color);
+                            dropzoneSeatDiv.text(currentAssignment.typeId ? String(currentAssignment.typeName).substring(0, 1).toUpperCase() : dropzoneSeatDiv.data('seat-number-display'));
+                            if (isColorDark(currentAssignment.color)) {
+                                dropzoneSeatDiv.css('color', 'white');
+                            } else {
+                                dropzoneSeatDiv.css('color', 'black');
+                            }
+                        }
+
+                        const draggableTypeDiv = $(event.relatedTarget);
+                        const draggedIsCouple = !!availableSeatTypes.find(st => String(st.id) === String(draggableTypeDiv.data('seat-type-id')))?.isCouple;
+                        if (draggedIsCouple) {
+                            const targetSeatNumber = parseInt(dropzoneSeatDiv.data('seat-number'));
+                            if (targetSeatNumber % 2 !== 0) {
+                                const neighborSeatNumber = targetSeatNumber + 1;
+                                const neighborSeatKey = `${dropzoneSeatDiv.data('seat-identifier')}_${neighborSeatNumber}`;
+                                const $neighborCell = $(`.seat-cell-preview[data-seat-key="${neighborSeatKey}"]`);
+                                const neighborAssignment = seatAssignments[neighborSeatKey];
+                                if ($neighborCell.length && neighborAssignment) {
+                                    $neighborCell.removeClass('drop-target-neighbor')
+                                                .css('background-color', neighborAssignment.color)
+                                                .text(neighborAssignment.typeId ? String(neighborAssignment.typeName).substring(0, 1).toUpperCase() : $neighborCell.data('seat-number-display'));
+                                    if (isColorDark(neighborAssignment.color)) $neighborCell.css('color', 'white'); else $neighborCell.css('color', 'black');
+                                }
+                            }
+                        }
+                    },
+                    ondrop: function (event) {
+                        const dropzoneSeatDiv = $(event.target);
+                        const draggableTypeDiv = $(event.relatedTarget);
+                        const targetSeatKey = dropzoneSeatDiv.data('seat-key');
+                        const targetRowIdentifier = dropzoneSeatDiv.data('seat-identifier');
+                        const targetSeatNumber = parseInt(dropzoneSeatDiv.data('seat-number'));
+
+                        let droppedSeatTypeIdRaw = draggableTypeDiv.attr('data-seat-type-id');
+                        if (droppedSeatTypeIdRaw === undefined) droppedSeatTypeIdRaw = draggableTypeDiv.data('seat-type-id');
+                        const droppedSeatTypeId = (droppedSeatTypeIdRaw === "" || droppedSeatTypeIdRaw === undefined || String(droppedSeatTypeIdRaw).toLowerCase() === "null") ? null : droppedSeatTypeIdRaw;
+                        const droppedSeatTypeObject = availableSeatTypes.find(st => String(st.id) === String(droppedSeatTypeId));
+                        const droppedIsCouple = droppedSeatTypeObject ? !!droppedSeatTypeObject.isCouple : false;
+
+                        function updateSingleSeat(seatKeyToUpdate, typeToApply, isPartOfNewCouple = false) {
+                            if (!seatAssignments[seatKeyToUpdate]) {
+                                return;
+                            }
+                            const typeId = typeToApply ? typeToApply.id : null;
+                            const typeName = typeToApply ? typeToApply.name : 'Unassigned';
+                            const typeColor = typeToApply ? typeToApply.color : '#6c757d';
+
+                            seatAssignments[seatKeyToUpdate].typeId = typeId;
+                            seatAssignments[seatKeyToUpdate].typeName = typeName;
+                            seatAssignments[seatKeyToUpdate].color = typeColor;
+                            seatAssignments[seatKeyToUpdate].isPartOfCouple = isPartOfNewCouple;
+
+                            const $cell = $(`.seat-cell-preview[data-seat-key="${seatKeyToUpdate}"]`);
+                            if ($cell.length) {
+                                $cell.text(typeId ? String(typeName).substring(0, 1).toUpperCase() : $cell.data('seat-number-display'))
+                                    .css('background-color', typeColor)
+                                    .attr('title', `Seat: ${$cell.data('seat-identifier')}${$cell.data('seat-number-display')} (${typeName})`);
+                                if (isColorDark(typeColor)) $cell.css('color', 'white'); else $cell.css('color', 'black');
+                            }
+                        }
+
+                        if (seatAssignments[targetSeatKey] && seatAssignments[targetSeatKey].isPartOfCouple) {
+                            const oldPairPartnerNumber = targetSeatNumber % 2 === 0 ? targetSeatNumber - 1 : targetSeatNumber + 1;
+                            const oldPairPartnerKey = `${targetRowIdentifier}_${oldPairPartnerNumber}`;
+
+                            if (seatAssignments[oldPairPartnerKey] && seatAssignments[oldPairPartnerKey].isPartOfCouple) {
+                                updateSingleSeat(oldPairPartnerKey, null, false); 
+                            }
+                            updateSingleSeat(targetSeatKey, null, false);
+                        }
+
+                        if (droppedIsCouple) {
+                            if (targetSeatNumber % 2 !== 0) { 
+                                const neighborSeatNumber = targetSeatNumber + 1;
+                                const neighborSeatKey = `${targetRowIdentifier}_${neighborSeatNumber}`;
+
+                                if (seatAssignments[neighborSeatKey]) { 
+                                    if(seatAssignments[neighborSeatKey].isPartOfCouple){
+                                        const neighborOldPairPartnerNumber = neighborSeatNumber % 2 === 0 ? neighborSeatNumber - 1 : neighborSeatNumber + 1;
+                                        if(neighborOldPairPartnerNumber !== targetSeatNumber){
+                                        updateSingleSeat(`${targetRowIdentifier}_${neighborOldPairPartnerNumber}`, null, false);
+                                        }
+                                    }
+                                    updateSingleSeat(targetSeatKey, droppedSeatTypeObject, true); 
+                                    updateSingleSeat(neighborSeatKey, droppedSeatTypeObject, true); 
+                                } else {
+                                    updateSingleSeat(targetSeatKey, null, false);
+                                }
+                            } else { 
+                                updateSingleSeat(targetSeatKey, null, false); 
+                            }
+                        } else { 
+                            updateSingleSeat(targetSeatKey, droppedSeatTypeObject, false); 
+                        }
+
+                        const finalAssignmentsForSubmit = Object.values(seatAssignments).map(sa => ({
+                            rowIdentifier: sa.rowIdentifier, seatNumber: sa.seatNumber,
+                            typeId: (sa.typeId === "" || sa.typeId === undefined || String(sa.typeId).toLowerCase() === "null") ? null : sa.typeId
+                        }));
+                        seatAssignmentsHiddenInput.val(JSON.stringify(finalAssignmentsForSubmit));
+                    }
+                });
+            }
+
+            function loadExistingDataForEdit() {
+                const isEditMode = /*[[${roomForm.id != null && roomForm.id != 0}]]*/ false;
+                const hasExistingRowsInDOM = seatRowsContainer.find('.row-definition').length > 0;
+
+                if (isEditMode) {
+                    if (hasExistingRowsInDOM && initialSeatAssignmentsJson && initialSeatAssignmentsJson !== "[]") {
+                        currentGeneratedRowDefinitions = initialRowDefinitionsFromServer.sort((a,b) => a.order - b.order).map(def => ({
+                            id: def.id, 
+                            identifier: def.identifier, 
+                            numberOfSeats: def.numberOfSeats, 
+                            order: def.order,
+                            seatTypeIdFromDTO: (def.seatTypeId === "" || def.seatTypeId === undefined || def.seatTypeId === null) ? null : def.seatTypeId
+                        }));
+
+                        renderSeatLayoutPreviewDOM(currentGeneratedRowDefinitions);
+
+                        try {
+                            const assignmentsFromServer = JSON.parse(initialSeatAssignmentsJson);
+                            assignmentsFromServer.forEach(rowAssignment => {
+                                if (rowAssignment.seats) {
+                                    rowAssignment.seats.forEach(seatInAssign => {
+                                        const seatKey = `${rowAssignment.rowIdentifier}_${seatInAssign.seatNumber}`;
+                                        if (seatAssignments[seatKey]) { 
+                                            const typeIdToAssign = (seatInAssign.seatTypeId === "" || seatInAssign.seatTypeId === undefined || seatInAssign.seatTypeId === null) ? null : seatInAssign.seatTypeId;
+                                            const seatType = availableSeatTypes.find(st => String(st.id) === String(typeIdToAssign));
+
+                                            seatAssignments[seatKey].typeId = typeIdToAssign;
+                                            seatAssignments[seatKey].typeName = seatType ? seatType.name : (typeIdToAssign ? 'Unknown Type' : 'Unassigned');
+                                            seatAssignments[seatKey].color = seatType ? seatType.color : '#6c757d';
+
+                                            const $seatCell = $(`.seat-cell-preview[data-seat-key="${seatKey}"]`);
+                                            if ($seatCell.length) {
+                                                if (typeIdToAssign) {
+                                                    $seatCell.text(String(seatAssignments[seatKey].typeName).substring(0,1).toUpperCase()).css('background-color', seatAssignments[seatKey].color);
+                                                    if (isColorDark(seatAssignments[seatKey].color)) $seatCell.css('color', 'white'); else $seatCell.css('color', 'black');
+                                                } else { 
+                                                    $seatCell.text($seatCell.data('seat-number-display')).css({'background-color': '#6c757d', 'color': 'white'});
+                                                }
+                                                $seatCell.attr('title', `Seat: ${$seatCell.data('seat-identifier')}${$seatCell.data('seat-number-display')} (${seatAssignments[seatKey].typeName})`);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (e) {
+                            switchToStep1();
+                            return;
+                        }
+                        switchToStep2();
+                    } else if (!hasExistingRowsInDOM && initialRowDefinitionsFromServer && initialRowDefinitionsFromServer.length > 0) {
+                        initialRowDefinitionsFromServer.forEach((def, index) => {
+                             seatRowsContainer.append(createRowDefinitionHTML(index, def.identifier, def.numberOfSeats, def.order, def.id));
+                        });
+                        nextRowIndex = initialRowDefinitionsFromServer.length;
+                        switchToStep1();
+                    } else {
+                        if (!hasExistingRowsInDOM) {
+                            addRowBtn.click();
+                        }
+                        switchToStep1();
+                    }
+                } else {
+                    if (!hasExistingRowsInDOM) {
+                        addRowBtn.click();
+                    }
+                    switchToStep1(); 
+                }
+                calculateTempCapacityFromInputs(); 
+            }
+
+            initializeDraggableSeatTypes();
+            loadExistingDataForEdit();
+
+            $('#roomForm').on('submit', function(e) {
+                if (seatAssignmentSection.is(':hidden') || finalSaveBtn.is(':hidden') || finalSaveBtn.prop('disabled')) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                currentGeneratedRowDefinitions.forEach((def) => {
+                    const $rowDiv = seatRowsContainer.find(`.row-definition`).filter(function() {
+                        return $(this).find('.row-identifier-input').val().trim().toUpperCase() === def.identifier &&
+                               parseInt($(this).find('.row-order-input').val()) === def.order;
+                    }).first();
+
+                    if ($rowDiv.length) {
+                        const originalIndex = $rowDiv.data('row-index');
+                        $rowDiv.find(`input[name="rowDefinitions[${originalIndex}].seatTypeId"]`).val('');
+                    }
+                });
+
+                const finalAssignments = Object.values(seatAssignments).map(sa => ({
+                    rowIdentifier: sa.rowIdentifier,
+                    seatNumber: sa.seatNumber,
+                    seatTypeId: (sa.typeId === "" || sa.typeId === undefined) ? null : sa.typeId
+                }));
+
+                $('#seatAssignmentsField').val(JSON.stringify(finalAssignments));
+            });
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

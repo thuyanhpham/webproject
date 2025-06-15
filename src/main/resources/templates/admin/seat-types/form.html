@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <!-- Copy các link CSS -->
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
     <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
@@ -18,51 +19,32 @@
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <title th:text="${showtime.id == null} ? 'Admin - Add Showtime' : 'Admin - Edit Showtime'">Admin - Showtime Form</title>
+    <title th:text="${seatType.id == null} ? 'Admin - Add Seat Type' : 'Admin - Edit Seat Type'">Admin - Seat Type Form</title>
 
-         <style>
+     <style>
         body { background-color: #032055; color: #ccc; }
         .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
         .form-label { color: #a0a3bd; margin-bottom: .5rem; font-weight: 500;}
-        .form-control, .form-select, .form-check-input {
+        .form-control, .form-select { /* Bỏ .form-check-input nếu không dùng checkbox/radio đặc biệt */
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid #2d3450;
             color: #fff;
             border-radius: 5px;
         }
-        .form-control:focus, .form-select:focus, .form-check-input:focus {
+        .form-control:focus, .form-select:focus {
             background-color: rgba(255, 255, 255, 0.1);
             border-color: #50a6fc;
             color: #fff;
             box-shadow: none;
         }
         .form-control::placeholder { color: #6c757d; }
-        .form-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a0a3bd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px 12px;
-            padding-right: 2.5rem;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-        }
-        .form-select option {
-            background-color: #0a1e44;
-            color: #ccc;
-            padding: 8px 12px;
-        }
-        .form-select option:hover {
-            background-color: #11255a;
-            color: #fff;
-        }
-        .form-check-label { color: #ccc; }
         .btn-save { display: inline-block; padding: 12px 30px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #001232; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; border: none; text-transform: uppercase; letter-spacing: 1px; }
         .btn-save:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
         .btn-cancel { display: inline-block; padding: 10px 25px; background: transparent; color: #aaa; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s ease; border: 1px solid #444; margin-left: 15px; }
         .btn-cancel:hover { background: #444; color: #fff; }
         .required-star { color: #ff4343; margin-left: 2px;}
-        .text-danger { color: #fff !important; font-size: 0.85em; margin-top: 4px; }
+        .text-danger { color: #ff4343 !important; font-size: 0.85em; margin-top: 4px; } /* Sửa màu lỗi cho rõ hơn */
+        .alert { margin-bottom: 20px; border-radius: 5px;}
         .header-section { background: #071240; }
         .header-section .menu > li > a.active { color: #31d7a9 !important; }
         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
@@ -82,67 +64,53 @@
 
     <header class="header-section" th:replace="~{fragments/admin-header :: header}"></header>
 
-    <!-- Phần Nội dung Chính: Form Thêm/Sửa Suất Chiếu -->
+    <!-- Phần Nội dung Chính: Form Thêm/Sửa Loại Ghế -->
     <section class="admin-section padding-top padding-bottom">
         <div class="container">
 
              <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;">
-			    <span th:text="${showtime.id == null ? 'Add New Showtime' : 'Edit Showtime'}"></span>
-			    <span th:if="${movie?.title != null and !#strings.isEmpty(movie.title)}"
-			          th:text="' for \'' + ${movie.title} + '\''">
-			    </span>
+			    <span th:text="${seatType.id == null ? 'Add New Seat Type' : 'Edit Seat Type'}"></span>
 			</h2>
 
-             <!-- Hiển thị lỗi chung (nếu có) -->
+             <!-- Hiển thị lỗi chung (nếu có từ flash attributes hoặc model) -->
              <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <span th:text="${errorMessage}"></span>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
 
-             <form th:action="@{/admin/showtimes/save}" th:object="${showtime}" method="post" class="mt-4">
+             <form th:action="@{/admin/seat-types/save}" th:object="${seatType}" method="post" class="mt-4">
                  <input type="hidden" th:field="*{id}" />
-                 <input type="hidden" name="movieId" th:value="*{movie?.id}" />
+
                  <div class="mb-3">
-                     <label for="roomId" class="form-label">Room / Screen <span class="required-star">*</span></label>
-                     <select name="roomId" class="form-select" id="roomId" required>
-                         <option value="">-- Select Room --</option>
-                         <option th:each="room : ${allRooms}"
-                                 th:value="${room.id}"
-                                 th:text="${room.name} +' - Capacity: ' + ${room.capacity}"
-                                 th:selected="${showtime.room != null and showtime.room.id == room.id}">
-                             Room Name (Cinema Name) - Capacity: 100
-                         </option>
-                          <option th:if="${allRooms == null or #lists.isEmpty(allRooms)}" value="" disabled>No active rooms available</option>
-                     </select>
-                      <div class="text-danger" th:if="${#fields.hasErrors('room')}" th:errors="*{room}"></div>
-                 </div>
-                 <div class="row">
-                     <div class="col-md-6 mb-3">
-                         <label for="showDate" class="form-label">Show Date<span class="required-star">*</span></label>
-                         <input type="date" class="form-control" id="showDate" name="showDate"
-                                th:value="${showtime.showDate != null ? #temporals.format(showtime.showDate, 'yyyy-MM-dd') : ''}" required>
-                         <div class="text-danger" th:if="${#fields.hasErrors('showDate')}" th:errors="*{showDate}"></div>
-                     </div>
-                     <div class="col-md-6 mb-3">
-                         <label for="startTimeString" class="form-label">Start Time<span class="required-star">*</span></label>
-                         <input type="time" class="form-control" id="startTimeString" name="startTimeString"
-                                th:value="${startTimeStringValue ?: (showtime.startTime != null ? #temporals.format(showtime.startTime, 'HH:mm') : '')}" required>
-                         <div class="text-danger" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></div>
-                     </div>
+                     <label for="name" class="form-label">Seat Type Name <span class="required-star">*</span></label>
+                     <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="e.g., Normal, VIP, Couple" required>
+                     <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
                  </div>
 
                  <div class="mb-3">
-                     <label for="experience" class="form-label">Experience</label>
-                     <input type="text" class="form-control" id="experience" th:field="*{experience}" placeholder="e.g., 2D, 3D, IMAX, 4DX">
-                     <div class="text-danger" th:if="${#fields.hasErrors('experience')}" th:errors="*{experience}"></div>
+                    <label for="price" class="form-label">Seat Price <span class="required-star">*</span></label>
+                    <input type="number" step="0.01" class="form-control" id="price" th:field="*{price}" placeholder="e.g., 75000, 120000" required>
+                    <small class="form-text" style="color: #888;">Enter the direct price for this seat type (e.g., in VND).</small>
+                    <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price error</div>
+                </div>
+
+                 <div class="mb-3">
+                     <label for="color" class="form-label">Display Color</label>
+                     <input type="color" class="form-control form-control-color" id="color" th:field="*{color}" title="Choose your color">
+                     <small class="form-text" style="color: #888;">Color to represent this seat type in seating charts (optional).</small>
+                     <div class="text-danger" th:if="${#fields.hasErrors('color')}" th:errors="*{color}">Color error</div>
                  </div>
 
                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                  <div class="mt-4 text-center">
-                     <button type="submit" class="btn-save" th:text="${showtime.id == null} ? 'Add Showtime' : 'Update Showtime'">Save</button>
-                     <a th:href="@{/admin/showtimes/movie/{movieId}(movieId=${showtime.movie?.id})}" class="btn-cancel">Cancel</a>
+                     <button type="submit" class="btn-save" th:text="${seatType.id == null} ? 'Add Seat Type' : 'Update Seat Type'">Save</button>
+                     <a th:href="@{/admin/seat-types}" class="btn-cancel">Cancel</a>
                  </div>
 
              </form>
@@ -151,7 +119,12 @@
     </section>
     <!-- ========== Phần Nội dung Chính End ========== -->
 
-    <!-- Scripts-->
+    <!-- Footer -->
+    <footer class="footer-section">
+       <div class="container"> <div class="footer-top"> <div class="logo"> <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div> <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul> </div> <div class="footer-bottom"> <div class="footer-bottom-area"> <div class="left"> <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>. Admin Panel.</p></div><ul class="links"> <li><a href="#">About</a></li> <li><a href="#">Terms Of Use</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">FAQ</a></li> </ul></div></div> </div>
+    </footer>
+
+    <!-- Scripts -->
     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
@@ -171,7 +144,7 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function() {
-             console.log("Admin showtime form page loaded.");
+             console.log("Admin seat type form page loaded.");
              $('.preloader').fadeOut(500, function() { $(this).remove(); });
               // Kích hoạt đóng alert nếu có
               var alertList = document.querySelectorAll('.alert');
