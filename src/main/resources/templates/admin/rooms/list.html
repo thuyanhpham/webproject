@@ -150,10 +150,6 @@
                             <td th:text="${room.capacity}">100</td>
                             <!-- Ô chứa các nút Actions -->
                             <td class="action-buttons">
-                                <!-- Nút View Details -->
-                                <a th:href="@{/admin/rooms/details/{id}(id=${room.id})}" title="View Details">
-                                     <i class="fas fa-eye"></i>
-                                </a>
                                 <!-- Nút Edit -->
                                 <a th:href="@{/admin/rooms/edit/{id}(id=${room.id})}" title="Edit">
                                     <i class="fas fa-edit"></i>
@@ -176,11 +172,6 @@
         </div>
     </section>
     <!-- ========== Phần Nội dung Chính End ========== -->
-
-    <!-- Footer -->
-    <footer class="footer-section">
-       <div class="container"> <div class="footer-top"> <div class="logo"> <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="footer"></a> </div> <ul class="social-icons"><li><a href="#"><i class="fab fa-facebook-f"></i></a></li><li><a href="#" class="active"><i class="fab fa-twitter"></i></a></li><li><a href="#"><i class="fab fa-pinterest-p"></i></a></li><li><a href="#"><i class="fab fa-google"></i></a></li><li><a href="#"><i class="fab fa-instagram"></i></a></li></ul> </div> <div class="footer-bottom"> <div class="footer-bottom-area"> <div class="left"> <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>. Admin Panel.</p></div><ul class="links"> <li><a href="#">About</a></li> <li><a href="#">Terms Of Use</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">FAQ</a></li> </ul></div></div> </div>
-    </footer>
 
     <!-- Scripts -->
     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
