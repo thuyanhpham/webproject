@@ -19,17 +19,7 @@
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
-    
-	<style>
-		.header-button.pr-0 { display: flex; align-items: center; }
-         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
-         .header-user-greeting b { color: #fff; font-weight: 600; }
-         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
-         .logout-button-styled {
-            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-         }
-         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }	
-	</style>
+
     <title th:text="${movie != null ? movie.title + ' - Movie Details' : 'Boleto - Movie Details'}">Boleto - Online Ticket Booking Website HTML Template</title>
 
 </head>

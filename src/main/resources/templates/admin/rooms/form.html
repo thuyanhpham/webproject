@@ -23,14 +23,6 @@
 
     <title th:text="${roomForm.id == null || roomForm.id == 0} ? 'Admin - Add Room' : 'Admin - Edit Room (' + ${roomForm.name != null ? roomForm.name : ''} + ')'">Admin - Room Form</title>
 
-    <style>
-        .header-section { background: #071240; }
-        .header-section .menu > li > a.active { color: #31d7a9 !important; }
-        .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
-        .logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
-        .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
-
-    </style>
 </head>
 <body>
     <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>

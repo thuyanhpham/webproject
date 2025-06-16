@@ -9749,3 +9749,55 @@ aside {
 .seat-representation.available.normal { border-color: #22e2d5; }
 .seat-representation.available.vip    { border-color: #fb1313; }
 .seat-representation.available.couple { border-color: #924f86; }
+.btn-save {width: auto !important; min-width: 0 !important; display: inline-block; padding: 12px 25px; background: linear-gradient(to bottom, #31d7a9, #27aa80); color: #001232; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; border: none; text-transform: uppercase; letter-spacing: 1px; }
+.btn-save:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 215, 169, 0.3); }
+.btn-cancel { display: inline-block; padding: 10px 25px; background: transparent; color: #aaa; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s ease; border: 1px solid #444; margin-left: 15px; }
+.btn-cancel:hover { background: #444; color: #fff; }
+.admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
+.form-label { color: #a0a3bd; margin-bottom: .5rem; font-weight: 500;}
+.form-control, .form-select, .form-check-input { background-color: rgba(255, 255, 255, 0.05); border: 1px solid #2d3450; color: #fff; border-radius: 5px; }
+.form-control:focus, .form-select:focus, .form-check-input:focus { background-color: rgba(255, 255, 255, 0.1); border-color: #50a6fc; color: #fff; box-shadow: none; }
+.form-control::placeholder { color: #6c757d; }
+.header-section .menu > li > a.active { color: #31d7a9 !important; }
+.header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+.header-user-greeting b { color: #ffffff; font-weight: 600; }
+.logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+.logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
+.logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+td.action-buttons {
+            display: flex;        
+            align-items: center;  
+            gap: 6px;     
+            justify-content: flex-start; 
+            vertical-align: middle !important;
+            padding-top: 8px;      
+            padding-bottom: 8px;
+            min-width: 130px;     
+            white-space: nowrap;  
+        }
+        td.action-buttons > a, td.action-buttons > form {margin: 0; padding: 0; flex-shrink: 0;}
+        td.action-buttons form {display: inline-block; line-height: 0;}
+        td.action-buttons a,td.action-buttons form button { 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            padding: 7px 10px;      
+            font-size: 14px;        
+            line-height: 1;        
+            border-radius: 4px;   
+            text-decoration: none;
+            border: none;       
+            cursor: pointer;
+            text-align: center;
+            min-width: 36px; 
+            min-height: 32px;
+            box-sizing: border-box;
+            transition: opacity 0.2s ease;
+        }
+        td.action-buttons a:hover,
+        td.action-buttons form button:hover {opacity: 0.85;}
+        td.action-buttons a[href*='/edit/'] { background-color: #ffc107; color: #212529; }
+        td.action-buttons form button { background-color: #dc3545; color: white; }
+        td.action-buttons a[href*='/details/'] { background-color: #17a2b8; color: white; }
+        td.action-buttons a i, td.action-buttons form button i {font-size: 1em;}
+
