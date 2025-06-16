@@ -48,54 +48,7 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- ==========Overlay========== -->
-      <!-- ==========Header-Section========== -->
-<header class="header-section">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo">
-                    <a th:href="@{/}">
-                        <img th:src="@{/images/logo.png}" alt="logo"> 
-                    </a>
-                </div>
-                <ul class="menu">
-                     <li class="menu-item-has-children" >
-                        <a th:href="@{/home}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/home')} ? 'active' : ''">Home</a>                   
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">movies</a>
-                    </li>
-
-                      <li class="menu-item-has-children">
-                         <a href="#">pages</a>
-                         <ul class="submenu">
-                             <li><a th:href="@{/about}">About Us</a></li>
-                             <li><a th:href="@{/apps-download}">Apps Download</a></li>
-                             <li><a th:href="@{/sign-in}">Sign In</a></li>
-                             <li><a th:href="@{/sign-up}">Sign Up</a></li>
-                             <li><a th:href="@{/404}">404</a></li>
-                         </ul>
-                     </li>
-	                <li class="menu-item" sec:authorize="isAuthenticated()">
-                        <a th:href="@{/profile}" th:text="'Xin chào, ' + ${#authentication.name} + '!'">Xin chào, User!</a>
-                    </li>
-	 
-	                <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-					    <form class="logout-button-form" th:action="@{/logout}" method="post">
-						    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						    <button class="logout-button-styled" type="submit">LOG OUT</button>
-						</form>
-					</li>                      
-                              
-                </ul>
-                <div class="header-bar d-lg-none">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
-            </div>
-        </div>
-    </header>
-    <!-- ==========Header-Section========== -->
+    <header class="header-section" th:replace="~{fragments/user-header :: header}"></header>
     <!-- ==========Banner-Section========== -->
     <section class="banner-section">
          <div class="banner-bg bg-fixed" th:styleappend="'background-image: url(' + @{/images/banner02.jpg} + ');'"></div>

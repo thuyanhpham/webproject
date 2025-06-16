@@ -9598,3 +9598,154 @@ aside {
             border-color: #545b62 !important;
             color: #ffffff !important;
         }
+.screen-wrapper {
+            background-color: #032055; /* Màu nền xanh đậm như trong ảnh */
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .seat-area-v2 {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .seat-line-v2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px; /* Khoảng cách giữa các hàng */
+        }
+
+        .seat-line-v2 .row-identifier {
+            color: #a7b3c9;
+            font-size: 16px;
+            font-weight: 600;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .seat-row-v2 {
+            display: flex;
+            flex-wrap: nowrap; /* Đảm bảo các ghế trên một hàng */
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 10px; /* Khoảng cách giữa các ghế trong một hàng */
+        }
+
+        /* Style cho từng ô ghế */
+        .seat-item-v2 {
+            width: 50px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #a7b3c9;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid rgba(167, 179, 201, 0.2);
+            position: relative;
+        }
+        .seat-row-v2 {gap: 10px;}
+        .seat-item-v2.couple-part-left {
+            margin-right: 0;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            transform-origin: right;
+        }
+        .seat-item-v2.couple-part-right {
+            margin-left: 0;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            transform-origin: left;
+        }
+        .seat-item-v2.couple-part-left::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            bottom: 15%; 
+            right: -1px;
+            width: 2px; 
+            background-color: #032055; 
+            z-index: 1;
+        }
+        /* Ghế đã đặt */
+        .seat-item-v2.booked {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #58657e;
+            cursor: not-allowed;
+            border-color: transparent;
+        }
+        .seat-item-v2.booked.couple-part-left::after {
+            display: none;
+        }
+
+        /* Ghế đang được chọn bởi người dùng */
+        .seat-item-v2.selected-by-user {
+            background-color: #31d7a9;
+            color: #ffffff;
+            font-weight: 700;
+            border-color: #31d7a9;
+            transform: scale(1.1);
+        }
+
+        /* Ghế còn trống khi hover */
+        .seat-row-v2:has(.seat-item-v2.couple:hover) .seat-item-v2[data-seat-id="${seat-id-on-hover}"] {
+            border-color: #31d7a9;
+        }
+        /* Loại ghế (chỉ áp dụng viền màu khi còn trống) */
+        .seat-item-v2.available.normal { border-color: #22e2d5; }
+        .seat-item-v2.available.vip    { border-color: #fb1313; }
+        .seat-item-v2.available.couple { border-color: #924f86; }
+        .seat-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép xuống hàng trên màn hình nhỏ */
+    gap: 25px; /* Khoảng cách giữa các mục chú thích */
+    margin-top: 40px; /* Khoảng cách với khu vực ghế ở trên */
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background-color: rgba(3, 32, 85, 0.5); /* Nền mờ hợp với theme */
+    border-radius: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Khoảng cách giữa ô màu và chữ */
+}
+
+.legend-item span {
+    color: #a7b3c9; /* Màu chữ giống màu hàng ghế */
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.seat-representation {
+    width: 28px;
+    height: 22px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid transparent; /* Đặt border cơ sở */
+}
+
+/* Áp dụng các style đã có của ghế cho ô màu chú thích */
+.seat-representation.booked {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: transparent;
+}
+
+.seat-representation.selected-by-user {
+    background-color: #31d7a9;
+    border-color: #31d7a9;
+}
+
+.seat-representation.available.normal { border-color: #22e2d5; }
+.seat-representation.available.vip    { border-color: #fb1313; }
+.seat-representation.available.couple { border-color: #924f86; }

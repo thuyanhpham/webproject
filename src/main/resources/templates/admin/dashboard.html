@@ -132,13 +132,25 @@
                         </div>
                      </a>
                 </div>
+                <div class="col-md-6 col-lg-4">
+                     <a th:href="@{/admin/rooms}" class="admin-widget-link">
+                        <div class="admin-widget">
+                           <div class="widget-icon icon-bookings"><i class="fas fa-ticket-alt"></i></div>
+                            <div class="widget-content">
+                                <h4 class="title">Total Room</h4>
+                                <h2 class="amount" th:text="${totalRooms ?: 'N/A'}">0</h2>
+                            </div>
+                        </div>
+                     </a>
+                </div>
             </div>
             <div class="quick-actions-section">
                  <h3 class="title mb-4">Quick Actions</h3>
                  <div style="text-align: center;">
-                     <a th:href="@{/admin/movies/create}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
+                     <a th:href="@{/admin/movies/add}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
                      <a th:href="@{/admin/users/create}" class="custom-button"><i class="fas fa-user-plus"></i> Add User</a>
-                     <a th:href="@{/admin/seat-types/create}" class="custom-button"><i class="fas fa-plus"></i> Add Seat Type</a>
+                     <a th:href="@{/admin/seat-types/new}" class="custom-button"><i class="fas fa-plus"></i> Add Seat Type</a>
+                     <a th:href="@{/admin/rooms/new}" class="custom-button"><i class="fas fa-plus"></i> Add Room</a>
                  </div>
             </div>
         </div>

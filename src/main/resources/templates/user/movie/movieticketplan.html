@@ -37,41 +37,18 @@
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
-    <header class="header-section">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo"><a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="logo"></a></div>
-                <ul class="menu">
-                    <li><a th:href="@{/home}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/home')} ? 'active' : ''">Home</a></li>
-                    <li class="menu-item-has-children">
-                        <a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/movies')} ? 'active' : ''">Movies</a>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="#">Pages</a>
-                        <ul class="submenu">
-                            <li><a th:href="@{/about}">About Us</a></li>
-                            <li><a th:href="@{/apps-download}">Apps Download</a></li>
-                            <li><a th:href="@{/sign-in}">Sign In</a></li>
-                            <li><a th:href="@{/sign-up}">Sign Up</a></li>
-                            <li><a th:href="@{/404}">404</a></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item" sec:authorize="isAuthenticated()">
-                        <a th:href="@{/profile}" th:text="'Xin chào, ' + ${#authentication.name} + '!'">Xin chào, User!</a>
-                    </li>
-                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <form class="logout-button-form" th:action="@{/logout}" method="post">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <button class="logout-button-styled" type="submit">LOG OUT</button>
-                        </form>
-                    </li>
-                </ul>
-                <div class="header-bar d-lg-none"><span></span><span></span><span></span></div>
-            </div>
-        </div>
-    </header>
+    <header class="header-section" th:replace="~{fragments/user-header :: header}"></header>
 
-    <section class="window-warning inActive"> <div class="lay"></div> <div class="warning-item"> <h6 class="subtitle">Welcome! </h6> <h4 class="title">Select Your Seats</h4> <div class="thumb"> <img th:src="@{/images/seat-plan.png}" alt="movie"> </div> <a th:href="@{/movie-seat-plan}" class="custom-button seatPlanButton">Seat Plans<i class="fas fa-angle-right"></i></a> </div> </section>
+
+    <section class="window-warning inActive"> 
+        <div class="lay"></div>
+        <div class="warning-item"> 
+        <h6 class="subtitle">Welcome! </h6> 
+        <h4 class="title">Select Your Seats</h4> 
+        <div class="thumb"> <img th:src="@{/images/seat-plan.png}" alt="movie"> </div> 
+        <a th:href="@{/movie-seat-plan}" class="custom-button seatPlanButton">Seat Plans<i class="fas fa-angle-right"></i></a> 
+        </div> 
+    </section>
 
     <section class="details-banner hero-area"
              th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner02.jpg'}"
@@ -161,9 +138,10 @@
                             <div class="movie-schedule">
                                 <div th:if="${showtimes != null and not #lists.isEmpty(showtimes)}">
                                     <div class="item" th:each="showtime : ${showtimes}">
-                                        <a th:href="@{/movie-seat-plan(showtimeId=${showtime.id})}"
-										   class="showtime-link"
-										   th:title="'Select seats for ' + ${#temporals.format(showtime.startTime, 'HH:mm')} + ' - ' + ${showtime.experience} + (${showtime.room?.name != null ? ' - Room ' + showtime.room.name : ''})">
+                                        <a href="javascript:void(0);"
+                                            class="showtime-link"
+                                            th:attr="data-seat-plan-url=@{/movies/showtimes/{id}/seat-plan(id=${showtime.id})}"
+										    th:title="'Select seats for ' + ${#temporals.format(showtime.startTime, 'HH:mm')} + ' - ' + ${showtime.experience} + (${showtime.room?.name != null ? ' - Room ' + showtime.room.name : ''})">
 										    <span th:text="${#temporals.format(showtime.startTime, 'HH:mm')}">00:00</span>
 										    <small th:text="'(' + ${showtime.experience} + ')'">(Experience)</small>
 										    <small th:if="${showtime.room?.name != null}" th:text="' - ' + ${showtime.room.name}"> - Room Name</small>
@@ -214,34 +192,64 @@
     <script th:src="@{/js/main.js}"></script>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip(); // Sửa data-toggle thành data-bs-toggle cho Bootstrap 5+
-
-            // $('.select-bar').niceSelect(); // Bỏ comment nếu bạn dùng nice-select cho các select box khác
-
-            $('.showtime-link').on('click', function(e) {
-                 e.preventDefault();
-                 var showtimeId = $(this).data('showtime-id');
-                 // *** CẬP NHẬT URL NÀY CHO ĐÚNG VỚI MAPPING CHỌN GHẾ CỦA BẠN ***
-                 var seatPlanUrl = /*[[@{/movie-seat-plan/}]]*/ '/movie-seat-plan/' + showtimeId; // Ví dụ
-
-                 if(showtimeId) {
-                    console.log("Navigating to seat plan for Showtime ID: " + showtimeId + ", URL: " + seatPlanUrl);
-                    window.location.href = seatPlanUrl;
-                 } else {
-                     console.error("Showtime ID not found for the clicked link.");
-                 }
-            });
-
-             $('.bg_img').each(function() {
-                 var src = $(this).data('background');
-                 if (src && $(this).css('background-image') === 'none') { // Chỉ set nếu chưa có style inline
-                     $(this).css({'background-image': 'url(' + src + ')'});
-                 }
-             });
+    /*<![CDATA[*/
+    $(function () {
+        // ===================================================
+        // KHỞI TẠO CÁC PLUGIN CỦA TEMPLATE (Giữ nguyên)
+        // ===================================================
+        $('[data-bs-toggle="tooltip"]').tooltip();
+        $('.bg_img').each(function() {
+            var src = $(this).data('background');
+            if (src && $(this).css('background-image') === 'none') {
+                $(this).css({'background-image': 'url(' + src + ')'});
+            }
         });
-        /*]]>*/
+
+        // ===================================================
+        // LOGIC XỬ LÝ POPUP CHỌN GHẾ (Đã đúng logic)
+        // ===================================================
+
+        // 1. Lấy ra các phần tử HTML cần thiết từ DOM
+        const warningPopup = $('.window-warning');
+        const seatPlanButtonInPopup = warningPopup.find('.seatPlanButton');
+        const popupOverlay = warningPopup.find('.lay');
+
+        // 2. Bắt sự kiện khi người dùng click vào một suất chiếu bất kỳ
+        $('.showtime-link').on('click', function(e) {
+            e.preventDefault(); // Luôn ngăn hành vi mặc định của thẻ <a>
+
+            // 3. Lấy URL chọn ghế từ thuộc tính 'data-seat-plan-url' của thẻ <a> vừa được click
+            // **LƯU Ý:** URL này phải được tạo ra ĐÚNG ở phía HTML (Thymeleaf)
+            const seatPlanUrl = $(this).data('seat-plan-url');
+
+            // 4. Kiểm tra xem URL có tồn tại không
+            if (seatPlanUrl) {
+                // Ghi log để debug
+                console.log("Suất chiếu được chọn. URL trang ghế là: " + seatPlanUrl);
+
+                // 5. CẬP NHẬT thuộc tính 'href' của nút "Seat Plans" trong popup
+                // Đây là bước quan trọng nhất
+                seatPlanButtonInPopup.attr('href', seatPlanUrl);
+
+                // 6. Hiển thị popup (bằng cách xóa class 'inActive')
+                warningPopup.removeClass('inActive');
+
+            } else {
+                // Xử lý lỗi nếu không tìm thấy URL (hiếm khi xảy ra nếu HTML đúng)
+                console.error("Không thể tìm thấy thuộc tính 'data-seat-plan-url' cho suất chiếu này.");
+                alert("Đã có lỗi xảy ra. Vui lòng làm mới trang và thử lại.");
+            }
+        });
+
+        // 7. Thêm sự kiện để có thể đóng popup khi click vào nền mờ
+        popupOverlay.on('click', function() {
+            warningPopup.addClass('inActive');
+        });
+
+        // Sau các bước trên, nút "Seat Plans" trong popup đã có URL đúng.
+        // Thẻ <a> sẽ tự động chuyển hướng người dùng khi được click.
+    });
+    /*]]>*/
     </script>
 </body>
 </html>

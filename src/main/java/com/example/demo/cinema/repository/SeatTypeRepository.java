@@ -14,4 +14,5 @@ public interface SeatTypeRepository extends JpaRepository<SeatType, Long> {
 
 	List<SeatType> findByIsActiveTrueOrderByNameAsc();
 	Optional<SeatType> findFirstByIsActiveTrue();
+	List<SeatType> findByIsActiveTrue();
 }

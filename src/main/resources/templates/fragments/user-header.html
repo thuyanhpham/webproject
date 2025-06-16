@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <style>
+
+        .header-button.pr-0 { display: flex; align-items: center; }
+        .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+        .header-user-greeting b { color: #fff; font-weight: 600; }
+        .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+        .logout-button-styled {
+            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+    <header class="header-section">
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="logo"><a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="logo"></a></div>
+                <ul class="menu">
+                    <li><a th:href="@{/home}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/home')} ? 'active' : ''">Home</a></li>
+                    <li class="menu-item-has-children">
+                        <a th:href="@{/movies}" th:classappend="${currentRequestURI != null && #strings.startsWith(currentRequestURI, '/movies')} ? 'active' : ''">Movies</a>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Pages</a>
+                        <ul class="submenu">
+                            <li><a th:href="@{/about}">About Us</a></li>
+                            <li><a th:href="@{/apps-download}">Apps Download</a></li>
+                            <li><a th:href="@{/sign-in}">Sign In</a></li>
+                            <li><a th:href="@{/sign-up}">Sign Up</a></li>
+                            <li><a th:href="@{/404}">404</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item" sec:authorize="isAuthenticated()">
+                        <a href="#">Hello, <span sec:authentication="name"></span>!</a>
+                    </li>
+                    <li class="header-button pr-0" sec:authorize="isAuthenticated()">
+                        <form class="logout-button-form" th:action="@{/logout}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button class="logout-button-styled" type="submit">LOG OUT</button>
+                        </form>
+                    </li>
+                </ul>
+                <div class="header-bar d-lg-none"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </header>
+
+</body>
+</html>

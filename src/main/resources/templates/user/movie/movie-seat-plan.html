@@ -1,182 +1,252 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      th:replace="~{user/fragments/layout :: layout(~{::title}, ~{::main-content}, ~{::head-extra}, ~{::scripts-extra})}">
+<!-- Thêm th:fragment và các namespace cần thiết nếu bạn dùng layout -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/animate.css}" />
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/css.css}" />
-    <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
-    <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
-    <link rel="stylesheet" th:href="@{/css/odometer.css}" />
-    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Các link CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
-    <title th:text="${seatMap != null ? seatMap.movieTitle + ' - Seat Plan' : 'Select Seats'}">Seat Plan</title>
+
+    <title th:text="${seatPlan != null ? seatPlan.showtime.movie.title + ' - Seat Selection' : 'Select Seats'}">Seat Selection</title>
+    
+    <style>
+        .header-button.pr-0 { display: flex; align-items: center; }
+        .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
+        .header-user-greeting b { color: #fff; font-weight: 600; }
+        .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
+        .logout-button-styled {
+            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
+    </style>
 </head>
+
 <body>
-    <header class="header-section">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo">
-                    <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="logo"></a>
+<header class="header-section" th:replace="~{fragments/user-header :: header}"></header>
+
+<!-- ========== Banner Section ========== -->
+<section class="details-banner hero-area"
+             th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}"
+             th:style="|background-image: url('${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}');|">
+    <div class="container">
+        <div class="details-banner-wrapper">
+            <div class="details-banner-content style-two">
+                <h3 class="title" th:text="${seatPlan.showtime.movie.title}">Movie Title</h3>
+                <div class="tags">
+                    <a href="#0" th:if="${seatPlan.showtime.room != null}" th:text="${seatPlan.showtime.room.name}">City Walk</a>
+                    <a href="#0">
+                        <th:block th:if="${seatPlan.showtime.movie.language != null}" th:text="${seatPlan.showtime.movie.language}">English</th:block>
+                        -
+                        <th:block th:if="${seatPlan.showtime.experience != null}" th:text="${seatPlan.showtime.experience}">2D</th:block>
+                    </a>
                 </div>
-                <ul class="menu">
-                    <li><a th:href="@{/home}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/home')} ? 'active' : ''">Home</a></li>
-                    <li><a th:href="@{/movielist}" th:classappend="${requestURI != null and #strings.startsWith(requestURI, '/movies')} ? 'active' : ''">Movies</a></li>
-                    <li sec:authorize="isAuthenticated()"><a href="#">Hello, <span sec:authentication="name"></span>!</a></li>
-                    <li sec:authorize="isAuthenticated()">
-                        <form th:action="@{/logout}" method="post">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <button type="submit">LOG OUT</button>
-                        </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Page Title Section ========== -->
+<section class="page-title bg-one">
+    <div class="container">
+        <div class="page-title-area" th:if="${seatPlan != null}">
+            <div class="item md-order-1">
+                <a th:href="@{/movies/{movieId}/showtimes(movieId=${seatPlan.showtime.movie.id})}" class="custom-button back-button">
+                    <i class="flaticon-double-right-arrows-angles"></i>back
+                </a>
+            </div>
+            <div class="item date-item">
+                <span class="date" th:text="${#temporals.format(seatPlan.showtime.showDate, 'EEE, dd MMM yyyy')}">Date</span>
+                <span th:text="${#temporals.format(seatPlan.showtime.startTime, 'hh:mm a')}">Time</span>
+            </div>
+            <div class="item">
+                <h5 class="title">05:00</h5>
+                <p>Mins Left</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Movie Section ========== -->
+<div class="seat-plan-section padding-bottom padding-top" th:if="${seatPlan != null}">
+    <div class="container">
+        <div class="screen-area">
+            <h4 class="screen">screen</h4>
+            <div class="screen-thumb">
+                <img th:src="@{/images/screen-thumb.png}" alt="movie">
+            </div>
+
+            <div class="screen-wrapper">
+                <ul class="seat-area-v2">
+                    <li class="seat-line-v2" th:each="rowEntry : ${seatPlan.seatLayout}">
+                        <span class="row-identifier" th:text="${rowEntry.key}">A</span>
+                        <ul class="seat-row-v2">
+                            <li class="seat-item-v2"
+                                th:each="seat : ${rowEntry.value}"
+                                th:classappend="${seat.status.name().toLowerCase()} + ' ' + 
+                                            ${seat.typeName.toLowerCase()} + ' ' + 
+                                            (${seat.isCouple} ? 'couple' : '') + ' ' +
+                                            (${seat.couplePart != null} ? 'couple-part-' + seat.couplePart : '')" 
+                                th:attr="data-seat-id=${seat.seatId}, 
+                                        data-label=${seat.seatLabel}, 
+                                        data-price=${seat.price},
+                                        data-is-couple=${seat.isCouple}">
+                                
+                                <span class.sit-num th:text="${seat.seatLabel}">A1</span>
+
+                            </li>
+                        </ul>
+                        <span class="row-identifier" th:text="${rowEntry.key}">A</span>
                     </li>
                 </ul>
             </div>
         </div>
-    </header>
-
-    <section class="details-banner hero-area"
-             th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}"
-             th:style="|background-image: url('${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}');|">
-        <div class="container">
-            <div class="details-banner-content" th:if="${movie != null}">
-                <h3 th:text="${movie.title}">Movie Title</h3>
-                <div class="tags">
-                    <a href="#" th:text="${movie.language ?: 'N/A'}">Language</a>
-                    <th:block th:each="genre : ${movie.genres}" th:if="${genre != null}">
-                        <a href="#" th:text="${genre.name}" class="movie-tag">Genre</a>
-                    </th:block>
-                    <a href="#" th:if="${movie.format != null}" th:text="${movie.format.name}" class="movie-format-tag">Format</a>
-                </div>
+        <!-- ========== Seat-Legend Section ========== -->
+        <div class="seat-legend">
+            <div class="legend-item">
+                <div class="seat-representation selected-by-user"></div>
+                <span>Ghế bạn chọn</span>
             </div>
-            <div class="details-banner-content" th:unless="${movie != null}">
-                <h3 style="color: white">Movie Not Found!</h3>
+            <div class="legend-item">
+                <div class="seat-representation booked"></div>
+                <span>Ghế đã đặt</span>
             </div>
-        </div>
-    </section>
-
-    <section class="page-title bg-one">
-        <div class="container">
-            <div class="page-title-area">
-                <a th:href="@{/movies/{movieId}/showtimes(movieId=${seatMap.showtimeMovieId}, date=${seatMap.showDateForUrl})}" class="custom-button back-button">Back</a>
-                <div th:if="${seatMap != null}">
-                    <span th:text="${seatMap.showFullDateDisplay}">Date</span>
-                    <span th:text="${seatMap.showStartTimeDisplay}">Time</span>
-                </div>
+            <div class="legend-item">
+                <div class="seat-representation available normal"></div>
+                <span>Ghế thường</span>
+            </div>
+            <div class="legend-item">
+                <div class="seat-representation available vip"></div>
+                <span>Ghế VIP</span>
+            </div>
+            <div class="legend-item">
+                <div class="seat-representation available couple"></div>
+                <span>Ghế đôi</span>
             </div>
         </div>
-    </section>
-
-    <div class="seat-plan-section" th:if="${seatMap != null}">
-        <div class="container">
-            <h4 class="screen">Screen</h4>
-            <div class="legend">
-                <span class="seat seat-normal seat-available"></span> Normal
-                <span class="seat seat-vip seat-available"></span> VIP
-                <span class="seat seat-couple seat-available"></span> Couple
-                <span class="seat seat-selected-by-user"></span> Selected
-                <span class="seat seat-booked"></span> Booked
-                <span class="seat seat-unavailable-system"></span> Unavailable
-            </div>
-            <ul class="seat-area" th:each="rowEntry : ${seatMap.groupedSeatsByRow}">
-                <li class="seat-line">
-                    <span th:text="${rowEntry.key}"></span>
-                    <ul class="seat--area">
-                        <li class="front-seat">
-                            <ul>
-                                <li class="single-seat"
-                                    th:each="seat : ${rowEntry.value}"
-                                    th:classappend="${'seat-' + #strings.toLowerCase(seat.seatType)} + ' ' +
-                                                   ${seat.status == 'AVAILABLE' ? 'seat-available' : (seat.status == 'BOOKED' ? 'seat-booked' : 'seat-unavailable-system')}"
-                                    th:attr="data-seat-id=${seat.seatId}, data-row=${seat.rowIdentifier}, data-number=${seat.seatNumber}, data-type=${seat.seatType}, data-price=${seat.price}">
-                                    <div class="seat-visual"></div>
-                                    <span class="sit-num" th:if="${seat.status == 'AVAILABLE'}" th:text="${seat.rowIdentifier + seat.seatNumber}"></span>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-
-            <div class="proceed-book">
-                <div class="proceed-to-book">
-                    <div class="book-item">
-                        <span>You have chosen</span>
-                        <h3 id="selectedSeatsDisplay">---</h3>
-                    </div>
-                    <div class="book-item">
-                        <span>Total Price</span>
-                        <h3 id="totalPriceDisplay">$0.00</h3>
-                    </div>
-                    <div class="book-item">
-                        <button id="proceedToCheckoutBtn" class="custom-button">Proceed to Checkout</button>
-                    </div>
+        <!-- ========== End of Seat-Legend Section ========== -->
+        <!-- Thanh toán -->
+        <div class="proceed-book" th:style="'background-image: url(' + @{/images/movie-bg-proceed.jpg} + ');'">
+            <div class="proceed-to-book">
+                <div class="book-item">
+                    <span>You have Chosen Seat</span>
+                    <h3 class="title" id="selected-seats-display">---</h3>
+                </div>
+                <div class="book-item">
+                    <span>Total Price</span>
+                    <h3 class="title" id="total-price-display">0 VND</h3>
+                </div>
+                <div class="book-item">
+                    <button id="proceedToCheckoutBtn" class="custom-button">Proceed</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
-    <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/magnific-popup.min.js}"></script>
-    <script th:src="@{/js/nice-select.js}"></script>
-    <script th:src="@{/js/odometer.min.js}"></script>
-    <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.js}"></script>
-    <script th:src="@{/js/wow.min.js}"></script>
-    <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
-    <script th:src="@{/js/contentInt.js}"></script>
-    <script th:src="@{/js/chunk-7ac80a40.js}"></script>
-    <script th:src="@{/js/main.js}"></script>
-    <script th:inline="javascript">
-    /*<![CDATA[*/
-        $(function() {
-            let selectedSeats = [];
-            let seatPrices = {};
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+<script th:src="@{/js/plugins.js}"></script>
+<script th:src="@{/js/magnific-popup.min.js}"></script>
+<script th:src="@{/js/nice-select.js}"></script>
+<script th:src="@{/js/odometer.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/viewport.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/countdown.min.js}"></script>
+<script th:src="@{/js/isotope.pkgd.min.js}"></script>
+<script th:src="@{/js/contentInt.js}"></script>
+<script th:src="@{/js/chunk-7ac80a40.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 
-            /*[[${seatMap.seats}]]*/forEach(seat => {
-                seatPrices[seat.seatId] = seat.price ? parseFloat(seat.price) : 10.0;
-            });
+<script th:inline="javascript">
+/*<![CDATA[*/
+$(document).ready(function() {
+    const selectedSeats = new Map();
+    const showtimeId = /*[[${seatPlan.showtime.id}]]*/ null;
 
-            $('.single-seat').on('click', function() {
-                const seatId = $(this).data('seat-id');
-                if ($(this).hasClass('seat-selected-by-user')) {
-                    $(this).removeClass('seat-selected-by-user');
-                    selectedSeats = selectedSeats.filter(id => id !== seatId);
-                } else {
-                    $(this).addClass('seat-selected-by-user');
-                    selectedSeats.push(seatId);
-                }
-                updateSelection();
-            });
+    $('.seat-item-v2.available').on('click', function() {
+        const clickedSeat = $(this);
+        const seatId = clickedSeat.data('seat-id'); // ID gốc của ghế
+        const isCouple = clickedSeat.data('is-couple');
 
-            function updateSelection() {
-                const identifiers = selectedSeats.map(id => {
-                    const $el = $('.single-seat[data-seat-id="' + id + '"]');
-                    return $el.data('row') + $el.data('number');
+        if (isCouple) {
+            // --- Xử lý khi click vào ghế đôi ---
+            const coupleSeats = $(`.seat-item-v2[data-seat-id='${seatId}']`);
+            
+            if (clickedSeat.hasClass('selected-by-user')) {
+                // Hủy chọn cả cặp
+                coupleSeats.removeClass('selected-by-user');
+                selectedSeats.delete(seatId);
+            } else {
+                // Chọn cả cặp
+                coupleSeats.addClass('selected-by-user');
+                // Chỉ thêm vào map một lần với giá của cả cặp
+                selectedSeats.set(seatId, { 
+                    label: coupleSeats.first().data('label') + '-' + coupleSeats.last().data('label'),
+                    price: parseFloat(clickedSeat.data('price'))
                 });
-                const total = selectedSeats.reduce((sum, id) => sum + (seatPrices[id] || 0), 0);
-                $('#selectedSeatsDisplay').text(identifiers.join(', ') || '---');
-                $('#totalPriceDisplay').text(`$${total.toFixed(2)}`);
             }
 
-            $('#proceedToCheckoutBtn').on('click', function() {
-                if (selectedSeats.length === 0) {
-                    alert("Please select at least one seat.");
-                } else {
-                    console.log("Proceeding with: ", selectedSeats);
-                    // Submit form or send AJAX request here
-                }
-            });
-        });
-    /*]]>*/
-    </script>
+        } else {
+            // --- Xử lý khi click vào ghế đơn (giữ nguyên) ---
+            if (clickedSeat.hasClass('selected-by-user')) {
+                clickedSeat.removeClass('selected-by-user');
+                selectedSeats.delete(seatId);
+            } else {
+                clickedSeat.addClass('selected-by-user');
+                selectedSeats.set(seatId, {
+                    label: clickedSeat.data('label'),
+                    price: parseFloat(clickedSeat.data('price'))
+                });
+            }
+        }
+        updateSummary();
+    });
+
+    function updateSummary() {
+        // Lấy danh sách tên ghế (ghế đôi hiển thị dạng A1-A2)
+        const seatLabels = Array.from(selectedSeats.values()).map(s => s.label).sort();
+        const totalPrice = Array.from(selectedSeats.values()).reduce((sum, s) => sum + s.price, 0);
+
+        $('#selected-seats-display').text(seatLabels.length > 0 ? seatLabels.join(', ') : '---');
+        
+        const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+        $('#total-price-display').text(formatter.format(totalPrice));
+    }
+
+    $('#proceedToCheckoutBtn').on('click', function() {
+        if (selectedSeats.size === 0) {
+            alert("Please select at least one seat.");
+            return;
+        }
+        
+        const seatIds = Array.from(selectedSeats.keys());
+        console.log("Proceeding with seats:", seatIds, "for showtime:", showtimeId);
+
+        // Chuyển hướng đến trang checkout
+        const checkoutUrl = new URL('/checkout', window.location.origin);
+        checkoutUrl.searchParams.append('showtimeId', showtimeId);
+        seatIds.forEach(id => checkoutUrl.searchParams.append('seatIds', id));
+        window.location.href = checkoutUrl.toString();
+    });
+});
+/*]]>*/
+</script>
+
 </body>
 </html>
