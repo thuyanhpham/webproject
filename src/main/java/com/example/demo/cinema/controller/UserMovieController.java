@@ -1,5 +1,6 @@
 package com.example.demo.cinema.controller;
 import com.example.demo.cinema.dto.ReviewDTO;
+import com.example.demo.cinema.dto.SeatPlanResponseDTO;
 import com.example.demo.cinema.dto.UserReviewDTO;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Review;
@@ -8,7 +9,10 @@ import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.service.MovieService;
 import com.example.demo.cinema.service.ReviewService;
+import com.example.demo.cinema.service.SeatPlanService;
 import com.example.demo.cinema.service.ShowtimeService;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,22 +44,24 @@ import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/movies")
-public class MovieDetailController {
+public class UserMovieController {
 
-    private static final Logger log = LoggerFactory.getLogger(MovieDetailController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserMovieController.class);
 
     private final MovieService movieService;
     private final ShowtimeService showtimeService;
     private final ReviewService reviewService; 
+    private final SeatPlanService seatPlanService;
 
     private static final String CINEMA_NAME = "Boleto Cinema VN";
     private static final int REVIEWS_PER_PAGE = 5;
 
     @Autowired
-    public MovieDetailController(MovieService movieService, ShowtimeService showtimeService,ReviewService reviewService) {
+    public UserMovieController(MovieService movieService, ShowtimeService showtimeService,ReviewService reviewService, SeatPlanService seatPlanService) {
         this.movieService = movieService;
         this.showtimeService = showtimeService;
         this.reviewService = reviewService;
+        this.seatPlanService = seatPlanService;
     }
 
     @GetMapping
@@ -66,7 +72,6 @@ public class MovieDetailController {
                                        @RequestParam(name = "search", required = false) String searchTerm,
                                        @RequestParam(name = "sort", defaultValue = "title,asc") String sortParamValue) {
 
-        try {
             String[] sortParamsArray = sortParamValue.split(",");
             String sortField = sortParamsArray[0];
             Sort.Direction direction = Sort.Direction.ASC;
@@ -97,17 +102,10 @@ public class MovieDetailController {
                  model.addAttribute("pageNumbers", List.of());
             }
             return "user/movie/movielist";
-        } catch (Exception e) {
-            log.error("An unexpected error occurred while fetching movie list for user. Details: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "An unexpected error occurred while retrieving movies. Please try again later.");
-            model.addAttribute("currentRequestURI", request.getRequestURI());
-            return "error/500";
-        }
     }
 
     @GetMapping("/detail/{id}")
     public String showMovieDetails(@PathVariable Long id, Model model) {
-        try {
             Movie movie = movieService.getMovieById(id);
             model.addAttribute("movie", movie);
             model.addAttribute("cinemaName", CINEMA_NAME);
@@ -117,15 +115,6 @@ public class MovieDetailController {
             model.addAttribute("reviewsForDisplay", reviewPage.getContent());
             model.addAttribute("reviewPage", reviewPage);
             return "user/movie/moviedetail";
-        } catch (ResourceNotFoundException e) {
-            log.error("Movie not found for ID: {}", id, e);
-            model.addAttribute("errorMessage", "Movie not found with ID: " + id);
-            return "error/404";
-        } catch (Exception e) {
-            log.error("An unexpected error occurred while fetching movie details for ID: {}", id, e);
-            model.addAttribute("errorMessage", "An unexpected error occurred.");
-            return "error/500";
-        }
     }
 
     @PostMapping("/{movieId}/reviews/submit")
@@ -269,7 +258,7 @@ public class MovieDetailController {
             Model model,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
-        try {
+
             Movie movie = movieService.getMovieById(movieId);
             LocalDate dateToFilter = (selectedDate != null) ? selectedDate : LocalDate.now();
             List<LocalDate> availableDates = showtimeService.findAvailableDatesForMovie(movieId);
@@ -284,14 +273,12 @@ public class MovieDetailController {
             model.addAttribute("cinemaName", CINEMA_NAME);
             model.addAttribute("pageTitle", movie.getTitle() + " - Showtimes");
             return "user/movie/movieticketplan";
-        } catch (ResourceNotFoundException e) {
-            log.error("Resource not found while getting showtimes for Movie ID: {}", movieId, e);
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/movies/detail/" + movieId;
-        } catch (Exception e) {
-            log.error("An unexpected error occurred while getting showtimes for Movie ID: {}", movieId, e);
-            model.addAttribute("errorMessage", "An unexpected error occurred while retrieving showtime information.");
-            return "error/500";
-        }
+    }
+
+    @GetMapping("/showtimes/{showtimeId}/seat-plan")
+    public String showSeatPlanPage(@PathVariable Long showtimeId, Model model) {
+            SeatPlanResponseDTO seatPlanData = seatPlanService.getSeatPlanForShowtime(showtimeId);
+            model.addAttribute("seatPlan", seatPlanData);
+            return "user/movie/movie-seat-plan";
     }
 }

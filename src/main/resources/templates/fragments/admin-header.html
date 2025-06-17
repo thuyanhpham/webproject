@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <style>
-        .header-section { background: #071240; }
-        .header-section .menu > li > a.active { color: #31d7a9 !important; }
-        .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
-        .header-user-greeting b { color: #ffffff; font-weight: 600; }
-        .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
-        .logout-button-styled { background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
-    </style>
-</head>
-<body>
+
     <header class="header-section">
         <div class="container">
             <div class="header-wrapper">
@@ -41,7 +29,7 @@
                     <li><a th:href="@{/admin/settings}" th:classappend="${currentURI != null and #strings.startsWith(currentURI, '/admin/settings')} ? 'active' : ''">Settings</a></li>
                     <li><a th:href="@{/home}" target="_blank">View Site</a></li>
                     <li class="header-button pr-0" sec:authorize="isAuthenticated()">
-                        <span class="header-user-greeting">Xin chào, <b sec:authentication="name">Admin</b>!</span>
+                        <span class="header-user-greeting">Helllo, <b sec:authentication="name">Admin</b>!</span>
                         <form class="logout-button-form" th:action="@{/logout}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <button class="logout-button-styled" type="submit">LOG OUT</button>
@@ -52,6 +40,3 @@
             </div>
         </div>
     </header>
-
-</body>
-</html>

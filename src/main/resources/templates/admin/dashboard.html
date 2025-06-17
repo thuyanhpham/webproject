@@ -35,17 +35,6 @@
         .quick-actions-section .custom-button { display: inline-block; padding: 12px 25px; margin: 0 10px 15px 10px; background: linear-gradient(to bottom, #4453a1, #333c7a); color: #fff; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: none; }
         .quick-actions-section .custom-button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(46, 96, 209, 0.4); }
         .quick-actions-section .custom-button i { margin-right: 8px; }
-         .header-button.pr-0 { display: flex; align-items: center; }
-         .header-user-greeting { color: #ccc; margin-right: 15px; font-size: 0.9em; }
-         .header-user-greeting b { color: #fff; font-weight: 600; }
-         .logout-button-form { display: inline-block; margin: 0; padding: 0; vertical-align: middle; }
-         .logout-button-styled {
-            background: linear-gradient(to right, #e1457a, #8f5ff3); color: #ffffff; padding: 10px 25px; border-radius: 50px; text-transform: uppercase; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-decoration: none; display: inline-block; transition: all 0.3s ease; border: none; cursor: pointer; line-height: normal; text-align: center; vertical-align: middle; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-         }
-         .logout-button-styled:hover { opacity: 0.9; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); transform: translateY(-1px); }
-
-         .header-section .menu > li > a.active,
-         .header-section .menu .submenu li a.active { color: #31d7a9 !important; font-weight: 600; }
 
         .page-title { padding: 80px 0; }
         .page-title .title { font-size: 2.5rem; margin-bottom: 10px; }
@@ -132,13 +121,25 @@
                         </div>
                      </a>
                 </div>
+                <div class="col-md-6 col-lg-4">
+                     <a th:href="@{/admin/rooms}" class="admin-widget-link">
+                        <div class="admin-widget">
+                           <div class="widget-icon icon-bookings"><i class="fas fa-ticket-alt"></i></div>
+                            <div class="widget-content">
+                                <h4 class="title">Total Room</h4>
+                                <h2 class="amount" th:text="${totalRooms ?: 'N/A'}">0</h2>
+                            </div>
+                        </div>
+                     </a>
+                </div>
             </div>
             <div class="quick-actions-section">
                  <h3 class="title mb-4">Quick Actions</h3>
                  <div style="text-align: center;">
-                     <a th:href="@{/admin/movies/create}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
+                     <a th:href="@{/admin/movies/add}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
                      <a th:href="@{/admin/users/create}" class="custom-button"><i class="fas fa-user-plus"></i> Add User</a>
-                     <a th:href="@{/admin/seat-types/create}" class="custom-button"><i class="fas fa-plus"></i> Add Seat Type</a>
+                     <a th:href="@{/admin/seat-types/new}" class="custom-button"><i class="fas fa-plus"></i> Add Seat Type</a>
+                     <a th:href="@{/admin/rooms/new}" class="custom-button"><i class="fas fa-plus"></i> Add Room</a>
                  </div>
             </div>
         </div>
