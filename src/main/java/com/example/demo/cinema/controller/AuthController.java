@@ -48,7 +48,7 @@ public class AuthController {
 			@RequestParam String confirmPassword, @RequestParam String email, RedirectAttributes redirectAttributes) {
 		email = email.trim().toLowerCase();
 
-		if (userRepository.findByUsername(username).isPresent()) {
+		if (userRepository.findByUsername(username) != null) {
 			redirectAttributes.addFlashAttribute("error", "Username đã tồn tại");
 			return "redirect:/register";
 		}

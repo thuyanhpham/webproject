@@ -3,6 +3,9 @@ package com.example.demo.cinema.service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.cinema.entity.Role;
 import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
+import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.repository.RoleRepository;
 import com.example.demo.cinema.repository.UserRepository;
 import com.example.demo.cinema.security.CustomUserDetails;
@@ -19,13 +23,17 @@ import com.example.demo.cinema.security.CustomUserDetails;
 public class UserService implements UserDetailsService {
 
 	@Autowired
-	private UserRepository userRepository;
-	private PasswordEncoder passwordEncoder;
-	private RoleRepository roleRepository;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final RoleRepository roleRepository;
+	private final SessionRegistry sessionRegistry;
+
 	
-	public UserService(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, SessionRegistry sessionRegistry) {
+		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
+		this.sessionRegistry = sessionRegistry;
 	}
 	
 	public String registerUser(String email, String username, String password, String fullname) {
@@ -52,8 +60,13 @@ public class UserService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy User"));
+		// Sử dụng method mới đã có JOIN FETCH
+		User user = userRepository.findByUsernameWithRole(username) 
+				.orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy User với username: " + username));
+
+		if (user.getStatus() != Status.ACTIVE) {
+			throw new DisabledException("User account is " + user.getStatus().name());
+		}
 		return new CustomUserDetails(user);
 	}
 	
@@ -79,7 +92,7 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public List<User> getAllUsers() {
-		return userRepository.findAll();
+		return userRepository.findByStatusNot(Status.DELETED);
 	}
 	
 	public User getUserById(Long id) {
@@ -87,32 +100,33 @@ public class UserService implements UserDetailsService {
 				.orElseThrow(() -> new RuntimeException("User not found"));
 	}
 	
-	public User updateUser(Long id, User updatedUser) {
-		User user = getUserById(id);
-		user.setFullname(updatedUser.getFullname());
-		user.setPhone(updatedUser.getPhone());
-		user.setGender(updatedUser.getGender());
-		user.setBirthday(updatedUser.getBirthday());
-		return userRepository.save(user);
-	}
-	
-	public void changePassword(Long id, String oldPassword, String newPassword) {
-		User user = getUserById(id);
-		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-			throw new RuntimeException("Mật khẩu cũ không đúng");
-		}
-		user.setPassword(passwordEncoder.encode(newPassword));
+	public void updateUserStatus(Long userId, Status newStatus) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+		user.setStatus(newStatus);
 		userRepository.save(user);
-		
+		if (newStatus == Status.BANNED || newStatus == Status.DELETED) {
+			invalidateUserSessions(user.getUsername());
+		}
 	}
 	
-	public User updateUserStatus(Long id, Status status) {
-		User user = getUserById(id);
-		user.setStatus(status);
-		return userRepository.save(user);
+	public void deleteUser(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+		user.setStatus(Status.DELETED);
+		userRepository.save(user);
+		invalidateUserSessions(user.getUsername());
 	}
-	
-	public void deleteUser(Long id) {
-		userRepository.deleteById(id);
+
+	private void invalidateUserSessions(String username) {
+		List<Object> principals = sessionRegistry.getAllPrincipals();
+		for (Object principal : principals) {
+			if (principal instanceof UserDetails userDetails && userDetails.getUsername().equals(username)) {
+				List<SessionInformation> sessions = sessionRegistry.getAllSessions(userDetails, false);
+				for (SessionInformation session : sessions) {
+					session.expireNow();
+				}
+			}
+		}
 	}
 }

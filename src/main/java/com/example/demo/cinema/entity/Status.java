@@ -4,6 +4,6 @@ public enum Status {
 
 	ACTIVE,
 	INACTIVE,
-	BANNED;
-
+	BANNED,
+	DELETED
 }

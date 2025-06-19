@@ -10,10 +10,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -21,12 +26,21 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final BlockedUserFilter blockedUserFilter;
+
+    public SecurityConfig(@Lazy BlockedUserFilter blockedUserFilter) {
+        this.blockedUserFilter = blockedUserFilter;
+    }
+
     @Autowired
     @Lazy
     private UserDetailsService userDetailsService;
 
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    
+    @Autowired
+    private UserStatusFilter userStatusFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,11 +61,28 @@ public class SecurityConfig {
     }
 
     @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .addFilterBefore(blockedUserFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .csrf(withDefaults()) 
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .maximumSessions(1)
+                        .expiredUrl("/login?session-expired")
+                        .maxSessionsPreventsLogin(false)
+                        .sessionRegistry(sessionRegistry())) 
+                .addFilterAfter(userStatusFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",             
@@ -60,6 +91,8 @@ public class SecurityConfig {
                                 "/sign-up", "/register",
                                 "/sign-in", "/login",
                                 "/forgot-password",
+                                "/login?session-expired",
+                                "/login?kicked=true",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
