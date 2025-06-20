@@ -1,0 +1,22 @@
+<nav class="sidebar" th:fragment="sidebar-content(currentPage)">
+    <div class="sidebar-logo">
+        <a th:href="@{/admin}"><img th:src="@{/images/footer-logo.png}" alt="logo"></a>
+    </div>
+    <ul class="sidebar-nav">
+        <li th:classappend="${currentPage == 'dashboard' ? 'active' : ''}">
+            <a th:href="@{/admin}"><i class="icon fas fa-tachometer-alt"></i> Dashboard</a>
+        </li>
+        <li th:classappend="${currentPage == 'users' ? 'active' : ''}">
+            <a th:href="@{/admin/users}"><i class="icon fas fa-users"></i> Users</a>
+        </li>
+        <li th:classappend="${currentPage == 'movies' ? 'active' : ''}">
+            <a th:href="@{/admin/movies}"><i class="icon fas fa-film"></i> Movies</a>
+        </li>
+        <li th:classappend="${currentPage == 'rooms' ? 'active' : ''}">
+            <a th:href="@{/admin/rooms}"><i class="icon fas fa-person-booth"></i> Rooms</a>
+        </li>
+        <li th:classappend="${currentPage == 'seat-types' ? 'active' : ''}">
+            <a th:href="@{/admin/seat-types}"><i class="icon fas fa-chair"></i> Seat Types</a>
+        </li>
+    </ul>
+</nav>
