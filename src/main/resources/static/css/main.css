@@ -9800,4 +9800,5 @@ td.action-buttons {
         td.action-buttons form button { background-color: #dc3545; color: white; }
         td.action-buttons a[href*='/details/'] { background-color: #17a2b8; color: white; }
         td.action-buttons a i, td.action-buttons form button i {font-size: 1em;}
+        
 

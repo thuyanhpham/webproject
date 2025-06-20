@@ -7,234 +7,103 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <link rel="stylesheet" th:href="@{/css/all.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/animate.css}" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/css.css}" />
-    <link rel="stylesheet" th:href="@{/css/flaticon.css}" />
-    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}" />
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
-    <link rel="stylesheet" th:href="@{/css/nice-select.css}" />
-    <link rel="stylesheet" th:href="@{/css/odometer.css}" />
-    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
     <title th:text="|Admin - Movie Details - ${movie?.title ?: 'Not Found'}|">Admin - Movie Details</title>
 
-        <style>
-        body { background-color: #032055; color: #ccc; }
-        .admin-section { min-height: calc(100vh - 160px); padding-bottom: 50px;}
-        .detail-label { color: #a0a3bd; font-weight: 500; min-width: 150px; display: inline-block;}
-        .detail-value { color: #fff; }
-        .detail-item { margin-bottom: 1rem; border-bottom: 1px solid #2d3450; padding-bottom: 1rem;}
-        .detail-item:last-child { border-bottom: none; }
-        .detail-genres span { background-color: rgba(255, 255, 255, 0.1); padding: 3px 8px; border-radius: 3px; margin-right: 5px; display: inline-block; margin-bottom: 5px;}
-        .poster-image { max-width: 250px; height: auto; border-radius: 5px; margin-top: 15px; }
-
-        .admin-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .btn-action {
-            padding: 10px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-align: center;/
-        }
-        .admin-actions form {
-            margin: 0;
-            padding: 0;
-            display: inline-flex;
-        }
-        .btn-edit { background: #ffc107; color: #111; }
-        .btn-delete { background: #dc3545; color: #fff; }
-        .btn-back { background: transparent; color: #aaa; border: 1px solid #444; }
-        .btn-back:hover { background: #444; color: #fff; }
-        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
-        .footer-section { background: #03173a; text-align: center; padding: 20px 0; }
-     </style>
 </head>
 
 <body>
-    <!-- Preloader, Overlay, ScrollToTop -->
-    <div class="preloader"><div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div></div>
-    <div class="overlay"></div>
-    <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
-
-    <header class="header-section" th:replace="~{fragments/admin-header :: header}"></header>
-
-    <!-- Phần Nội dung Chính: Chi Tiết Phim -->
-    <section class="admin-section padding-top padding-bottom">
-        <div class="container">
-
-            <!-- Tiêu đề Trang -->
-            <h2 class="mb-4" style="color: white; border-bottom: 1px solid #2d3450; padding-bottom: 15px;"
-                th:text="|Movie Details: ${movie?.title ?: 'Not Found'}|">Movie Details</h2>
-
-            <!-- Hiển thị thông báo lỗi/thành công -->
-             <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
-             <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
-
-            <!-- Kiểm tra xem có đối tượng movie không -->
-            <div th:if="${movie != null}">
-                <div class="row">
-                    <!-- Cột trái: Poster và Actions -->
-                    <div class="col-md-4">
-                        <img th:if="${movie.posterUrl != null}" th:src="${movie.posterUrl}" alt="Movie Poster" class="img-fluid poster-image mb-3">
-                        <img th:unless="${movie.posterUrl != null}" th:src="@{/images/default-poster.png}" alt="Default Poster" class="img-fluid poster-image mb-3">
-
-                        <div class="admin-actions mt-3">
-                             <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" class="btn-action btn-edit">Edit</a>
-                             <form th:action="@{/admin/movies/delete/{id}(id=${movie.id})}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this movie?');">
-                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                 <button type="submit" class="btn-action btn-delete">Delete</button>
-                             </form>
-                             <a th:href="@{/admin/showtimes/movie/{movieId}(movieId=${movie.id})}" class="btn-action" style="background-color: #007bff; color: white;">Manage Showtimes</a>
-                             <a th:href="@{/admin/movies}" class="btn-action btn-back">Back to List</a>
-                        </div>
-                    </div>
-
-                    <!-- Cột phải: Thông tin chi tiết -->
-                    <div class="col-md-8">
-                        <div class="detail-item">
-                            <span class="detail-label">ID:</span>
-                            <span class="detail-value" th:text="${movie.id}"></span>
-                        </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Title:</span>
-                             <span class="detail-value" th:text="${movie.title}"></span>
-                         </div>
-                         <div class="detail-item">
-                              <span class="detail-label">Description:</span>
-                              <span class="detail-value" th:text="${movie.description} ?: 'N/A'"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Release Date:</span>
-                             <span class="detail-value" th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : 'N/A'}"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Duration:</span>
-                             <span class="detail-value" th:text="${movie.duration != null ? movie.duration + ' minutes' : 'N/A'}"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Language:</span>
-                             <span class="detail-value" th:text="${movie.language} ?: 'N/A'"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Director:</span>
-                             <span class="detail-value" th:text="${movie.director} ?: 'N/A'"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Cast:</span>
-                             <span class="detail-value" th:text="${movie.cast != null and !movie.cast.isBlank() ? movie.cast : 'N/A'}"></span>
-                         </div>
-                         <div class="detail-item detail-genres">
-						    <span class="detail-label">Genres:</span>
-						    <span class="detail-value"
-						          th:if="${movie.genres != null and not movie.genres.empty}"
-						          th:text="${#strings.listJoin(movie.genres.![name], ', ')}">
-						    </span>
-						    <span class="detail-value" th:unless="${movie.genres != null and not movie.genres.empty}">N/A</span>
-						 </div>
-						 <div class="detail-item detail-format">
-						     <span class="detail-label">Format:</span>
-						     <span class="detail-value"
-						           th:if="${movie.format != null and movie.format.name != null}"
-						           th:text="${movie.format.name}">
-						     </span>
-						     <span class="detail-value" th:unless="${movie.format != null and movie.format.name != null}">N/A</span>
-						 </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Trailer URL:</span>
-                             <a th:if="${movie.trailerUrl != null}" th:href="${movie.trailerUrl}" target="_blank" class="detail-value" style="color: #50a6fc; text-decoration: underline;" th:text="${movie.trailerUrl}"></a>
-                             <span th:unless="${movie.trailerUrl != null}" class="detail-value">N/A</span>
-                         </div>
-                          <div class="detail-item">
-                             <span class="detail-label">Banner URL:</span>
-                             <a th:if="${movie.bannerUrl != null}" th:href="${movie.bannerUrl}" target="_blank" class="detail-value" style="color: #50a6fc; text-decoration: underline;" th:text="${movie.bannerUrl}"></a>
-                             <span th:unless="${movie.bannerUrl != null}" class="detail-value">N/A</span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Rating:</span>
-                             <span class="detail-value" th:text="${movie.rating != null ? movie.rating : 'N/A'}"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Status:</span>
-                             <span class="detail-value" th:text="${movie.status != null ? movie.status : 'N/A'}"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Created At:</span>
-                             <span class="detail-value" th:text="${movie.createdAt != null ? #temporals.format(movie.createdAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></span>
-                         </div>
-                         <div class="detail-item">
-                             <span class="detail-label">Updated At:</span>
-                             <span class="detail-value" th:text="${movie.updatedAt != null ? #temporals.format(movie.updatedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></span>
-                         </div>
-
+    <div class="admin-layout">
+        <div th:replace="~{fragments/sidebar :: sidebar-content(currentPage='movies')}"></div>
+        <main class="main-content">
+            <header class="main-header">
+                <h1 class="page-title">Movie Details</h1>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <a th:href="@{/login}"><i class="fas fa-sign-out-alt"></i></a>
                     </div>
                 </div>
+            </header>
 
+            <div class="main-content-area">
+                <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+                <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+                
+                <div class="card">
+                    <div th:if="${movie != null}">
+                        <h3 class="card-title mb-4" th:text="${movie.title}">Movie Title</h3>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img th:if="${movie.posterUrl != null}" th:src="${movie.posterUrl}" alt="Movie Poster" class="poster-image mb-4">
+                                <img th:unless="${movie.posterUrl != null}" th:src="@{/images/default-poster.png}" alt="Default Poster" class="poster-image mb-4">
+                                
+                                <div class="action-grid-container mt-4">
+                                    <div class="action-grid">
+                                        <div class="action-grid-item">
+                                            <a th:href="@{/admin/movies/edit/{id}(id=${movie.id})}" class="btn btn-warning w-100 h-100">
+                                                <i class="fas fa-edit me-2"></i> Edit Movie
+                                            </a>
+                                        </div>
+                                        <div class="action-grid-item">
+                                            <a th:href="@{/admin/showtimes/movie/{movieId}(movieId=${movie.id})}" class="btn btn-primary w-100 h-100">
+                                                <i class="fas fa-calendar-alt me-2"></i> Manage Showtimes
+                                            </a>
+                                        </div>
+                                        <div class="action-grid-item">
+                                            <form th:action="@{/admin/movies/delete/{id}(id=${movie.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this movie?');" class="h-100">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                <button type="submit" class="btn btn-danger w-100 h-100">
+                                                    <i class="fas fa-trash-alt me-2"> </i>Delete Movie
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="action-grid-item">
+                                            <a th:href="@{/admin/movies}" class="btn btn-secondary w-100 h-100">
+                                                <i class="fas fa-arrow-left me-2"></i> Back to List
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <ul class="detail-list">
+                                    <li class="detail-item"><span class="detail-label">ID:</span> <span class="detail-value" th:text="${movie.id}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Description:</span> <span class="detail-value" th:text="${movie.description} ?: 'N/A'"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Release Date:</span> <span class="detail-value" th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Duration:</span> <span class="detail-value" th:text="${movie.duration != null ? movie.duration + ' minutes' : 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Language:</span> <span class="detail-value" th:text="${movie.language} ?: 'N/A'"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Director:</span> <span class="detail-value" th:text="${movie.director} ?: 'N/A'"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Cast:</span> <span class="detail-value" th:text="${movie.cast != null and !movie.cast.isBlank() ? movie.cast : 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Genres:</span> <span class="detail-value" th:text="${movie.genres != null and not movie.genres.empty ? #strings.listJoin(movie.genres.![name], ', ') : 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Format:</span> <span class="detail-value" th:text="${movie.format?.name ?: 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Status:</span> <span class="detail-value" th:text="${movie.status?.displayName ?: 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Rating:</span> <span class="detail-value" th:text="${movie.rating != null ? movie.rating : 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Trailer URL:</span> <a th:if="${movie.trailerUrl}" th:href="${movie.trailerUrl}" target="_blank" class="detail-value link" th:text="${movie.trailerUrl}"></a><span th:unless="${movie.trailerUrl}" class="detail-value">N/A</span></li>
+                                    <li class="detail-item"><span class="detail-label">Banner URL:</span> <a th:if="${movie.bannerUrl}" th:href="${movie.bannerUrl}" target="_blank" class="detail-value link" th:text="${movie.bannerUrl}"></a><span th:unless="${movie.bannerUrl}" class="detail-value">N/A</span></li>
+                                    <li class="detail-item"><span class="detail-label">Created At:</span> <span class="detail-value" th:text="${movie.createdAt != null ? #temporals.format(movie.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></span></li>
+                                    <li class="detail-item"><span class="detail-label">Updated At:</span> <span class="detail-value" th:text="${movie.updatedAt != null ? #temporals.format(movie.updatedAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:unless="${movie != null}" class="text-center p-5">
+                        <h3 class="text-danger">Movie not found.</h3>
+                        <a th:href="@{/admin/movies}" class="btn btn-secondary mt-3">Back to List</a>
+                    </div>
+                </div>
             </div>
 
-            <!-- Trường hợp không tìm thấy movie -->
-            <div th:unless="${movie != null}" class="text-center" style="padding: 50px 0;">
-                <h3 style="color: #ff4444;">Movie not found.</h3>
-                <a th:href="@{/admin/movies}" class="btn-action btn-back">Back to List</a>
-            </div>
+            <footer class="main-footer">
+                <p>Copyright © <span th:text="${#dates.year(#dates.createNow())}"></span>. Admin Panel by <a href="#">Boleto</a></p>
+            </footer>
+        </main>
+    </div>
 
-        </div>
-    </section>
-    <!-- ========== Phần Nội dung Chính End ========== -->
-
-    <!-- Footer -->
-    <footer class="footer-section">
-         <div class="container">
-             <div class="footer-bottom">
-                 <div class="footer-bottom-area">
-                     <div class="left">
-                          <p>Copyright © 2024. All Rights Reserved By Boleto Admin</p>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </footer>
-    <!-- ==========Footer Section========== -->
-
-    <!-- Scripts -->
     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
-    <script th:src="@{/js/plugins.js}"></script>
-    <script th:src="@{/js/magnific-popup.min.js}"></script>
-    <script th:src="@{/js/nice-select.js}"></script>
-    <script th:src="@{/js/odometer.min.js}"></script>
-    <script th:src="@{/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/js/viewport.js}"></script>
-    <script th:src="@{/js/wow.min.js}"></script>
-    <script th:src="@{/js/countdown.min.js}"></script>
-    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
-    <script th:src="@{/js/contentInt.js}"></script>
-    <script th:src="@{/js/chunk-7ac80a40.js}"></script>
-    <script th:src="@{/js/main.js}"></script>
-
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function() {
-             console.log("Admin movie details page loaded.");
-             // Xử lý preloader nếu có
-             $('.preloader').fadeOut(500, function() { $(this).remove(); });
-        });
-        /*]]>*/
-    </script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 
 </body>
 </html>
