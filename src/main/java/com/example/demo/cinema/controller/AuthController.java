@@ -10,19 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.cinema.entity.Role;
-import com.example.demo.cinema.entity.Status;
+import com.example.demo.cinema.dto.CommonResult;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.RoleRepository;
-import com.example.demo.cinema.repository.UserRepository;
 import com.example.demo.cinema.service.UserService;
 
 @Controller
 @RequestMapping("")
 public class AuthController {
-
-	@Autowired
-	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
@@ -43,42 +38,21 @@ public class AuthController {
 		return "register";
 	}
 
-	@PostMapping("/register")
-	public String register(@RequestParam String fullname, @RequestParam String username, @RequestParam String password,
-			@RequestParam String confirmPassword, @RequestParam String email, RedirectAttributes redirectAttributes) {
-		email = email.trim().toLowerCase();
+	public String register(@RequestParam String fullname,
+							@RequestParam String username,
+							@RequestParam String password,
+							@RequestParam String confirmPassword,
+							@RequestParam String email,
+							RedirectAttributes redirectAttributes) {
 
-		if (userRepository.findByUsername(username) != null) {
-			redirectAttributes.addFlashAttribute("error", "Username đã tồn tại");
+		CommonResult result = userService.registerUser(email, username, password, confirmPassword, fullname);
+
+		if (!result.isSuccess()) {
+			redirectAttributes.addFlashAttribute("error", result.getMessage());
 			return "redirect:/register";
 		}
 
-		if (userRepository.findByEmailIgnoreCase(email).isPresent()) {
-			redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng");
-			return "redirect:/register";
-		}
-
-		if (!password.equals(confirmPassword)) {
-			redirectAttributes.addFlashAttribute("error", "Mật khẩu không khớp");
-			return "redirect:/register";
-		}
-
-		User user = new User();
-		user.setFullname(fullname);
-		user.setUsername(username);
-		user.setPassword(passwordEncoder.encode(password));
-		user.setEmail(email);
-		user.setStatus(Status.ACTIVE);
-
-		Long defaultRoleId = 2L;
-		Role role = roleRepository.findById(defaultRoleId).orElse(null);
-		if (role == null) {
-			redirectAttributes.addFlashAttribute("error", "Không tìm thấy role mặc định trong hệ thống.");
-			return "redirect:/register";
-		}
-		user.setRole(role);
-		userRepository.save(user);
-		redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập. ");
+		redirectAttributes.addFlashAttribute("success", result.getMessage());
 		return "redirect:/login";
 	}
 
