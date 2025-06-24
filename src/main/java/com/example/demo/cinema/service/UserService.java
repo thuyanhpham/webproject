@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.cinema.dto.CommonResult;
 import com.example.demo.cinema.entity.Role;
 import com.example.demo.cinema.entity.Status;
 import com.example.demo.cinema.entity.User;
@@ -36,18 +38,19 @@ public class UserService implements UserDetailsService {
 		this.sessionRegistry = sessionRegistry;
 	}
 	
-	public String registerUser(String email, String username, String password, String confirmPassword, String fullname) {
+	public CommonResult registerUser(String email, String username, String password, String confirmPassword, String fullname) {
 		email = email.trim().toLowerCase();
+
 		if (userRepository.findByEmail(email).isPresent()) {
-			return "Email đã tồn tại!";
+			return CommonResult.failure("Email đã tồn tại!");
 		}
 
 		if (userRepository.findByUsername(username).isPresent()) {
-			return "Username đã tồn tại!";
+			return CommonResult.failure("Username đã tồn tại!");
 		}
 
 		if (!password.equals(confirmPassword)) {
-			return "Mật khẩu không khớp!";
+			return CommonResult.failure("Mật khẩu không khớp!");
 		}
 
 		Role userRole = roleRepository.findByName("ROLE_USER")
@@ -62,7 +65,7 @@ public class UserService implements UserDetailsService {
 		user.setRole(userRole);
 
 		userRepository.save(user);
-		return "success";
+		return CommonResult.success();
 	}
 	
 	@Override

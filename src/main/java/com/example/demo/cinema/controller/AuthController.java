@@ -10,17 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.cinema.entity.Role;
-import com.example.demo.cinema.entity.Status;
+import com.example.demo.cinema.dto.CommonResult;
 import com.example.demo.cinema.entity.User;
 import com.example.demo.cinema.repository.RoleRepository;
-import com.example.demo.cinema.repository.UserRepository;
 import com.example.demo.cinema.service.UserService;
 
 @Controller
 @RequestMapping("")
 public class AuthController {
-
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
@@ -41,22 +38,21 @@ public class AuthController {
 		return "register";
 	}
 
-	@PostMapping("/register")
 	public String register(@RequestParam String fullname,
-						@RequestParam String username,
-						@RequestParam String password,
-						@RequestParam String confirmPassword,
-						@RequestParam String email,
-						RedirectAttributes redirectAttributes) {
+							@RequestParam String username,
+							@RequestParam String password,
+							@RequestParam String confirmPassword,
+							@RequestParam String email,
+							RedirectAttributes redirectAttributes) {
 
-		String result = userService.registerUser(email, username, password, confirmPassword, fullname);
+		CommonResult result = userService.registerUser(email, username, password, confirmPassword, fullname);
 
-		if (!result.equals("success")) {
-			redirectAttributes.addFlashAttribute("error", result);
+		if (!result.isSuccess()) {
+			redirectAttributes.addFlashAttribute("error", result.getMessage());
 			return "redirect:/register";
 		}
 
-		redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
+		redirectAttributes.addFlashAttribute("success", result.getMessage());
 		return "redirect:/login";
 	}
 
