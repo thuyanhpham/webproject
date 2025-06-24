@@ -9800,5 +9800,480 @@ td.action-buttons {
         td.action-buttons form button { background-color: #dc3545; color: white; }
         td.action-buttons a[href*='/details/'] { background-color: #17a2b8; color: white; }
         td.action-buttons a i, td.action-buttons form button i {font-size: 1em;}
+        /* Profile Section (Giữ nguyên) */
+    .user-profile-section {
+        padding: 60px 0 80px 0;
+        background-color: #0A1029;
+        color: #fff;
+    }
+    .details-banner.hero-area {
+       padding-bottom: 120px;
+    }
+
+    /* Card Container (Giữ nguyên) */
+    .user-profile-card {
+        background-color: #1a2035;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #334878;
+        margin-top: -80px;
+        position: relative;
+        z-index: 2;
+        box-sizing: border-box;
+    }
+    /* No User Message (Giữ nguyên) */
+    .user-profile-card .no-user-message {
+        text-align: center;
+        color: #aaaaaa;
+        padding: 20px 0;
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    /* Form Layout (Giữ nguyên) */
+    .edit-profile-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .form-group {
+        flex: 1 1 48%;
+        margin-bottom: 20px;
+    }
+    .form-group.full-width {
+        flex: 1 1 100%;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #e0e0e0;
+        font-weight: 500;
+    }
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #334878;
+        border-radius: 5px;
+        background-color: #0A1029;
+        color: #ffffff;
+        font-size: 1em;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-control-custom:focus {
+        border-color: #8f5ff3;
+        box-shadow: 0 0 0 0.2rem rgba(143, 95, 243, 0.25);
+        outline: none;
+    }
+    .form-control-custom[readonly] {
+        background-color: #212942;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    .form-control-custom::placeholder {
+        color: #888;
+    }
+    .form-control-custom option {
+        background-color: #0A1029;
+        color: #ffffff;
+    }
+
+
+    /* Avatar Upload (Giữ nguyên) */
+    .avatar-upload-area {
+        text-align: center;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    .current-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #e1457a;
+        margin: 0 auto 20px;
+        display: block;
+        box-shadow: 0 0 10px rgba(225, 69, 122, 0.4);
+    }
+    .avatar-upload-btn {
+        background: linear-gradient(to right, #8f5ff3, #e1457a);
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 0.95em;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .avatar-upload-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .avatar-upload-btn input[type="file"] {
+        display: none;
+    }
+    .file-name-display {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: #aaa;
+    }
+    .error-message {
+        color: #ff4343;
+        font-size: 0.9em;
+        margin-top: 5px;
+        display: block;
+    }
+    .success-message {
+        color: #3cb371;
+        font-size: 0.9em;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    /* Form Buttons - CẬP NHẬT TẠI ĐÂY */
+    .form-buttons {
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+    .form-buttons .button-wrapper {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+    }
+    .submit-button, .cancel-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        /* THAY ĐỔI PADDING NGANG TẠI ĐÂY */
+        padding: 12px 20px; /* Giảm padding ngang từ 30px xuống 20px */
+        border-radius: 50px;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 1px; /* Giữ nguyên hoặc giảm nhẹ nếu muốn chữ gần hơn */
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Để đảm bảo cả hai nút có kích thước bằng nhau */
+    .form-buttons .button-wrapper > * {
+        flex: 1; /* Các nút sẽ chia sẻ không gian bằng nhau, giúp chúng có cùng chiều rộng */
+        max-width: 200px; /* Thêm max-width để giới hạn chiều rộng tối đa của mỗi nút */
+    }
+
+
+    .submit-button {
+        background: linear-gradient(to right, #5560ff, #aa52a1);
+        color: #ffffff;
+    }
+    .submit-button:hover {
+        opacity: 0.9;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        transform: translateY(-1px);
+    }
+    .cancel-button {
+        background: linear-gradient(to right, #e1457a, #ff4343);
+        color: #ffffff !important;
+    }
+    .cancel-button:hover {
+        opacity: 0.9;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        transform: translateY(-1px);
+    }
+
+
+    /* Responsive (Giữ nguyên) */
+    @media (max-width: 768px) {
+        .user-profile-card {
+            padding: 30px 25px;
+            margin-top: -50px;
+        }
+        .edit-profile-form .form-group {
+            flex: 1 1 100%;
+        }
+        .current-avatar {
+            width: 120px;
+            height: 120px;
+        }
+        .avatar-upload-btn {
+            font-size: 0.85em;
+            padding: 8px 15px;
+        }
+        .submit-button, .cancel-button {
+            padding: 10px 15px; /* Giảm padding ngang hơn nữa trên mobile */
+            font-size: 14px;
+        }
+        .form-buttons {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-buttons .button-wrapper {
+            flex-direction: column;
+            width: 100%;
+            gap: 15px;
+        }
+        .form-buttons .button-wrapper > * {
+            width: 100%;
+            max-width: none; /* Bỏ max-width trên mobile để chúng chiếm full width */
+        }
+    }
+    @media (max-width: 576px) {
+        .details-banner.hero-area {
+            padding: 170px 0 60px;
+        }
+        .user-profile-card {
+            margin-top: 0px;
+            box-shadow: none;
+            border-radius: 0;
+            background-color: transparent;
+            border: none;
+        }
+        .user-profile-section {
+            padding-top: 10px;
+        }
+    }
+    /* Background chung nếu bg-one chưa đủ padding */
+      .user-profile-section {
+         padding: 60px 0 80px 0; /* Tăng padding bottom */
+        /* background-color: #0c0c1b; /* Màu nền section nếu cần */
+      }
+     /* Đảm bảo banner đủ cao khi card đè lên trên mobile */
+      .details-banner.hero-area {
+           padding-bottom: 120px; 
+      }
+
+     /* --- Card Container --- */
+      .user-profile-card {
+          background-color: #1c1c33; /* Màu nền card đậm hơn nền section một chút */
+          border-radius: 12px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+          padding: 40px;
+          color: #e0e0e0; /* Màu chữ mặc định trong card */
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          overflow: hidden;
+           margin-top: -80px; /* Hiệu ứng card nằm đè lên banner một chút */
+           position: relative;
+            z-index: 2;
+            box-sizing: border-box;
+      }
+       /* Container cho nội dung khi có user */
+       .profile-content-wrapper {
+          /* Layout Flex */
+          display: flex;
+          flex-direction: row; /* Mặc định avatar và info cạnh nhau */
+          align-items: flex-start; /* Canh theo đỉnh trên cùng */
+          gap: 40px; /* Khoảng cách giữa avatar và info */
+       }
+       
+       /* Style cho trường hợp không có user */
+       .user-profile-card .no-user-message {
+            text-align: center; 
+            color: #aaaaaa;
+            padding: 20px 0; /* Giảm padding khi chỉ có text */
+            width: 100%;
+            font-size: 1.1rem;
+       }
+
+
+     /* --- Avatar --- */
+      .user-avatar-container {
+          flex-shrink: 0; /* Không cho avatar bị co lại */
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          padding: 5px;
+          background: linear-gradient(45deg, #5560ff, #aa52a1); /* Viền gradient theo màu nút */
+          box-shadow: 0 0 15px rgba(85, 96, 255, 0.5);
+           align-self: center; /* Avatar canh giữa theo chiều dọc nếu info quá dài */
+      }
+
+      .user-avatar-container img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover; /* Đảm bảo ảnh không bị méo */
+          border-radius: 50%;
+           border: 4px solid #1c1c33; /* Tạo khoảng hở giữa ảnh và viền gradient bằng màu nền card*/
+      }
+
+     /* --- User Info Details --- */
+       .user-info-details {
+         flex-grow: 1; /* Chiếm toàn bộ không gian còn lại */
+         text-align: left;
+       }
+
+      .user-info-details h4 {
+          color: #ffffff;
+          font-size: 1.8rem;
+          font-weight: 600;
+          margin-top: 0;
+          margin-bottom: 25px;
+          padding-bottom: 15px;
+           border-bottom: 1px dashed rgba(255,255,255, 0.2); /* Đường kẻ dưới tên */
+      }
+
+       .info-list {
+         margin-bottom: 30px;
+       }
+
+      .info-item {
+           display: flex; /* Dùng flex để canh item */
+           align-items: baseline; 
+           margin-bottom: 16px; /* Tăng khoảng cách dòng */
+           line-height: 1.6;
+           padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255, 0.05); /* Kẻ mờ phân cách */
+       }
+       .info-item:last-child {
+           border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+       }
+
+
+       .info-item strong {
+            color: #a6a6c5; /* Màu nhạt hơn cho label */
+            font-weight: 500;
+            /* min-width: 170px; */ /* Dùng min-width hoặc flex-basis để canh lề */
+            flex: 0 0 180px; /* Tăng chiều rộng label*/
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px; /* Khoảng cách giữa label và value */
+        }
         
+        .info-item strong i {
+             margin-right: 12px; /* Khoảng cách icon và text label */
+             color: #aa52a1; /* Màu highlight cho icon */
+              width: 22px; /* Đảm bảo các icon thẳng hàng */
+              text-align: center;
+              font-size: 1.1em;
+         }
+
+         .info-item span {
+              color: #ffffff; /* Màu value nổi bật */
+              font-weight: 600;
+              flex: 1; /* Value chiếm phần còn lại */
+          }
+
+
+     /* --- Edit Button --- */
+     /* Cần class text-center trên div chứa button canh giữa trên mobile */
+     .user-info-details .text-center {
+         text-align: left; /* Desktop thì canh trái */
+      }
+      .edit-profile-button {
+          display: inline-block;
+          padding: 10px 28px;
+          /* background-image: -webkit-linear-gradient(169deg, #5560ff 17%, #aa52a1 63%, #ff4343 100%);  */
+           background: linear-gradient(to right, #5560ff, #aa52a1); /* Màu nút theo theme */
+          color: #ffffff !important;
+          border-radius: 30px; /* Bo tròn kiểu viên thuốc */
+          text-decoration: none !important;
+          font-weight: 600;
+          transition: all 0.3s ease;
+           box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+           border: none;
+           font-size: 1rem;
+      }
+       .edit-profile-button:hover {
+            opacity: 0.95;
+            color: #fff;
+            transform: translateY(-3px); /* Hiệu ứng nhấc nhẹ lên */
+            box-shadow: 0 5px 20px rgba(85, 96, 255, 0.4);
+             text-decoration: none !important;
+       }
+
+       /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+             .details-banner.hero-area {
+                  padding-bottom: 80px; /* Chỉnh lại banner trên mobile */
+             }
+            .user-profile-card {
+               padding: 30px 25px;
+                margin-top: -50px; /* Giảm hiệu ứng đè lên banner */
+            }
+             .profile-content-wrapper {
+                flex-direction: column; /* Xếp chồng avatar và info */
+                align-items: center;    /* Canh giữa các thành phần */
+                 gap: 25px;
+             }
+             .user-avatar-container {
+                 width: 130px;
+                 height: 130px;
+                  align-self: center; /* Canh giữa avatar */
+             }
+            .user-info-details {
+                text-align: center; /* Canh giữa text block trên mobile */
+                 width: 100%;
+            }
+            .user-info-details h4 {
+                 font-size: 1.5rem;
+                  margin-bottom: 20px;
+                  text-align: center; /* Canh giữa tên */
+                  border-bottom: none;
+                  padding-bottom: 0;
+            }
+             /* Style lại info-item cho mobile */
+              .info-item {
+                 flex-direction: column; /* Xếp label và value chồng lên nhau */
+                 align-items: center;
+                 margin-bottom: 18px;
+                 background-color: rgba(255,255,255, 0.05); /* Nền nhẹ cho từng item */
+                  padding: 10px 8px;
+                  border-radius: 5px;
+                   border-bottom: none; /* bỏ border bottom */
+             }
+              .info-item:last-child {
+                   margin-bottom: 0;
+              }
+             .info-item strong {
+                  flex: unset;
+                  min-width: unset;
+                   flex-basis: auto; /* reset flex-basis */
+                  margin-right: 0;
+                  margin-bottom: 5px; /* Khoảng cách giữa label và value */
+                  justify-content: center; /* Canh giữa icon và text label */
+             }
+              .info-item span {
+                  flex: unset;
+              }
+              .user-info-details .text-center {
+                 text-align: center; /* Canh giữa button trên mobile */
+                  margin-top: 15px; /* thêm khoảng cách với list */
+              }
+               .edit-profile-button {
+                    padding: 10px 25px;
+               }
+        }
+         @media (max-width: 576px) {
+               .details-banner.hero-area {
+                     padding: 170px 0 60px; /* Tăng padding banner */
+                }
+              .user-profile-card {
+                 margin-top: 0px; /* Bỏ hiệu ứng đè lên banner */
+                 box-shadow: none;
+                  border-radius: 0;
+                  background-color: transparent; /* làm trong suốt card nếu muốn */
+                   border: none;
+              }
+              .user-profile-section {
+                 padding-top: 10px; /* Giảm padding top */
+              }
+         }
 
