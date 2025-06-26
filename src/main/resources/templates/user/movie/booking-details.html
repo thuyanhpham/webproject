@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Giữ nguyên các link CSS từ template của bạn -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" th:href="@{/css/ticket.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title th:text="${pageTitle ?: 'Chi tiết vé'}">Ticket Details</title>
+</head>
+
+<body>
+    <!-- Preloader and Scroll to Top -->
+    <div class="preloader" style="display: none;">
+        <div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div>
+    </div>
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop active"><i class="fas fa-angle-up"></i></a>
+
+    <!-- Header Section -->
+    <header class="header-section header-active" th:replace="~{fragments/user-header :: header}"></header>
+
+    <!-- Banner Section -->
+    <section class="details-banner bg_img" 
+             th:if="${booking != null}"
+             th:attr="data-background=${booking.showtime.movie.bannerUrl}"
+             th:style="|background-image: url('${booking.showtime.movie.bannerUrl}');|">
+        <div class="container">
+            <div class="details-banner-wrapper" style="padding: 40px 0; justify-content: flex-start;">
+                <div>
+                    
+                    <div class="item md-order-1" style="margin-bottom: 80px;">
+                        <a th:href="@{/user/my-bookings}" class="custom-button back-button">
+                            <i class="flaticon-double-right-arrows-angles"></i> Back to History
+                        </a>
+                    </div>
+    
+                    <div class="details-banner-content style-two">
+                        <h3 class="title" th:text="${booking.showtime.movie.title}">Movie Title</h3>
+                        <p style="margin-top: 10px;">Your e-ticket</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Đã xóa class 'padding-top' để giảm khoảng cách -->
+    <section class="movie-ticket-section padding-bottom">
+        <div class="container">
+            <div class="row justify-content-center" th:if="${booking != null}">
+                <div class="col-lg-10">
+                    <div class="modern-ticket">
+                        <div class="ticket-left">
+                            <img th:src="${booking.showtime.movie.posterUrl}" alt="Movie Poster">
+                        </div>
+                        <div class="ticket-right">
+                            <h2 class="movie-title" th:text="${booking.showtime.movie.title}">Movie Title</h2>
+                            <p class="booking-id" th:text="'Booking ID: BOOK-' + ${booking.id}">Booking ID</p>
+    
+                            <div class="ticket-info-grid">
+                                <div>
+                                    <span>Date</span>
+                                    <strong th:text="${#temporals.format(booking.showtime.showDate, 'dd/MM/yyyy')}">26/06/2025</strong>
+                                </div>
+                                <div>
+                                    <span>Time</span>
+                                    <strong th:text="${#temporals.format(booking.showtime.startTime, 'HH:mm')}">08:37</strong>
+                                </div>
+                                <div>
+                                    <span>Room</span>
+                                    <strong th:text="${booking.showtime.room.name}">Phòng 1</strong>
+                                </div>
+                                <div>
+                                    <span>Seats</span>
+                                    <strong th:text="${booking.getSeatLabels()}">D7, D8</strong>
+                                </div>
+                            </div>
+    
+                            <div class="qr-area">
+                                <img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + ${booking.id}" alt="QR Code">
+                                <p class="mt-2">Show this code to our staff.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Trường hợp không tìm thấy vé -->
+            <div th:if="${booking == null}" class="text-center py-5">
+                <div class="event-area">
+                    <div class="event-item">
+                        <div class="event-content">
+                            <h3 class="title">Ticket Not Found</h3>
+                            <p>The ticket may have been deleted or you do not have permission to view it.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Giữ nguyên các link JS từ template của bạn -->
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

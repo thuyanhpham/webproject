@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Giữ nguyên các link CSS từ template của bạn -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+
+    <title th:text="${pageTitle ?: 'Đặt vé thành công'}">Đặt vé thành công</title>
+</head>
+
+<body>
+    <!-- Preloader and Scroll to Top -->
+    <div class="preloader" style="display: none;">
+        <div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div>
+    </div>
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop active"><i class="fas fa-angle-up"></i></a>
+
+    <!-- Header Section -->
+     <header class="header-section" th:replace="~{fragments/user-header :: header}"></header>
+
+    <!-- Banner Section -->
+    <section class="details-banner hero-area bg_img" data-background="/images/banner02.jpg" style="background-image: url('/images/banner02.jpg');">
+        <div class="container">
+            <div class="details-banner-wrapper">
+                <div class="details-banner-content style-two">
+                    <h3 class="title">Thanh toán hoàn tất</h3>
+                    <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================= NỘI DUNG CHÍNH CỦA TRANG XÁC NHẬN ======================= -->
+		    <section class="event-section padding-top padding-bottom">
+		    <div class="container">
+		        <div class="row justify-content-center">
+		            <div class="col-lg-8 col-md-10">
+		                <div class="event-area">
+		                    <div class="event-item" style="text-align: center;">
+		                        <div class="event-content">
+		                            <!-- Thêm margin-bottom để tạo khoảng cách -->
+		                            <h3 class="title" style="margin-bottom: 20px;">Đặt vé thành công!</h3>
+		
+		                            <!-- Giữ nguyên nội dung, có thể thêm margin-top nếu cần -->
+		                            <p style="margin-bottom: 30px;">
+		                                Cảm ơn bạn đã tin tưởng và đặt vé. Chi tiết vé của bạn đã được cập nhật trong mục "Vé của tôi".
+		                            </p>
+		
+		                            <!-- Khung mã đặt vé -->
+		                            <div class="booking-summery bg-one" style="max-width: 400px; margin: 30px auto; padding: 20px;">
+		                                <h6 class="title" style="font-size: 16px; margin-bottom: 5px;">Mã đặt vé của bạn</h6>
+		                                <h4 class="subtitle" style="color: #31d7a9; font-size: 24px;" th:text="${orderId ?: 'N/A'}">BOOKING_XYZ_123</h4>
+		                            </div>
+		
+		                            <div class="button-area">
+                                     <a th:href="@{/}" class="custom-button">Về trang chủ</a>
+                                     <a th:href="@{/user/booking/{id}(id=${bookingId})}" class="custom-button">Xem vé của tôi</a>
+                               		 </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</section>
+
+    <!-- =================================================================================== -->
+
+   
+
+    <!-- Giữ nguyên các link JS từ template của bạn -->
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

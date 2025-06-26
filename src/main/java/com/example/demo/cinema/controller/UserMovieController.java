@@ -281,4 +281,5 @@ public class UserMovieController {
             model.addAttribute("seatPlan", seatPlanData);
             return "user/movie/movie-seat-plan";
     }
+    
 }

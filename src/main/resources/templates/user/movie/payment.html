@@ -1,30 +1,27 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)https://pixner.net/boleto/demo/movie-checkout.html -->
-<html lang="en" class=" sizes customelements history pointerevents postmessage webgl websockets cssanimations csscolumns csscolumns-width csscolumns-span csscolumns-fill csscolumns-gap csscolumns-rule csscolumns-rulecolor csscolumns-rulestyle csscolumns-rulewidth csscolumns-breakbefore csscolumns-breakafter csscolumns-breakinside flexbox picture srcset webworkers"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="stylesheet" href="./payment_files/bootstrap.min.css">
-    <link rel="stylesheet" href="./payment_files/all.min.css">
-    <link rel="stylesheet" href="./payment_files/animate.css">
-    <link rel="stylesheet" href="./payment_files/flaticon.css">
-    <link rel="stylesheet" href="./payment_files/magnific-popup.css">
-    <link rel="stylesheet" href="./payment_files/odometer.css">
-    <link rel="stylesheet" href="./payment_files/owl.carousel.min.css">
-    <link rel="stylesheet" href="./payment_files/owl.theme.default.min.css">
-    <link rel="stylesheet" href="./payment_files/nice-select.css">
-    <link rel="stylesheet" href="./payment_files/main.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/css/nice-select.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 
-    <link rel="shortcut icon" href="https://pixner.net/boleto/demo/assets/images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <title>Boleto  - Online Ticket Booking Website HTML Template</title>
-
-
+    <title th:text="${pageTitle ?: 'Boleto - Online Ticket Booking'}">Boleto - Online Ticket Booking Website HTML Template</title>
 </head>
 
 <body>
-    <!-- ==========Preloader========== -->
     <div class="preloader" style="display: none;">
         <div class="preloader-inner">
             <div class="preloader-icon">
@@ -33,290 +30,94 @@
             </div>
         </div>
     </div>
-    <!-- ==========Preloader========== -->
-    <!-- ==========Overlay========== -->
     <div class="overlay"></div>
-    <a href="https://pixner.net/boleto/demo/movie-checkout.html#0" class="scrollToTop active">
+    <a href="#" class="scrollToTop active">
         <i class="fas fa-angle-up"></i>
     </a>
-    <!-- ==========Overlay========== -->
-
-    <!-- ==========Header-Section========== -->
-    <header class="header-section header-active">
-        <div class="container">
-            <div class="header-wrapper">
-                <div class="logo">
-                    <a href="https://pixner.net/boleto/demo/index.html">
-                        <img src="./payment_files/logo.png" alt="logo">
-                    </a>
-                </div>
-                <ul class="menu">
-                    <li class="menu-item-has-children">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">Home</a>
-                        <ul class="submenu">
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/index.html">Home One</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/index-2.html">Home Two</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0" class="active">movies</a>
-                        <ul class="submenu">
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-grid.html">Movie Grid</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-list.html">Movie List</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-details.html">Movie Details</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-details-2.html">Movie Details 2</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-ticket-plan.html">Movie Ticket Plan</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-seat-plan.html">Movie Seat Plan</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-checkout.html#0" class="active">Movie Checkout</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/popcorn.html">Movie Food</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">events</a>
-                        <ul class="submenu">
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/events.html">Events</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/event-details.html">Event Details</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/event-speaker.html">Event Speaker</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/event-ticket.html">Event Ticket</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/event-checkout.html">Event Checkout</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">sports</a>
-                        <ul class="submenu">
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/sports.html">Sports</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/sport-details.html">Sport Details</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/sports-ticket.html">Sport Ticket</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/sports-checkout.html">Sport Checkout</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">pages</a>
-                        <ul class="submenu">
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/about.html">About Us</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/apps-download.html">Apps Download</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/sign-in.html">Sign In</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/sign-up.html">Sign Up</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/404.html">404</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">blog</a>
-                        <ul class="submenu">
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/blog.html">Blog</a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/blog-details.html">Blog Single</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="https://pixner.net/boleto/demo/contact.html">contact</a>
-                    </li>
-                    <li class="header-button pr-0">
-                        <a href="https://pixner.net/boleto/demo/sign-up.html">join us</a>
-                    </li>
-                </ul>
-                <div class="header-bar d-lg-none">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
-            </div>
-        </div>
-    </header>
-    <!-- ==========Header-Section========== -->
-
-    <!-- ==========Banner-Section========== -->
-    <section class="details-banner hero-area bg_img seat-plan-banner" data-background="./assets/images/banner/banner04.jpg" style="background-image: url(&quot;./assets/images/banner/banner04.jpg&quot;);">
+    <header class="header-section header-active" th:replace="~{fragments/user-header :: header}"></header>
+    <section class="details-banner hero-area bg_img seat-plan-banner"
+             th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}"
+             th:style="|background-image: url('${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}');|">
         <div class="container">
             <div class="details-banner-wrapper">
-                <div class="details-banner-content style-two">
-                    <h3 class="title">Venus</h3>
+                <div class="details-banner-content style-two" th:if="${movie != null}">
+                    <h3 class="title" th:text="${movie.title}">Movie Title</h3>
                     <div class="tags">
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">City Walk</a>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">English - 2D</a>
+                        <a href="javascript:void(0);" th:text="${movie.language + ' - ' + movie.format?.name}">English - 2D</a>
                     </div>
+                </div>
+                <div class="details-banner-wrapper" th:unless="${movie != null}">
+                     <h3 style="color: white; text-align: center; padding: 50px;">Movie Not Found!</h3>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ==========Banner-Section========== -->
-
-    <!-- ==========Page-Title========== -->
     <section class="page-title bg-one">
         <div class="container">
             <div class="page-title-area">
                 <div class="item md-order-1">
-                    <a href="https://pixner.net/boleto/demo/movie-ticket-plan.html" class="custom-button back-button">
+                    <a th:href="@{/movies/{movieId}/showtimes(movieId=${movie?.id})}" class="custom-button back-button">
                         <i class="flaticon-double-right-arrows-angles"></i>back
                     </a>
                 </div>
                 <div class="item date-item">
-                    <span class="date">MON, SEP 09 2020</span>
-                    <select class="select-bar" style="display: none;">
-                        <option value="sc1">09:40</option>
-                        <option value="sc2">13:45</option>
-                        <option value="sc3">15:45</option>
-                        <option value="sc4">19:50</option>
-                    </select><div class="nice-select select-bar" tabindex="0"><span class="current">09:40</span><ul class="list"><li data-value="sc1" class="option selected">09:40</li><li data-value="sc2" class="option">13:45</li><li data-value="sc3" class="option">15:45</li><li data-value="sc4" class="option">19:50</li></ul></div>
+                    <!-- ======================= SỬA LỖI HIỂN THỊ TẠI ĐÂY ======================= -->
+                    <!-- 1. Sử dụng đối tượng `showtime.showDate` để lấy ngày. -->
+                    <!-- 2. Sử dụng chuỗi định dạng ngày tháng hợp lệ. -->
+                    <span class="date" th:text="${#temporals.format(showtime?.showDate, 'EEE, dd MMM yyyy')}">MON, SEP 09 2020</span>
+                    <select class="select-bar">
+                        <!-- Phần này đã đúng, giữ nguyên -->
+                        <option th:value="${#temporals.format(showtime?.startTime, 'HH:mm')}"
+                                th:text="${#temporals.format(showtime?.startTime, 'HH:mm')}"
+                                selected>09:40</option>
+                        </select>
                 </div>
                 <div class="item">
-                    <h5 class="title">05:00</h5>
+                    <h5 class="title" id="countdown-timer">05:00</h5>
                     <p>Mins Left</p>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ==========Page-Title========== -->
-
-    <!-- ==========Movie-Section========== -->
     <div class="movie-facility padding-bottom padding-top">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
-                    <div class="checkout-widget d-flex flex-wrap align-items-center justify-cotent-between">
-                        <div class="title-area">
-                            <h5 class="title">Already a Boleto  Member?</h5>
-                            <p>Sign in to earn points and make booking easier!</p>
-                        </div>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0" class="sign-in-area">
-                            <i class="fas fa-user"></i><span>Sign in</span>
-                        </a>
-                    </div>
                     <div class="checkout-widget checkout-contact">
-                        <h5 class="title">Share your Contact  Details </h5>
+                        <h5 class="title">Your Contact Details </h5>
                         <form class="checkout-contact-form">
                             <div class="form-group">
-                                <input type="text" placeholder="Full Name">
+                                <input type="text" name="fullName" placeholder="Full Name" th:value="${currentUser?.fullname}" required readonly>
                             </div>
                             <div class="form-group">
-                                <input type="text" placeholder="Enter your Mail">
+                                <input type="email" name="email" placeholder="Enter your Mail" th:value="${currentUser?.email}" required readonly>
                             </div>
-                            <div class="form-group">
-                                <input type="text" placeholder="Enter your Phone Number ">
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Continue" class="custom-button">
-                            </div>
-                        </form>
+                            </form>
                     </div>
-                    <div class="checkout-widget checkout-contact">
-                        <h5 class="title">Promo Code </h5>
-                        <form class="checkout-contact-form">
-                            <div class="form-group">
-                                <input type="text" placeholder="Please enter promo code">
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Verify" class="custom-button">
-                            </div>
-                        </form>
-                    </div>
+
                     <div class="checkout-widget checkout-card mb-0">
-                        <h5 class="title">Payment Option </h5>
+                        <h5 class="title">Payment Method </h5>
                         <ul class="payment-option">
-                            <li class="active">
-                                <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                                    <img src="./payment_files/card.png" alt="payment">
-                                    <span>Credit Card</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                                    <img src="./payment_files/card.png" alt="payment">
-                                    <span>Debit Card</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                                    <img src="./payment_files/paypal.png" alt="payment">
-                                    <span>paypal</span>
+                            <li class="active"> <a href="javascript:void(0);">
+                                    <img th:src="@{/images/momo-logo.png}" alt="Momo Payment" style="max-width: 50px;">
+                                    <span>Momo Payment</span>
                                 </a>
                             </li>
                         </ul>
-                        <h6 class="subtitle">Enter Your Card Details </h6>
-                        <form class="payment-card-form">
-                            <div class="form-group w-100">
-                                <label for="card1">Card Details</label>
-                                <input type="text" id="card1">
-                                <div class="right-icon">
-                                    <i class="flaticon-lock"></i>
-                                </div>
-                            </div>
-                            <div class="form-group w-100">
-                                <label for="card2"> Name on the Card</label>
-                                <input type="text" id="card2">
-                            </div>
+                        <p class="mt-3">Click the button below to pay with MoMo.</p>
+                        <form class="payment-card-form" th:action="@{/checkout/initiate-momo-payment}" method="post">
+                            <input type="hidden" name="showtimeId" th:value="${showtime?.id}" />
+                            <th:block th:each="seat : ${selectedSeats}">
+                                <input type="hidden" name="seatIds" th:value="${seat.id}" />
+                            </th:block>
+                            <input type="hidden" name="totalAmount" th:value="${totalTicketPrice}" />
+                            
                             <div class="form-group">
-                                <label for="card3">Expiration</label>
-                                <input type="text" id="card3" placeholder="MM/YY">
-                            </div>
-                            <div class="form-group">
-                                <label for="card4">CVV</label>
-                                <input type="text" id="card4" placeholder="CVV">
-                            </div>
-                            <div class="form-group check-group">
-                                <input id="card5" type="checkbox" checked="">
-                                <label for="card5">
-                                    <span class="title">QuickPay</span>
-                                    <span class="info">Save this card information to my Boleto  account and make faster payments.</span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" class="custom-button" value="make payment">
+                                <button type="submit" class="custom-button">MoMo payment</button>
                             </div>
                         </form>
                         <p class="notice">
-                            By Clicking "Make Payment" you agree to the <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">terms and conditions</a>
+                            By clicking "MoMo payment", you agree to the <a th:href="@{/terms}">Terms of Use</a>
                         </p>
                     </div>
                 </div>
@@ -325,137 +126,110 @@
                         <h4 class="title">booking summery</h4>
                         <ul>
                             <li>
-                                <h6 class="subtitle">Venus</h6>
-                                <span class="info">English-2d</span>
+                                <h6 class="subtitle" th:text="${movie?.title}">Movie Title</h6>
+                                <span class="info" th:text="${movie?.language + ' - ' + movie?.format?.name}">English - 2D</span>
                             </li>
                             <li>
-                                <h6 class="subtitle"><span>City Walk</span><span>02</span></h6>
-                                <div class="info"><span>10 SEP TUE, 11:00 PM</span> <span>Tickets</span></div>
-                            </li>
-                            <li>
-                                <h6 class="subtitle mb-0"><span>Tickets  Price</span><span>$150</span></h6>
-                            </li>
-                        </ul>
-                        <ul class="side-shape">
-                            <li>
-                                <h6 class="subtitle"><span>combos</span><span>$57</span></h6>
-                                <span class="info"><span>2 Nachos Combo</span></span>
-                            </li>
-                            <li>
-                                <h6 class="subtitle"><span>food &amp; bevarage</span></h6>
+                                <h6 class="subtitle">
+                                    <span th:text="${#lists.size(selectedSeats) + ' Seats'}">02 Seats</span>
+                                </h6>
+                                <div class="info">
+                                    <!-- Sửa lại định dạng cho hợp lý hơn -->
+                                    <span th:text="${#temporals.format(showtime?.showDate, 'dd/MM/yyyy')} + ', ' + ${#temporals.format(showtime?.startTime, 'HH:mm')}">10/09/2020, 11:00 PM</span>
+                                    <span>Tickets</span>
+                                </div>
                             </li>
                         </ul>
                         <ul>
                             <li>
-                                <span class="info"><span>price</span><span>$207</span></span>
-                                <span class="info"><span>vat</span><span>$15</span></span>
+                                <span class="info"><span>Total Ticket Price</span><span id="total-ticket-price-display" th:data-raw-price="${totalTicketPrice}">$150</span></span>
                             </li>
                         </ul>
                     </div>
-                    <div class="proceed-area  text-center">
-                        <h6 class="subtitle"><span>Amount Payable</span><span>$222</span></h6>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0" class="custom-button back-button">proceed</a>
+                    <div class="proceed-area text-center">
+                        <h6 class="subtitle"><span>Amount Payable</span><span id="amount-payable-display" th:data-raw-price="${totalTicketPrice}">$222</span></h6>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- ==========Movie-Section========== -->
+    <footer class="footer-section" th:replace="~{fragments/user-footer :: footer}"></footer>
+    
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/modernizr-3.6.0.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/magnific-popup.min.js}"></script>
+    <script th:src="@{/js/nice-select.js}"></script>
+    <script th:src="@{/js/odometer.min.js}"></script>
+    <script th:src="@{/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/js/viewport.js}"></script>
+    <script th:src="@{/js/wow.min.js}"></script>
+    <script th:src="@{/js/countdown.min.js}"></script>
+    <script th:src="@{/js/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
 
-    <!-- ==========Newslater-Section========== -->
-    <footer class="footer-section">
-        <div class="newslater-section padding-bottom">
-            <div class="container">
-                <div class="newslater-container bg_img" data-background="./assets/images/newslater/newslater-bg01.jpg" style="background-image: url(&quot;./assets/images/newslater/newslater-bg01.jpg&quot;);">
-                    <div class="newslater-wrapper">
-                        <h5 class="cate">subscribe to Boleto </h5>
-                        <h3 class="title">to get exclusive benifits</h3>
-                        <form class="newslater-form">
-                            <input type="text" placeholder="Your Email Address">
-                            <button type="submit">subscribe</button>
-                        </form>
-                        <p>We respect your privacy, so we never share your info</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="footer-top">
-                <div class="logo">
-                    <a href="https://pixner.net/boleto/demo/index-1.html">
-                        <img src="./payment_files/footer-logo.png" alt="footer">
-                    </a>
-                </div>
-                <ul class="social-icons">
-                    <li>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0" class="active">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                            <i class="fab fa-pinterest-p"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                            <i class="fab fa-google"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="footer-bottom">
-                <div class="footer-bottom-area">
-                    <div class="left">
-                        <p>Copyright © 2020.All Rights Reserved By <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">Boleto </a></p>
-                    </div>
-                    <ul class="links">
-                        <li>
-                            <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">About</a>
-                        </li>
-                        <li>
-                            <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">Terms Of Use</a>
-                        </li>
-                        <li>
-                            <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">FAQ</a>
-                        </li>
-                        <li>
-                            <a href="https://pixner.net/boleto/demo/movie-checkout.html#0">Feedback</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- ==========Newslater-Section========== -->
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    $(function () {
+        // Initialize plugins from the template
+        $('.bg_img').each(function() {
+            var src = $(this).data('background');
+            if (src && $(this).css('background-image') === 'none') {
+                $(this).css({'background-image': 'url(' + src + ')'});
+            }
+        });
 
+        // Initialize Nice Select for dropdowns
+        $('.select-bar').niceSelect();
 
-    <script src="./payment_files/jquery-3.3.1.min.js.tải xuống"></script>
-    <script src="./payment_files/modernizr-3.6.0.min.js.tải xuống"></script>
-    <script src="./payment_files/plugins.js.tải xuống"></script>
-    <script src="./payment_files/bootstrap.min.js.tải xuống"></script>
-    <script src="./payment_files/isotope.pkgd.min.js.tải xuống"></script>
-    <script src="./payment_files/magnific-popup.min.js.tải xuống"></script>
-    <script src="./payment_files/owl.carousel.min.js.tải xuống"></script>
-    <script src="./payment_files/wow.min.js.tải xuống"></script>
-    <script src="./payment_files/countdown.min.js.tải xuống"></script>
-    <script src="./payment_files/odometer.min.js.tải xuống"></script>
-    <script src="./payment_files/viewport.jquery.js.tải xuống"></script>
-    <script src="./payment_files/nice-select.js.tải xuống"></script>
-    <script src="./payment_files/main.js.tải xuống"></script>
+        // Countdown timer for the page
+        let minutesLeft = 5;
+        let secondsLeft = 0;
 
+        function updateCountdown() {
+            if (minutesLeft <= 0 && secondsLeft <= 0) {
+                $('#countdown-timer').text("00:00");
+                // Tùy chọn: Tự động chuyển hướng hoặc hiển thị thông báo hết giờ
+                // window.location.href = '/session-expired'; 
+                return;
+            }
 
-</body></html>
+            if (secondsLeft === 0) {
+                minutesLeft--;
+                secondsLeft = 59;
+            } else {
+                secondsLeft--;
+            }
+
+            const displayMinutes = String(minutesLeft).padStart(2, '0');
+            const displaySeconds = String(secondsLeft).padStart(2, '0');
+            $('#countdown-timer').text(`${displayMinutes}:${displaySeconds}`);
+        }
+
+        setInterval(updateCountdown, 1000);
+
+        function formatCurrency(amount) {
+            const formatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            return formatter.format(amount);
+        }
+
+        const rawTicketPrice = parseFloat($('#total-ticket-price-display').data('raw-price'));
+        if (!isNaN(rawTicketPrice)) {
+            $('#total-ticket-price-display').text(formatCurrency(rawTicketPrice));
+            $('#amount-payable-display').text(formatCurrency(rawTicketPrice));
+        } else {
+            console.error("Invalid price value passed from server.");
+            $('#total-ticket-price-display').text("N/A");
+            $('#amount-payable-display').text("N/A");
+        }
+    });
+    /*]]>*/
+    </script>
+</body>
+</html>

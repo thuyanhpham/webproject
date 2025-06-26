@@ -143,11 +143,12 @@ public class ShowtimeService {
     	showtimeRepository.delete(showtime);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // <-- Quan trọng: Đảm bảo có @Transactional
     public Optional<Showtime> findById(Long id) {
-        return showtimeRepository.findById(id);
+        // ĐẢM BẢO GỌI ĐÚNG PHƯƠNG THỨC JOIN FETCH
+        return showtimeRepository.findByIdWithMovieAndRoomAndSeats(id);
     }
-
+    
     @Transactional(readOnly = true)
     public Page<Showtime> findAllShowtimes(Pageable pageable) {
         return showtimeRepository.findAll(pageable);

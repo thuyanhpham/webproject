@@ -41,8 +41,9 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
     int markOldShowtimesAsDeleted(@Param("today") LocalDate today, @Param("time") LocalTime time);
     
     @Query("SELECT sh FROM Showtime sh " +
-           "JOIN FETCH sh.movie m " +
-           "JOIN FETCH sh.room r LEFT JOIN FETCH r.seats s " + 
-           "WHERE sh.id = :showtimeId AND sh.deleted = false") 
-    Optional<Showtime> findByIdWithMovieAndRoomAndSeats(@Param("showtimeId") Long showtimeId);
+            "JOIN FETCH sh.movie m " + // <--- Đảm bảo có "JOIN FETCH sh.movie m"
+            "JOIN FETCH sh.room r " +  // <--- Đảm bảo có "JOIN FETCH sh.room r"
+            // Nếu bạn muốn cả seats cũng được load: "LEFT JOIN FETCH r.seats s " +
+            "WHERE sh.id = :showtimeId AND sh.deleted = false")
+     Optional<Showtime> findByIdWithMovieAndRoomAndSeats(@Param("showtimeId") Long showtimeId);
 }

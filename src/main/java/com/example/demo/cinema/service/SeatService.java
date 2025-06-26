@@ -77,5 +77,10 @@ public class SeatService {
     public List<Seat> findByRoomIdOrderByRowOrderAscSeatNumberAsc(Long roomId) { 
         return seatRepository.findByRoomId(roomId, Sort.by(Sort.Order.asc("rowOrder"), Sort.Order.asc("seatNumber")));
     }
+    
+ // THÊM PHƯƠNG THỨC NÀY VÀO ĐÂY
+    public List<Seat> findAllById(List<Long> ids) {
+        return seatRepository.findAllById(ids);
+    }
 }
 

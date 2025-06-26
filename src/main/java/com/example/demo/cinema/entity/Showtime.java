@@ -18,7 +18,7 @@ public class Showtime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // <-- TẠM THỜI THAY ĐỔI THÀNH EAGER
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 

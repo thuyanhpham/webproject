@@ -10,6 +10,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal; // <--- THÊM IMPORT NÀY
+
 @Entity
 @Table(name = "seats")
 public class Seat {
@@ -43,6 +45,8 @@ public class Seat {
 	
 	@Column(name = "is_available", nullable = false)
     private boolean isAvailable = true;
+
+   
 	
 	public Long getId() {
 		return id;
@@ -115,5 +119,6 @@ public class Seat {
 	public void setRowOrder(Integer rowOrder) {
 		this.rowOrder = rowOrder;
 	}
+
 
 }

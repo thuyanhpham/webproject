@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Payment Failed</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"> </head>
+<body>
+    <div style="text-align: center; padding: 50px;">
+        <h1>Thanh toán thất bại!</h1>
+        <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+        <p>Đã xảy ra lỗi trong quá trình thanh toán MoMo của bạn.</p>
+        <a th:href="@{/}" class="btn btn-primary">Quay về trang chủ</a>
+        <br/>
+        <a th:href="@{/checkout?showtimeId=...&seatIds=...}" class="btn btn-secondary">Thử lại thanh toán</a>
+        </div>
+</body>
+</html>
