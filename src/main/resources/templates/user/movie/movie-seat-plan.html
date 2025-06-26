@@ -209,29 +209,30 @@ $(document).ready(function() {
     });
 
     function updateSummary() {
-        // Lấy danh sách tên ghế (ghế đôi hiển thị dạng A1-A2)
         const seatLabels = Array.from(selectedSeats.values()).map(s => s.label).sort();
         const totalPrice = Array.from(selectedSeats.values()).reduce((sum, s) => sum + s.price, 0);
 
         $('#selected-seats-display').text(seatLabels.length > 0 ? seatLabels.join(', ') : '---');
-        
+
         const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
         $('#total-price-display').text(formatter.format(totalPrice));
     }
 
     $('#proceedToCheckoutBtn').on('click', function() {
         if (selectedSeats.size === 0) {
-            alert("Please select at least one seat.");
+            alert("Vui lòng chọn ít nhất một ghế."); // Thông báo tiếng Việt
             return;
         }
-        
+
         const seatIds = Array.from(selectedSeats.keys());
         console.log("Proceeding with seats:", seatIds, "for showtime:", showtimeId);
 
-        // Chuyển hướng đến trang checkout
-        const checkoutUrl = new URL('/checkout', window.location.origin);
+        // Xây dựng URL cho trang thanh toán
+        const checkoutUrl = new URL(/*[[@{/checkout}]]*/ '/checkout', window.location.origin);
         checkoutUrl.searchParams.append('showtimeId', showtimeId);
         seatIds.forEach(id => checkoutUrl.searchParams.append('seatIds', id));
+
+        // Chuyển hướng người dùng
         window.location.href = checkoutUrl.toString();
     });
 });
