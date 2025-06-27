@@ -64,16 +64,18 @@
                                 <div class="row mb-10 justify-content-center">
                                     <th:block th:if="${moviesPage != null and !moviesPage.empty}">
                                         <div class="col-sm-6 col-lg-4" th:each="movie : ${moviesPage.content}">
-                                            <div class="movie-grid">
-                                                <div class="movie-thumb c-thumb"><a th:href="@{/movies/detail/{id}(id=${movie.id})}"><img th:src="${movie.posterUrl ?: '/images/default-poster.png'}" alt="movie poster" style="height: 370px; object-fit: cover;"></a></div>
-                                                <div class="movie-content bg-one">
-                                                    <h5 class="title m-0"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
-                                                    <ul class="movie-rating-percent">
-                                                        <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="rating icon"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
-                                                        <li><div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div><span class="content">...%</span></li>
-                                                    </ul>
+                                            <th:block th:with="posterUrl=${movie.posterUrl != null and !movie.posterUrl.isBlank() ? movie.posterUrl : '/images/default-poster.png'}">
+                                                <div class="movie-grid">
+                                                    <div class="movie-thumb c-thumb"><a th:href="@{/movies/detail/{id}(id=${movie.id})}"><img th:src="@{${posterUrl}}" alt="movie poster" style="height: 370px; object-fit: cover;"></a></div>
+                                                    <div class="movie-content bg-one">
+                                                        <h5 class="title m-0"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
+                                                        <ul class="movie-rating-percent">
+                                                            <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="rating icon"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
+                                                            <li><div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div><span class="content">...%</span></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </th:block>
                                         </div>
                                     </th:block>
                                     <div class="col-12 text-center" th:if="${moviesPage == null or moviesPage.empty}"><p>No movies found.</p></div>
@@ -83,30 +85,32 @@
                                 <div class="movie-area mb-10">
                                     <th:block th:if="${moviesPage != null and !moviesPage.empty}">
                                         <div class="movie-list" th:each="movie : ${moviesPage.content}">
-                                            <div class="movie-thumb c-thumb"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" class="w-100 bg_img h-100" th:attr="data-background=${movie.posterUrl}" th:style="'background-image: url(\'' + ${movie.posterUrl} + '\');'"><img class="d-sm-none" th:src="${movie.posterUrl ?: '/images/default-poster.png'}" alt="movie poster"></a></div>
-                                            <div class="movie-content bg-one">
-                                                <h5 class="title"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
-                                                <p class="duration" th:if="${movie.duration != null}" th:text="${(movie.duration / 60) + 'h ' + (movie.duration % 60) + 'm'}"></p>
-												<div class="movie-tags">
-												    <th:block th:if="${movie.genres != null and not movie.genres.empty}">
-												        <a href="javascript:void(0);" th:each="genreObject : ${movie.genres}" th:if="${genreObject != null}" th:text="${genreObject.name}" class="mr-1 mb-1 movie-genre-tag"
-												           style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">
-												        </a>
-												    </th:block>
-												    <span th:unless="${movie.genres != null and not movie.genres.empty}" style="font-style: italic; color: #888;">
-												        No Genres Available
-												    </span>
-												</div>
-                                                <ul class="movie-rating-percent">
-                                                    <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
-                                                    <li><div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div><span class="content">...%</span></li>
-                                                </ul>
-                                                <div class="book-area"><div class="book-ticket">
-                                                    <div class="react-item"><a href="#"><div class="thumb"><img th:src="@{/images/heart.png}" alt="icons"></div></a></div>
-                                                    <div class="react-item mr-auto"><a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id})}"><div class="thumb"><img th:src="@{/images/book.png}" alt="icons"></div><span>book ticket</span></a></div>
-                                                    <div class="react-item"><a th:href="${movie.trailerUrl}" class="popup-video"><div class="thumb"><img th:src="@{/images/play-button.png}" alt="icons"></div><span>watch trailer</span></a></div>
-                                                </div></div>
-                                            </div>
+                                            <th:block th:with="posterUrl=${movie.posterUrl != null and !movie.posterUrl.isBlank() ? movie.posterUrl : '/images/default-poster.png'}">
+                                                <div class="movie-thumb c-thumb"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" class="w-100 bg_img h-100" th:attr="data-background=${posterUrl}" th:style="'background-image: url(\'' + @{${posterUrl}} + '\');'"><img class="d-sm-none" th:src="@{${posterUrl}}" alt="movie poster"></a></div>
+                                                <div class="movie-content bg-one">
+                                                    <h5 class="title"><a th:href="@{/movies/detail/{id}(id=${movie.id})}" th:text="${movie.title}"></a></h5>
+                                                    <p class="duration" th:if="${movie.duration != null}" th:text="${(movie.duration / 60) + 'h ' + (movie.duration % 60) + 'm'}"></p>
+                                                    <div class="movie-tags">
+                                                        <th:block th:if="${movie.genres != null and not movie.genres.empty}">
+                                                            <a href="javascript:void(0);" th:each="genreObject : ${movie.genres}" th:if="${genreObject != null}" th:text="${genreObject.name}" class="mr-1 mb-1 movie-genre-tag"
+                                                               style="background-color: #334878; color: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">
+                                                            </a>
+                                                        </th:block>
+                                                        <span th:unless="${movie.genres != null and not movie.genres.empty}" style="font-style: italic; color: #888;">
+                                                            No Genres Available
+                                                        </span>
+                                                    </div>
+                                                    <ul class="movie-rating-percent">
+                                                        <li><div class="thumb"><img th:src="@{/images/tomato.png}" alt="movie"></div><span class="content" th:if="${movie.rating != null}" th:text="${#numbers.formatDecimal(movie.rating, 1, 1)} + '/10'"></span><span class="content" th:unless="${movie.rating != null}">N/A</span></li>
+                                                        <li><div class="thumb"><img th:src="@{/images/cake.png}" alt="movie"></div><span class="content">...%</span></li>
+                                                    </ul>
+                                                    <div class="book-area"><div class="book-ticket">
+                                                        <div class="react-item"><a href="#"><div class="thumb"><img th:src="@{/images/heart.png}" alt="icons"></div></a></div>
+                                                        <div class="react-item mr-auto"><a th:href="@{/movies/{movieId}/showtimes(movieId=${movie.id})}"><div class="thumb"><img th:src="@{/images/book.png}" alt="icons"></div><span>book ticket</span></a></div>
+                                                        <div class="react-item"><a th:href="${movie.trailerUrl}" class="popup-video"><div class="thumb"><img th:src="@{/images/play-button.png}" alt="icons"></div><span>watch trailer</span></a></div>
+                                                    </div></div>
+                                                </div>
+                                            </th:block>
                                         </div>
                                     </th:block>
                                     <div class="col-12 text-center" th:if="${moviesPage == null or moviesPage.empty}"><p>No movies found.</p></div>
