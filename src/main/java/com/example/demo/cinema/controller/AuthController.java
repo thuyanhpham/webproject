@@ -25,7 +25,7 @@ public class AuthController {
 	@Autowired
 	private RoleRepository roleRepository;
 
-	@GetMapping("/")
+	@GetMapping("/welcome")
 	public String index(Model model) {
 		model.addAttribute("pageTitle", "Boleto - Online Movie Ticket Booking");
 		return "index";

@@ -22,6 +22,36 @@
 
     <title th:text="${movie != null ? movie.title + ' - Movie Details' : 'Boleto - Movie Details'}">Boleto - Online Ticket Booking Website HTML Template</title>
 
+    <!-- BẮT ĐẦU GIẢI PHÁP CSS CUỐI CÙNG -->
+    <style>
+        .movie-review-item .author {
+			display: flex !important;
+			align-items: center !important;
+			flex-direction: row !important;
+			gap: 20px;
+		}
+        .movie-review-item .author .thumb {
+            width: 80px !important; 
+            height: 80px !important;  
+            border-radius: 50% !important;
+            overflow: hidden !important; 
+            border: 3px solid #31d7a9 !important;
+            padding: 0 !important; 
+            background: none !important;
+        }
+        
+        .movie-review-item .author .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+		.movie-review-item .author .movie-review-info {
+            text-align: left !important;
+            width: auto !important;
+        }
+    </style>
+
 </head>
 <body>
     <!-- ==========Preloader========== -->
@@ -208,6 +238,7 @@
  								<div class="tab-item" id="user-review-content-area">
 						    <div th:if="${movie != null}">
 						
+						        <!-- Sử dụng cấu trúc HTML gốc của theme -->
 						        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}" th:attr="data-review-id=${review.id}">
 						            <div class="author">
 						                <div class="thumb">
@@ -248,7 +279,6 @@
 						                       Report Abuse
 						                    </a>
 						                </div>
-						               
 						            </div>
 						        </div>
 						
@@ -257,7 +287,8 @@
 						        </div>
 						
 						        <div id="more-reviews-container">
-						            </div>
+						            <!-- Các review load thêm sẽ vào đây -->
+						        </div>
 						
 						        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
 						            <a href="javascript:void(0);" class="custom-button transparent"
@@ -444,6 +475,7 @@
 	
 	        const authorDiv = document.createElement('div');
 	        authorDiv.className = 'author';
+	        
 	        const thumbDiv = document.createElement('div');
 	        thumbDiv.className = 'thumb';
 	        const authorLink = document.createElement('a');
