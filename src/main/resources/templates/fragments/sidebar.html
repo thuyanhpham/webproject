@@ -12,6 +12,9 @@
         <li th:classappend="${currentPage == 'movies' ? 'active' : ''}">
             <a th:href="@{/admin/movies}"><i class="icon fas fa-film"></i> Movies</a>
         </li>
+        <li th:classappend="${currentPage == 'people' ? 'active' : ''}">
+            <a th:href="@{/admin/people}"><i class="icon fas fa-users"></i> People</a>
+        </li>
         <li th:classappend="${currentPage == 'rooms' ? 'active' : ''}">
             <a th:href="@{/admin/rooms}"><i class="icon fas fa-person-booth"></i> Rooms</a>
         </li>

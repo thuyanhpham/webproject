@@ -1,22 +1,13 @@
 package com.example.demo.cinema.controller;
-import com.example.demo.cinema.entity.Format;
-import com.example.demo.cinema.entity.Genre;
 import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.MovieStatus;
 import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.service.FormatService;
 import com.example.demo.cinema.service.GenreService;
 import com.example.demo.cinema.service.MovieService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.demo.cinema.service.PersonService;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,13 +16,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/movies")
 public class AdminController {
-
-    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private MovieService movieService;
@@ -42,157 +32,86 @@ public class AdminController {
     @Autowired
     private FormatService formatService;
 
+    @Autowired
+    private PersonService personService;
+
     @GetMapping
-    public String showAdminDashboard(Model model, HttpServletRequest request) {
-        model.addAttribute("currentURI", request.getRequestURI());
-        return "admin/dashboard";
-    }
-
-    @GetMapping("/movies")
-    public String listMovies(Model model,
-                             @PageableDefault(size = 10, sort = "title") Pageable pageable,
-                             HttpServletRequest request) {
-        Page<Movie> moviesPage = movieService.findMovies(pageable, null);
-
+    public String listMovies(Model model, @PageableDefault(size = 10, sort = "title") Pageable pageable, @RequestParam(required = false) String searchTerm) {
+        Page<Movie> moviesPage = movieService.findMovies(pageable, searchTerm);
         model.addAttribute("moviesPage", moviesPage);
-        model.addAttribute("currentPage", moviesPage.getNumber());
-        model.addAttribute("pageSize", moviesPage.getSize());
-        String sortParam = pageable.getSort().toString().replace(": ", ",");
-        model.addAttribute("sortParam", sortParam);
-        model.addAttribute("currentURI", request.getRequestURI());
-
         return "admin/movie/list";
     }
 
-    @GetMapping("/movies/add")
-    public String showCreateMovieForm(Model model, HttpServletRequest request) {
-        model.addAttribute("movie", new Movie());
-        model.addAttribute("pageTitle", "Add New Movie");
-        model.addAttribute("currentURI", request.getRequestURI());
+    private void addCommonAttributesToModel(Model model) {
         model.addAttribute("allGenres", genreService.getAllGenres());
-        model.addAttribute("selectedGenres", List.of());
         model.addAttribute("allFormats", formatService.getAllFormats());
         model.addAttribute("allMovieStatuses", MovieStatus.values());
+        model.addAttribute("allPeople", personService.findAll());
+    }
+
+    @GetMapping("/new")
+    public String showNewMovieForm(Model model) {
+        model.addAttribute("movie", new Movie());
+        model.addAttribute("pageTitle", "Add New Movie");
+        addCommonAttributesToModel(model);
         return "admin/movie/form";
     }
 
-    @GetMapping("/movies/edit/{id}")
-    public String showEditMovieForm(@PathVariable Long id, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    @GetMapping("/edit/{id}")
+    public String showEditMovieForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Movie movie = movieService.getMovieById(id);
-
             model.addAttribute("movie", movie);
             model.addAttribute("pageTitle", "Edit Movie: " + movie.getTitle());
-            model.addAttribute("currentURI", request.getRequestURI());
-            model.addAttribute("allGenres", genreService.getAllGenres());
-            model.addAttribute("allFormats", formatService.getAllFormats());
-            model.addAttribute("allMovieStatuses", MovieStatus.values());
-            
-            if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
-                model.addAttribute("selectedGenres",
-                        movie.getGenres().stream().map(Genre::getName).collect(Collectors.toList()));
-            } else {
-                model.addAttribute("selectedGenres", List.of());
-            }
-
+            addCommonAttributesToModel(model);
             return "admin/movie/form";
-        } catch (Exception e) {
-            log.error("Error finding movie with id {} for edit: {}", id, e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", "Movie not found."); 
-            return "redirect:/admin/movies";
-        }
-    }
-
-    @PostMapping("/movies/save")
-    public String saveOrUpdateMovie(@ModelAttribute("movie") Movie movieFromForm,
-                                    BindingResult bindingResult,
-                                    @RequestParam(name = "selectedGenresArray", required = false) List<String> selectedGenreNames,
-                                    @RequestParam(name = "formatId", required = false) Long formatId,
-                                    RedirectAttributes redirectAttributes,
-                                    Model model,
-                                    HttpServletRequest request) {
-    	if (selectedGenreNames != null && !selectedGenreNames.isEmpty()) {
-            Set<Genre> resolvedGenres = genreService.findOrCreateGenresByNames(selectedGenreNames);
-            movieFromForm.setGenres(resolvedGenres);
-        } else {
-            movieFromForm.setGenres(new HashSet<>());
-        }
-
-    	if (formatId != null && formatId > 0) {
-            Optional<Format> formatOptional = formatService.findById(formatId);
-            if (formatOptional.isPresent()) {
-                movieFromForm.setFormat(formatOptional.get());
-            } else {
-                movieFromForm.setFormat(null);
-            }
-        }
-    	
-        if (bindingResult.hasErrors()) {
-            log.error("Controller: Validation errors found: {}", bindingResult.getAllErrors());
-            model.addAttribute("currentURI", request.getRequestURI());
-            model.addAttribute("movie", movieFromForm);
-            model.addAttribute("pageTitle", movieFromForm.getId() == null ? "Add New Movie" : "Edit Movie: " + movieFromForm.getTitle());
-            model.addAttribute("allGenres", genreService.getAllGenres());
-            model.addAttribute("selectedGenres", selectedGenreNames != null ? selectedGenreNames : List.of());
-            model.addAttribute("allFormats", formatService.getAllFormats());
-            return "admin/movie/form";
-        }
-
-        try {
-        	if (selectedGenreNames != null && !selectedGenreNames.isEmpty()) {
-                Set<Genre> resolvedGenres = genreService.findOrCreateGenresByNames(selectedGenreNames);
-                movieFromForm.setGenres(resolvedGenres);
-            } else {
-                movieFromForm.setGenres(new HashSet<>());
-            }
-            Movie savedOrUpdatedMovie = movieService.saveOrUpdate(movieFromForm);
-            return "redirect:/admin/movies";
-        } catch (ResourceNotFoundException rnfe) {
-            redirectAttributes.addFlashAttribute("errorMessage", rnfe.getMessage());
-            return "redirect:/admin/movies"; 
-        } catch (Exception e) {
-            log.error("Controller: Error during movie save/update: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "Error saving movie: " + e.getMessage());
-            model.addAttribute("movie", movieFromForm); 
-            model.addAttribute("pageTitle", movieFromForm.getId() == null ? "Add New Movie" : "Edit Movie: " + movieFromForm.getTitle());
-            model.addAttribute("allGenres", genreService.getAllGenres());
-            model.addAttribute("selectedGenres", selectedGenreNames != null ? selectedGenreNames : List.of());
-            model.addAttribute("allFormats", formatService.getAllFormats());
-            model.addAttribute("allMovieStatuses", MovieStatus.values());
-            model.addAttribute("currentURI", request.getRequestURI());
-            return "admin/movie/form";
-        }
-    }
-
-
-    @PostMapping("/movies/delete/{id}")
-    public String deleteMovie(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        log.warn("Attempting to delete movie with id: {}", id);
-        try {
-            movieService.deleteMovie(id);
-        } catch (Exception e) {
-             log.error("Error deleting movie with id {}: {}", id, e.getMessage(), e);
-             redirectAttributes.addFlashAttribute("errorMessage", "Error deleting movie: " + e.getMessage());
-        }
-        return "redirect:/admin/movies";
-    }
-
-    @GetMapping("/movies/details/{id}")
-    public String showMovieDetails(@PathVariable Long id, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        try{
-           Movie movie = movieService.getMovieById(id);
-
-           model.addAttribute("movie", movie);
-           model.addAttribute("currentURI", request.getRequestURI());
-           return "admin/movie/details";
-
         } catch (ResourceNotFoundException e) {
-            log.error("Movie not found with id: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Movie not found with id: " + id);
+            redirectAttributes.addFlashAttribute("errorMessage", "Movie not found.");
+            return "redirect:/admin/movies";
+        }
+    }
+
+    @PostMapping("/save")
+    public String saveMovie(@ModelAttribute("movie") Movie movie,
+                            BindingResult bindingResult,
+                            @RequestParam("posterFile") MultipartFile posterFile,
+                            @RequestParam(name = "directorIds", required = false) List<Long> directorIds,
+                            @RequestParam(name = "actorIds", required = false) List<Long> actorIds,
+                            RedirectAttributes redirectAttributes, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("pageTitle", movie.getId() == null ? "Add New Movie" : "Edit Movie");
+            addCommonAttributesToModel(model);
+            return "admin/movie/form";
+        }
+
+        try {
+            movieService.saveMovieAndCrew(movie, posterFile, directorIds, actorIds);
+            
+            redirectAttributes.addFlashAttribute("successMessage", "Movie and its crew have been saved successfully.");
             return "redirect:/admin/movies";
         } catch (Exception e) {
-            log.error("Error loading movie details for id {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error loading movie details.");
+            model.addAttribute("errorMessage", "Error saving movie: " + e.getMessage());
+            model.addAttribute("pageTitle", movie.getId() == null ? "Add New Movie" : "Edit Movie");
+            addCommonAttributesToModel(model);
+            return "admin/movie/form";
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+        public String deleteMovie(@PathVariable Long id) {
+                movieService.deleteMovie(id);
+            return "redirect:/admin/movies";
+        }
+
+    @GetMapping("/details/{id}")
+    public String showMovieDetails(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Movie movie = movieService.getMovieById(id);
+            model.addAttribute("movie", movie);
+            return "admin/movie/details";
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/admin/movies";
         }
     }
