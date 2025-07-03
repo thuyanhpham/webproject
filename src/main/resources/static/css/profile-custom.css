@@ -1,0 +1,187 @@
+/* General improvements for the user profile section */
+.user-profile-section {
+    padding: 80px 0; /* More vertical spacing */
+    /* Màu nền 3D chuyên nghiệp với tông xanh chủ đạo */
+    background: 
+        radial-gradient(at top left, #0e1a3c 0%, #1a2a5a 30%, #0d122e 70%, #05081b 100%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><rect fill="rgba(255,255,255,0.05)" width="1" height="1"/><rect fill="rgba(255,255,255,0.05)" x="2" y="2" width="1" height="1"/><rect fill="rgba(255,255,255,0.05)" x="1" y="0" width="1" height="1"/><rect fill="rgba(255,255,255,0.05)" x="3" y="1" width="1" height="1"/></svg>');
+    background-size: cover, 4px 4px; /* Cover cho gradient, 4px cho lớp hạt */
+    background-attachment: fixed; /* Giữ nền cố định khi cuộn để tăng hiệu ứng 3D */
+    color: #e0e0eb; /* Light text for contrast */
+    position: relative; /* Quan trọng để các pseudo-element tạo hiệu ứng có thể căn theo */
+    z-index: 1; /* Đảm bảo section nằm trên cùng */
+}
+
+/* Optional: Thêm pseudo-element để tạo lớp phủ hiệu ứng sáng/tối hoặc hạt nhiễu (noise) */
+.user-profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+    z-index: -1; /* Đặt phía sau nội dung chính */
+    opacity: 0.9; /* Độ trong suốt nhẹ */
+}
+
+
+.user-profile-card {
+    /* Màu nền thẻ chuyển sang tông xanh đậm hơn */
+    background-color: rgba(20, 40, 70, 0.96); /* Một màu xanh đậm hơi trong suốt */
+    border-radius: 12px; /* Slightly more rounded corners */
+    box-shadow: 0 12px 45px rgba(0, 0, 0, 0.8); /* Stronger, deeper shadow for a premium feel */
+    backdrop-filter: blur(10px) saturate(1.2); /* Tăng độ mờ và độ bão hòa nhẹ để nổi bật hơn */
+    /* Viền thẻ chuyển sang tông xanh */
+    border: 1px solid rgba(40, 80, 120, 0.4); /* Thêm viền nhẹ để định hình thẻ */
+    padding: 40px; /* Increased padding inside the card */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically on smaller screens */
+    align-items: center; /* Center items horizontally */
+    text-align: center; /* Center text within the card */
+    color: #e0e0eb; /* Ensure light text within the card */
+    z-index: 2; /* Đảm bảo thẻ nằm trên pseudo-element */
+    position: relative; /* Để z-index hoạt động */
+}
+
+@media (min-width: 768px) { /* For larger screens (tablets and desktops) */
+    .user-profile-card {
+        flex-direction: row; /* Arrange items horizontally */
+        text-align: left; /* Align text to the left */
+    }
+}
+
+.profile-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .profile-content-wrapper {
+        flex-direction: row;
+        align-items: flex-start; /* Align avatar and text to the top */
+    }
+}
+
+/* User Avatar */
+.user-avatar-container {
+    flex-shrink: 0; /* Prevent avatar from shrinking */
+    margin-bottom: 30px; /* Space below avatar on small screens */
+    border-radius: 50%;
+    overflow: hidden; /* **CRITICAL: Crops image to circular frame** */
+    /* Màu viền avatar chuyển sang tông xanh */
+    border: 4px solid #00bfff; /* Màu xanh dương sáng hơn, nổi bật */
+    box-shadow: 0 4px 20px rgba(0, 191, 255, 0.7); /* Soft, vibrant shadow cho avatar */
+    width: 150px; /* Consistent avatar size */
+    height: 150px;
+    display: flex; /* Use flexbox to center the image if it's smaller than the frame */
+    justify-content: center;
+    align-items: center;
+}
+
+.user-avatar-container img {
+    width: 100%; /* **CRITICAL: Image fills 100% width of its container** */
+    height: 100%; /* **CRITICAL: Image fills 100% height of its container** */
+    object-fit: cover; /* **CRITICAL: Ensures image covers the area without distortion** */
+    display: block; /* Remove extra space below image */
+}
+
+@media (min-width: 768px) {
+    .user-avatar-container {
+        margin-bottom: 0;
+        margin-right: 40px; /* Space to the right of avatar on large screens */
+    }
+}
+
+/* User Info Details */
+.user-info-details {
+    flex-grow: 1; /* Allow info details to take up remaining space */
+    color: #e0e0eb; /* Light text color for better readability */
+}
+
+.user-info-details h4 {
+    font-size: 2.2em; /* Larger username */
+    font-weight: 700;
+    /* Màu tên người dùng chuyển sang tông xanh */
+    color: #00bfff; /* Màu xanh dương sáng, nổi bật */
+    margin-bottom: 25px; /* Space below username */
+}
+
+.user-info-details .info-list {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.user-info-details .info-item {
+    font-size: 1.1em; /* Slightly larger text for info items */
+    margin-bottom: 15px; /* More spacing between info items */
+    display: flex; /* Use flexbox for icon and text alignment */
+    align-items: center;
+    line-height: 1.5;
+}
+
+.user-info-details .info-item:last-child {
+    margin-bottom: 0; /* No margin for the last item */
+}
+
+.user-info-details .info-item strong {
+    /* Màu labels chuyển sang tông xanh */
+    color: #87ceeb; /* Màu xanh da trời nhạt hơn cho labels */
+    min-width: 150px; /* Ensure labels align */
+    display: flex;
+    align-items: center;
+    font-weight: 600; /* Make labels a bit bolder */
+}
+
+.user-info-details .info-item strong i {
+    margin-right: 10px; /* Space between icon and text */
+    /* Màu icons chuyển sang tông xanh */
+    color: #00bfff; /* Màu xanh dương sáng, khớp với viền avatar */
+    font-size: 1.1em; /* Slightly larger icons */
+}
+
+.user-info-details .info-item span {
+    color: #e0e0eb; /* Light text for values */
+}
+
+/* Edit Profile Button - Loại bỏ màu tím, sử dụng gradient xanh */
+.edit-profile-button {
+    display: inline-block;
+    /* Gradient từ xanh đậm sang xanh sáng hơn, đồng bộ với tông xanh mới */
+    background: linear-gradient(to right, #0a4f9b, #00bfff);
+    color: #ffffff; /* White text */
+    padding: 12px 30px; /* More padding for a larger button */
+    border-radius: 8px; /* Rounded button corners */
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+    border: none; /* Remove default button border */
+    cursor: pointer;
+    margin-top: 30px; /* Space above the button */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for the button */
+}
+
+.edit-profile-button:hover {
+    /* Gradient tối hơn khi hover */
+    background: linear-gradient(to right, #073a70, #0099cc);
+    transform: translateY(-2px) scale(1.02); /* Slight lift and subtle scale effect on hover */
+    color: #ffffff; /* Ensure text remains white on hover */
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+/* No User Message */
+.no-user-message {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: #e0e0eb; /* Light text color */
+    /* Nền thông báo cũng chuyển sang tông xanh */
+    background-color: rgba(30, 60, 90, 0.9); /* Một màu xanh đậm hơn */
+    border: 1px solid rgba(50, 100, 150, 0.9); /* Complementary border color */
+    border-radius: 8px;
+    backdrop-filter: blur(3px); /* Subtle blur for the message card */
+}

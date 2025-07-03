@@ -15,4 +15,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT t.seat.id FROM Ticket t WHERE t.booking.showtime.id = :showtimeId")
     Set<Long> findSeatIdsByShowtimeId(@Param("showtimeId") Long showtimeId);
+    
+    @Query("SELECT t.seat.id FROM Ticket t WHERE t.booking.showtime.id = :showtimeId AND t.booking.status = 'CONFIRMED'")
+    Set<Long> findConfirmedSeatIdsByShowtimeId(@Param("showtimeId") Long showtimeId);
 }

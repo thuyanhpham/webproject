@@ -18,23 +18,18 @@
 
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
 
-    <title th:text="${pageTitle ?: 'Boleto - Online Ticket Booking'}">Boleto - Online Ticket Booking Website HTML Template</title>
+    <title th:text="${pageTitle ?: 'Boleto - Online Ticket Booking'}">Boleto - Online Ticket Booking</title>
 </head>
 
 <body>
     <div class="preloader" style="display: none;">
-        <div class="preloader-inner">
-            <div class="preloader-icon">
-                <span></span>
-                <span></span>
-            </div>
-        </div>
+        <div class="preloader-inner"><div class="preloader-icon"><span></span><span></span></div></div>
     </div>
     <div class="overlay"></div>
-    <a href="#" class="scrollToTop active">
-        <i class="fas fa-angle-up"></i>
-    </a>
+    <a href="#" class="scrollToTop active"><i class="fas fa-angle-up"></i></a>
+    
     <header class="header-section header-active" th:replace="~{fragments/user-header :: header}"></header>
+    
     <section class="details-banner hero-area bg_img seat-plan-banner"
              th:attr="data-background=${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}"
              th:style="|background-image: url('${movie != null && movie.bannerUrl != null ? movie.bannerUrl : '/images/banner04.jpg'}');|">
@@ -46,12 +41,10 @@
                         <a href="javascript:void(0);" th:text="${movie.language + ' - ' + movie.format?.name}">English - 2D</a>
                     </div>
                 </div>
-                <div class="details-banner-wrapper" th:unless="${movie != null}">
-                     <h3 style="color: white; text-align: center; padding: 50px;">Movie Not Found!</h3>
-                </div>
             </div>
         </div>
     </section>
+    
     <section class="page-title bg-one">
         <div class="container">
             <div class="page-title-area">
@@ -61,16 +54,13 @@
                     </a>
                 </div>
                 <div class="item date-item">
-                    <!-- ======================= SỬA LỖI HIỂN THỊ TẠI ĐÂY ======================= -->
-                    <!-- 1. Sử dụng đối tượng `showtime.showDate` để lấy ngày. -->
-                    <!-- 2. Sử dụng chuỗi định dạng ngày tháng hợp lệ. -->
-                    <span class="date" th:text="${#temporals.format(showtime?.showDate, 'EEE, dd MMM yyyy')}">MON, SEP 09 2020</span>
+                    <!-- ======================= SỬA LỖI ĐỊNH DẠNG NGÀY ======================= -->
+                    <span class="date" th:text="${#temporals.format(showtime?.showDate, 'EEE, dd MMM yyyy')}">MON, 09 SEP 2020</span>
                     <select class="select-bar">
-                        <!-- Phần này đã đúng, giữ nguyên -->
                         <option th:value="${#temporals.format(showtime?.startTime, 'HH:mm')}"
                                 th:text="${#temporals.format(showtime?.startTime, 'HH:mm')}"
                                 selected>09:40</option>
-                        </select>
+                    </select>
                 </div>
                 <div class="item">
                     <h5 class="title" id="countdown-timer">05:00</h5>
@@ -79,81 +69,85 @@
             </div>
         </div>
     </section>
+    
     <div class="movie-facility padding-bottom padding-top">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="checkout-widget checkout-contact">
-                        <h5 class="title">Your Contact Details </h5>
-                        <form class="checkout-contact-form">
+            <form class="payment-card-form" th:action="@{/checkout/initiate-momo-payment}" method="post">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="checkout-widget checkout-contact">
+                            <h5 class="title">Your Contact Details</h5>
                             <div class="form-group">
-                                <input type="text" name="fullName" placeholder="Full Name" th:value="${currentUser?.fullname}" required readonly>
+                                <input type="text" placeholder="Full Name" th:value="${currentUser?.fullname}" required readonly>
                             </div>
                             <div class="form-group">
-                                <input type="email" name="email" placeholder="Enter your Mail" th:value="${currentUser?.email}" required readonly>
+                                <input type="email" placeholder="Enter your Mail" th:value="${currentUser?.email}" required readonly>
                             </div>
-                            </form>
-                    </div>
+                        </div>
 
-                    <div class="checkout-widget checkout-card mb-0">
-                        <h5 class="title">Payment Method </h5>
-                        <ul class="payment-option">
-                            <li class="active"> <a href="javascript:void(0);">
-                                    <img th:src="@{/images/momo-logo.png}" alt="Momo Payment" style="max-width: 50px;">
-                                    <span>Momo Payment</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <p class="mt-3">Click the button below to pay with MoMo.</p>
-                        <form class="payment-card-form" th:action="@{/checkout/initiate-momo-payment}" method="post">
+                        <div class="checkout-widget checkout-card mb-0">
+                            <h5 class="title">Payment Method</h5>
+                            <ul class="payment-option">
+                                <li class="active">
+                                    <a href="javascript:void(0);">
+                                        <img th:src="@{/images/momo-logo.png}" alt="Momo Payment" style="max-width: 50px;">
+                                        <span>Momo Payment</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <p class="mt-3">Click the button below to pay with MoMo.</p>
+                            
+                            <!-- Các trường ẩn được đặt ở đây -->
                             <input type="hidden" name="showtimeId" th:value="${showtime?.id}" />
                             <th:block th:each="seat : ${selectedSeats}">
                                 <input type="hidden" name="seatIds" th:value="${seat.id}" />
                             </th:block>
                             <input type="hidden" name="totalAmount" th:value="${totalTicketPrice}" />
-                            
+
                             <div class="form-group">
-                                <button type="submit" class="custom-button">MoMo payment</button>
+                                <button type="submit" class="custom-button">Pay with MoMo</button>
                             </div>
-                        </form>
-                        <p class="notice">
-                            By clicking "MoMo payment", you agree to the <a th:href="@{/terms}">Terms of Use</a>
-                        </p>
+                            <p class="notice">
+                                By clicking "Pay with MoMo", you agree to the <a th:href="@{/terms}">Terms of Use</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="booking-summery bg-one">
+                            <h4 class="title">Booking Summary</h4>
+                            <ul>
+                                <li>
+                                    <h6 class="subtitle" th:text="${movie?.title}">Movie Title</h6>
+                                    <span class="info" th:text="${movie?.language + ' - ' + movie?.format?.name}">English - 2D</span>
+                                </li>
+                                <li>
+                                    <h6 class="subtitle">
+                                        <span th:text="${#lists.size(selectedSeats) + ' Seats'}">02 Seats</span>
+                                    </h6>
+                                    <div class="info">
+                                        <span th:text="${#temporals.format(showtime?.showDate, 'dd/MM/yyyy')} + ', ' + ${#temporals.format(showtime?.startTime, 'HH:mm')}">10/09/2020, 11:00 PM</span>
+                                        <span>Tickets</span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    <!-- ======================= SỬA LỖI HIỂN THỊ GIÁ ======================= -->
+                                    <span class="info"><span>Total Ticket Price</span><span id="total-ticket-price-display" th:data-raw-price="${totalTicketPrice}"></span></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="proceed-area text-center">
+                            <h6 class="subtitle"><span>Amount Payable</span><span id="amount-payable-display" th:data-raw-price="${totalTicketPrice}"></span></h6>
+                            <!-- ===================================================================== -->
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="booking-summery bg-one">
-                        <h4 class="title">booking summery</h4>
-                        <ul>
-                            <li>
-                                <h6 class="subtitle" th:text="${movie?.title}">Movie Title</h6>
-                                <span class="info" th:text="${movie?.language + ' - ' + movie?.format?.name}">English - 2D</span>
-                            </li>
-                            <li>
-                                <h6 class="subtitle">
-                                    <span th:text="${#lists.size(selectedSeats) + ' Seats'}">02 Seats</span>
-                                </h6>
-                                <div class="info">
-                                    <!-- Sửa lại định dạng cho hợp lý hơn -->
-                                    <span th:text="${#temporals.format(showtime?.showDate, 'dd/MM/yyyy')} + ', ' + ${#temporals.format(showtime?.startTime, 'HH:mm')}">10/09/2020, 11:00 PM</span>
-                                    <span>Tickets</span>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul>
-                            <li>
-                                <span class="info"><span>Total Ticket Price</span><span id="total-ticket-price-display" th:data-raw-price="${totalTicketPrice}">$150</span></span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="proceed-area text-center">
-                        <h6 class="subtitle"><span>Amount Payable</span><span id="amount-payable-display" th:data-raw-price="${totalTicketPrice}">$222</span></h6>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
-    <footer class="footer-section" th:replace="~{fragments/user-footer :: footer}"></footer>
+    
+
     
     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -171,8 +165,7 @@
 
     <script th:inline="javascript">
     /*<![CDATA[*/
-    $(function () {
-        // Initialize plugins from the template
+    $(document).ready(function () {
         $('.bg_img').each(function() {
             var src = $(this).data('background');
             if (src && $(this).css('background-image') === 'none') {
@@ -180,54 +173,38 @@
             }
         });
 
-        // Initialize Nice Select for dropdowns
         $('.select-bar').niceSelect();
 
-        // Countdown timer for the page
         let minutesLeft = 5;
         let secondsLeft = 0;
-
-        function updateCountdown() {
-            if (minutesLeft <= 0 && secondsLeft <= 0) {
-                $('#countdown-timer').text("00:00");
-                // Tùy chọn: Tự động chuyển hướng hoặc hiển thị thông báo hết giờ
-                // window.location.href = '/session-expired'; 
-                return;
-            }
-
+        const countdownTimer = setInterval(function() {
             if (secondsLeft === 0) {
+                if (minutesLeft === 0) {
+                    clearInterval(countdownTimer);
+                    $('#countdown-timer').text("00:00");
+                    return;
+                }
                 minutesLeft--;
                 secondsLeft = 59;
             } else {
                 secondsLeft--;
             }
-
-            const displayMinutes = String(minutesLeft).padStart(2, '0');
-            const displaySeconds = String(secondsLeft).padStart(2, '0');
-            $('#countdown-timer').text(`${displayMinutes}:${displaySeconds}`);
-        }
-
-        setInterval(updateCountdown, 1000);
+            $('#countdown-timer').text(String(minutesLeft).padStart(2, '0') + ':' + String(secondsLeft).padStart(2, '0'));
+        }, 1000);
 
         function formatCurrency(amount) {
-            const formatter = new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            });
-            return formatter.format(amount);
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
         }
 
-        const rawTicketPrice = parseFloat($('#total-ticket-price-display').data('raw-price'));
-        if (!isNaN(rawTicketPrice)) {
-            $('#total-ticket-price-display').text(formatCurrency(rawTicketPrice));
-            $('#amount-payable-display').text(formatCurrency(rawTicketPrice));
-        } else {
-            console.error("Invalid price value passed from server.");
-            $('#total-ticket-price-display').text("N/A");
-            $('#amount-payable-display').text("N/A");
-        }
+        // Cập nhật lại logic để định dạng tất cả các giá trị
+        $('[data-raw-price]').each(function() {
+            const rawPrice = parseFloat($(this).data('raw-price'));
+            if (!isNaN(rawPrice)) {
+                $(this).text(formatCurrency(rawPrice));
+            } else {
+                $(this).text("N/A");
+            }
+        });
     });
     /*]]>*/
     </script>

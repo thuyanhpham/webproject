@@ -1,19 +1,19 @@
 package com.example.demo.cinema.service;
 
-import com.example.demo.cinema.dto.momo.MomoPaymentRequest; // <<< THÊM IMPORT NÀY
+import com.example.demo.cinema.dto.momo.MomoPaymentRequest;
 import com.example.demo.cinema.dto.momo.MomoPaymentResponse;
 import java.util.Map;
-
 import org.springframework.stereotype.Service;
 
 @Service
 public interface MomoService {
 
     /**
-     * Sửa đổi chữ ký của phương thức để nhận một đối tượng MomoPaymentRequest duy nhất.
-     * Điều này làm cho code sạch hơn và khớp với lớp triển khai MomoServiceImp.
+     * Tạo một yêu cầu thanh toán đến MoMo.
+     * @param request Đối tượng chứa tất cả thông tin cần thiết cho yêu cầu.
+     * @return Một đối tượng chứa kết quả trả về từ MoMo, bao gồm payUrl.
      */
-    MomoPaymentResponse createPayment(MomoPaymentRequest request); // <<< SỬA DÒNG NÀY
+    MomoPaymentResponse createPayment(MomoPaymentRequest request);
 
     /**
      * Xử lý thông báo IPN (Instant Payment Notification) từ MoMo.

@@ -16,6 +16,8 @@
     <link rel="stylesheet" th:href="@{/css/odometer.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}" />
     <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}" />
+
+
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" type="image/x-icon">
     <title th:text="${user != null ? user.fullname + ' - User Profile' : 'User Profile'}">User Profile - Boleto</title>
 
@@ -32,7 +34,7 @@
                 <div class="details-banner-content">
                      <h3 class="title">User Profile</h3>
                      <ul class="tags">
-                         <li><a href="javascript:void(0);">Thông tin cá nhân</a></li>
+                         <li><a href="javascript:void(0);">Personal Information</a></li>
                      </ul>
                 </div>
             </div>
@@ -58,15 +60,15 @@
                                   
                                 <div class="info-list">
                                      <!-- Giữ nguyên cấu trúc p -> strong + span -->
-                                    <p class="info-item"><strong><i class="fas fa-user"></i> Họ và tên:</strong> <span th:text="${user.fullname}"></span></p>
+                                    <p class="info-item"><strong><i class="fas fa-user"></i> Full Name:</strong> <span th:text="${user.fullname}"></span></p>
                                     <p class="info-item"><strong><i class="fas fa-envelope"></i> Email:</strong> <span th:text="${user.email}"></span></p>
-                                    <p class="info-item"><strong><i class="fas fa-phone"></i> Điện thoại:</strong> <span th:text="${user.phone != null ? user.phone : 'Chưa cập nhật'}"></span></p>
-                                    <p class="info-item"><strong><i class="fas fa-venus-mars"></i> Giới tính:</strong> <span th:text="${user.gender != null ? user.gender.displayName : 'Chưa cập nhật'}"></span></p>
-                                    <p class="info-item"><strong><i class="fas fa-birthday-cake"></i> Ngày sinh:</strong> <span th:text="${user.birthday != null ? #temporals.format(user.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}"></span></p>
-                                    <p class="info-item"><strong><i class="fas fa-clock"></i> Tạo lúc:</strong> <span th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></span></p>
+                                    <p class="info-item"><strong><i class="fas fa-phone"></i> Phone:</strong> <span th:text="${user.phone != null ? user.phone : 'Chưa cập nhật'}"></span></p>
+                                    <p class="info-item"><strong><i class="fas fa-venus-mars"></i> Gender:</strong> <span th:text="${user.gender != null ? user.gender.displayName : 'Chưa cập nhật'}"></span></p>
+                                    <p class="info-item"><strong><i class="fas fa-birthday-cake"></i> Date of Birth:</strong> <span th:text="${user.birthday != null ? #temporals.format(user.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}"></span></p>
+                                    <p class="info-item"><strong><i class="fas fa-clock"></i> Member since:</strong> <span th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></span></p>
                                 </div>
                                 <div class="text-center"> <!-- Class text-center của bootstrap, đã chỉnh lại trong CSS cho mobile/desktop -->
-                                    <a th:href="@{/profile/edit}" class="edit-profile-button">Chỉnh sửa hồ sơ</a>
+                                    <a th:href="@{/profile/edit}" class="edit-profile-button">Edit Profile</a>
                                 </div>
                             </div>
                         </div>
@@ -74,7 +76,7 @@
                         <!-- Khi không có User -->
                         <div th:unless="${user != null}" class="no-user-message">
                            <!-- Thêm class no-user-message -->
-                            <p>Không tìm thấy thông tin người dùng.</p> 
+                            <p>User not found.</p> 
                         </div>
 						
                     </div>

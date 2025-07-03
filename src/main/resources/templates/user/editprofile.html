@@ -29,9 +29,9 @@
         <div class="container">
             <div class="details-banner-wrapper">
                 <div class="details-banner-content">
-                     <h3 class="title">Chỉnh sửa hồ sơ</h3>
+                     <h3 class="title">Edit Profile</h3>
                      <ul class="tags">
-                         <li><a href="javascript:void(0);">Cập nhật thông tin</a></li>
+                         <li><a href="javascript:void(0);">Update Profile</a></li>
                      </ul>
                 </div>
             </div>
@@ -45,22 +45,22 @@
                     <div class="user-profile-card">
 
                         <div th:if="${user != null}">
-                            <h4 style="text-align: center; color: #e1457a; margin-bottom: 30px; font-size: 1.8em;">Cập nhật thông tin cá nhân</h4>
+                            <h4 style="text-align: center; color: #e1457a; margin-bottom: 30px; font-size: 1.8em;">Update Personal Information</h4>
 
                             <form th:action="@{/profile/edit}" th:object="${user}" method="post" enctype="multipart/form-data" class="edit-profile-form">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <input type="hidden" th:field="*{id}" /> <div class="avatar-upload-area full-width">
                                     <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/images/avatar-placeholder.png'}" alt="Current Avatar" class="current-avatar" id="avatarPreview">
                                     <label for="avatarFile" class="avatar-upload-btn">
-                                        Tải lên ảnh đại diện mới
+                                        Upload new profile picture
                                         <input type="file" id="avatarFile" name="avatarFile" accept="image/*">
                                     </label>
-                                    <span id="fileName" class="file-name-display">Chọn ảnh (tối đa 2MB)</span>
+                                    <span id="fileName" class="file-name-display">Select photo (max 2MB)</span>
                                     <div th:if="${avatarError}" class="error-message" th:text="${avatarError}"></div>
                                 </div>
 
                                 <div class="form-group full-width">
-                                    <label for="username"><i class="fas fa-user"></i> Tên đăng nhập:</label>
+                                    <label for="username"><i class="fas fa-user"></i> Username:</label>
                                     <input type="text" id="username" th:field="*{username}" class="form-control-custom" readonly>
                                 </div>
 
@@ -70,21 +70,21 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="fullname"><i class="fas fa-address-card"></i> Họ và tên:</label>
+                                    <label for="fullname"><i class="fas fa-address-card"></i> Full Name:</label>
                                     <input type="text" id="fullname" th:field="*{fullname}" class="form-control-custom" required>
                                     <span th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}" class="error-message"></span>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="phone"><i class="fas fa-phone"></i> Điện thoại:</label>
+                                    <label for="phone"><i class="fas fa-phone"></i> Phone:</label>
                                     <input type="tel" id="phone" th:field="*{phone}" class="form-control-custom" placeholder="Nhập số điện thoại">
                                     <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="error-message"></span>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="gender"><i class="fas fa-venus-mars"></i> Giới tính:</label>
+                                    <label for="gender"><i class="fas fa-venus-mars"></i> Gender:</label>
                                     <select id="gender" th:field="*{gender}" class="form-control-custom">
-                                        <option value="">Chọn giới tính</option>
+                                        <option value="">Select gender</option>
                                         <option th:each="genderOpt : ${T(com.example.demo.cinema.entity.Gender).values()}"
                                                 th:value="${genderOpt}" th:text="${genderOpt.displayName}"></option>
                                     </select>
@@ -92,7 +92,7 @@
                                 </div>
 
 								<div class="form-group">
-								    <label for="birthday"><i class="fas fa-birthday-cake"></i> Ngày sinh:</label>
+								    <label for="birthday"><i class="fas fa-birthday-cake"></i> Date of Birth:</label>
 								
 								    <input type="date" id="birthday" name="birthday"
 								           th:value="${user.birthday != null ? #temporals.format(user.birthday, 'yyyy-MM-dd') : ''}"
@@ -101,13 +101,13 @@
 								    <span th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}" class="error-message"></span>
 								</div>
                                 <div class="form-group full-width">
-                                    <label for="createdAt"><i class="fas fa-clock"></i> Tạo lúc:</label>
+                                    <label for="createdAt"><i class="fas fa-clock"></i> Member since:</label>
                                     <input type="text" id="createdAt" th:value="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}" class="form-control-custom" readonly>
                                 </div>
                                 
                                 <div class="form-buttons">
-								    <div class="button-wrapper"> <button type="submit" class="submit-button">Lưu thay đổi</button>
-								        <a th:href="@{/profile}" class="cancel-button">Hủy bỏ</a>
+								    <div class="button-wrapper"> <button type="submit" class="submit-button">Save Changes</button>
+								        <a th:href="@{/profile}" class="cancel-button">Cancel</a>
 								    </div> </div>
                                 <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
                                 <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
@@ -115,8 +115,8 @@
                         </div>
 
                         <div th:unless="${user != null}" class="no-user-message">
-                            <p>Không tìm thấy thông tin người dùng để chỉnh sửa.</p>
-                            <a th:href="@{/profile}" class="cancel-button">Quay lại hồ sơ</a>
+                            <p>User profile not found to edit.</p>
+                            <a th:href="@{/profile}" class="cancel-button">Back to Profile</a>
                         </div>
 
                     </div>

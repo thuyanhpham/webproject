@@ -32,135 +32,132 @@ import java.util.Map;
 @Service
 public class MomoServiceImp implements MomoService {
 
-	 private static final Logger log = LoggerFactory.getLogger(MomoServiceImp.class);
+    private static final Logger log = LoggerFactory.getLogger(MomoServiceImp.class);
 
-	    @Autowired
-	    private PaymentService paymentService;
+    @Autowired
+    private PaymentService paymentService;
 
-	
-	    private String signHmacSHA256(String data, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
-	        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-	        Mac mac = Mac.getInstance("HmacSHA256");
-	        mac.init(secretKeySpec);
-	        byte[] rawHmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
-	        return toHexString(rawHmac);
-	    }
+    private String signHmacSHA256(String data, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(secretKeySpec);
+        byte[] rawHmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return toHexString(rawHmac);
+    }
 
-	    private String toHexString(byte[] bytes) {
-	        StringBuilder sb = new StringBuilder(bytes.length * 2);
-	        try (Formatter formatter = new Formatter(sb)) {
-	            for (byte b : bytes) {
-	                formatter.format("%02x", b);
-	            }
-	        }
-	        return sb.toString();
-	    }
-	    
-	    @Override
-	    public MomoPaymentResponse createPayment(MomoPaymentRequest request) {
-	        String partnerCode = MomoConfig.PARTNER_CODE;
-	        String accessKey = MomoConfig.ACCESS_KEY;
-	        String secretKey = MomoConfig.SECRET_KEY;
-	        String createOrderUrl = MomoConfig.CREATE_ORDER_URL;
-	        
-	        String redirectUrl = MomoConfig.RETURN_URL;
-	        String ipnUrl = MomoConfig.NOTIFY_URL;
+    private String toHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        try (Formatter formatter = new Formatter(sb)) {
+            for (byte b : bytes) {
+                formatter.format("%02x", b);
+            }
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public MomoPaymentResponse createPayment(MomoPaymentRequest request) {
+        String partnerCode = MomoConfig.PARTNER_CODE;
+        String accessKey = MomoConfig.ACCESS_KEY;
+        String secretKey = MomoConfig.SECRET_KEY;
+        String createOrderUrl = MomoConfig.CREATE_ORDER_URL;
+        
+        String redirectUrl = MomoConfig.RETURN_URL;
+        String ipnUrl = MomoConfig.NOTIFY_URL;
 
-	        long longAmount = request.getAmount();
-	        String orderId = request.getOrderId();
-	        String orderInfo = request.getOrderInfo();
-	        String extraData = request.getExtraData();
-	        String requestId = request.getRequestId();
-	        String requestType = "captureWallet"; 
+        long longAmount = request.getAmount();
+        String orderId = request.getOrderId();
+        String orderInfo = request.getOrderInfo();
+        String extraData = request.getExtraData();
+        String requestId = request.getRequestId();
+        String requestType = "captureWallet"; // Sử dụng giá trị chuẩn
 
-	        String rawHash = 	"accessKey=" + accessKey +
-			                    "&amount=" + longAmount +
-			                    "&extraData=" + extraData +
-			                    "&ipnUrl=" + ipnUrl +
-			                    "&orderId=" + orderId +
-			                    "&orderInfo=" + orderInfo +
-			                    "&partnerCode=" + partnerCode +
-			                    "&redirectUrl=" + redirectUrl +
-			                    "&requestId=" + requestId +
-			                    "&requestType=" + requestType;
+        String rawHash = "accessKey=" + accessKey +
+                         "&amount=" + longAmount +
+                         "&extraData=" + extraData +
+                         "&ipnUrl=" + ipnUrl +
+                         "&orderId=" + orderId +
+                         "&orderInfo=" + orderInfo +
+                         "&partnerCode=" + partnerCode +
+                         "&redirectUrl=" + redirectUrl +
+                         "&requestId=" + requestId +
+                         "&requestType=" + requestType;
 
-	        String signature;
-	        try {
-	            log.info("[MoMo Create Payment] Final Raw hash string: " + rawHash);
-	            signature = signHmacSHA256(rawHash, secretKey);
-	        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-	            log.error("Error creating signature for payment creation: {}", e.getMessage(), e);
-	            return new MomoPaymentResponse(-1, "Lỗi tạo chữ ký.");
-	        }
+        String signature;
+        try {
+            log.info("[MoMo Create Payment] Final Raw hash string: " + rawHash);
+            signature = signHmacSHA256(rawHash, secretKey);
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            log.error("Error creating signature for payment creation: {}", e.getMessage(), e);
+            return new MomoPaymentResponse(-1, "Lỗi tạo chữ ký.");
+        }
 
-	        JSONObject jsonPayload = new JSONObject();
-	        jsonPayload.put("partnerCode", partnerCode);
-	        jsonPayload.put("requestId", requestId);
-	        jsonPayload.put("amount", String.valueOf(longAmount));
-	        jsonPayload.put("orderId", orderId);
-	        jsonPayload.put("orderInfo", orderInfo);
-	        jsonPayload.put("redirectUrl", redirectUrl);
-	        jsonPayload.put("ipnUrl", ipnUrl);
-	        jsonPayload.put("extraData", extraData);
-	        jsonPayload.put("requestType", requestType);
-	        jsonPayload.put("signature", signature);
-	        jsonPayload.put("lang", "vi");
+        JSONObject jsonPayload = new JSONObject();
+        jsonPayload.put("partnerCode", partnerCode);
+        jsonPayload.put("requestId", requestId);
+        jsonPayload.put("amount", String.valueOf(longAmount));
+        jsonPayload.put("orderId", orderId);
+        jsonPayload.put("orderInfo", orderInfo);
+        jsonPayload.put("redirectUrl", redirectUrl);
+        jsonPayload.put("ipnUrl", ipnUrl);
+        jsonPayload.put("extraData", extraData);
+        jsonPayload.put("requestType", requestType);
+        jsonPayload.put("signature", signature);
+        jsonPayload.put("lang", "vi");
 
-	        try (CloseableHttpClient client = HttpClients.createDefault()) {
-	            HttpPost post = new HttpPost(createOrderUrl);
-	            post.setHeader("Content-Type", "application/json");
-	            post.setEntity(new StringEntity(jsonPayload.toString(), StandardCharsets.UTF_8));
-	            log.info("[MoMo Create Payment] Request body: " + jsonPayload.toString());
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost post = new HttpPost(createOrderUrl);
+            post.setHeader("Content-Type", "application/json");
+            post.setEntity(new StringEntity(jsonPayload.toString(), StandardCharsets.UTF_8));
+            log.info("[MoMo Create Payment] Request body: " + jsonPayload.toString());
 
-	            try (CloseableHttpResponse response = client.execute(post);
-	                 BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8))) {
-	                
-	                StringBuilder responseStringBuilder = new StringBuilder();
-	                String line;
-	                while ((line = reader.readLine()) != null) {
-	                    responseStringBuilder.append(line);
-	                }
-	                
-	                JSONObject apiResponse = new JSONObject(responseStringBuilder.toString());
-	                log.info("MoMo API Response (Create Payment): {}", apiResponse.toString());
+            try (CloseableHttpResponse response = client.execute(post);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8))) {
+                
+                StringBuilder responseStringBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseStringBuilder.append(line);
+                }
+                
+                JSONObject apiResponse = new JSONObject(responseStringBuilder.toString());
+                log.info("MoMo API Response (Create Payment): {}", apiResponse.toString());
 
-	                MomoPaymentResponse momoResponse = new MomoPaymentResponse();
-	                momoResponse.setResultCode(apiResponse.optInt("resultCode"));
+                MomoPaymentResponse momoResponse = new MomoPaymentResponse();
+                momoResponse.setResultCode(apiResponse.optInt("resultCode"));
 
-	                String message = apiResponse.optString("message");
-	                if (message != null && message.length() > 250) {
-	                    log.warn("MoMo message is too long, truncating it. Original: {}", message);
-	                    message = message.substring(0, 250) + "...";
-	                }
-	                momoResponse.setMessage(message);
+                String message = apiResponse.optString("message");
+                if (message != null && message.length() > 250) {
+                    log.warn("MoMo message is too long, truncating it. Original: {}", message);
+                    message = message.substring(0, 250) + "...";
+                }
+                momoResponse.setMessage(message);
 
-	                if (momoResponse.getResultCode() == 0) {
-	                    momoResponse.setPayUrl(apiResponse.optString("payUrl"));
-	                } else {
-	                     log.error("MoMo payment initiation failed. Code: {}, Message: {}", momoResponse.getResultCode(), momoResponse.getMessage());
-	                }
-	                
-	                momoResponse.setPartnerCode(apiResponse.optString("partnerCode"));
-	                momoResponse.setRequestId(apiResponse.optString("requestId"));
-	                momoResponse.setOrderId(apiResponse.optString("orderId"));
-	                momoResponse.setAmount(apiResponse.optLong("amount"));
-	                momoResponse.setTransId(apiResponse.optString("transId"));
-	                
-	                return momoResponse;
-	            }
-	        } catch (Exception e) {
-	            log.error("Exception during MoMo payment creation: {}", e.getMessage(), e);
-	            return new MomoPaymentResponse(-1, "Lỗi kết nối hoặc xử lý response từ MoMo: " + e.getMessage());
-	        }
-	    }
-	    
-   
+                if (momoResponse.getResultCode() == 0) {
+                    momoResponse.setPayUrl(apiResponse.optString("payUrl"));
+                } else {
+                     log.error("MoMo payment initiation failed. Code: {}, Message: {}", momoResponse.getResultCode(), momoResponse.getMessage());
+                }
+                
+                momoResponse.setPartnerCode(apiResponse.optString("partnerCode"));
+                momoResponse.setRequestId(apiResponse.optString("requestId"));
+                momoResponse.setOrderId(apiResponse.optString("orderId"));
+                momoResponse.setAmount(apiResponse.optLong("amount"));
+                momoResponse.setTransId(apiResponse.optString("transId"));
+                
+                return momoResponse;
+            }
+        } catch (Exception e) {
+            log.error("Exception during MoMo payment creation: {}", e.getMessage(), e);
+            return new MomoPaymentResponse(-1, "Lỗi kết nối hoặc xử lý response từ MoMo: " + e.getMessage());
+        }
+    }
+    
     @Override
     public boolean processIpn(Map<String, String> ipnData) {
         String secretKey = MomoConfig.SECRET_KEY;
         String receivedSignature = ipnData.get("signature");
 
-        
         String rawHash = "accessKey=" + ipnData.get("accessKey") +
                          "&amount=" + ipnData.get("amount") +
                          "&extraData=" + ipnData.get("extraData") +
@@ -207,7 +204,6 @@ public class MomoServiceImp implements MomoService {
         String secretKey = MomoConfig.SECRET_KEY;
         String queryStatusUrl = MomoConfig.QUERY_STATUS_URL; 
 
-        
         String rawHash = "partnerCode=" + partnerCode +
                          "&accessKey=" + accessKey +
                          "&requestId=" + requestId +
