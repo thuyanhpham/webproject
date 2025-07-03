@@ -48,6 +48,13 @@
                             <div class="amount" th:text="${totalMovies ?: 'N/A'}">0</div>
                         </div>
                     </a>
+                    <a th:href="@{/admin/people}" class="stat-card">
+                        <div class="stat-card-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-card-info">
+                            <div class="title">Total People</div>
+                            <div class="amount" th:text="${totalPeople ?: 'N/A'}">0</div>
+                        </div>
+                    </a>
                     <a th:href="@{/admin/seat-types}" class="stat-card">
                         <div class="stat-card-icon orange"><i class="fas fa-ticket-alt"></i></div>
                         <div class="stat-card-info">
@@ -69,9 +76,10 @@
                         <h3 class="card-title">Quick Actions</h3>
                     </div>
                     <div class="card-body quick-actions-container">
-                         <a th:href="@{/admin/movies/add}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
-                         <a th:href="@{/admin/seat-types/new}" class="custom-button"><i class="fas fa-plus"></i> Add Seat Type</a>
-                         <a th:href="@{/admin/rooms/new}" class="custom-button"><i class="fas fa-plus"></i> Add Room</a>
+                        <a th:href="@{/admin/people/new}" class="custom-button"><i class="fas fa-plus"></i> Add Person</a>
+                        <a th:href="@{/admin/movies/add}" class="custom-button"><i class="fas fa-plus"></i> Add Movie</a>
+                        <a th:href="@{/admin/seat-types/new}" class="custom-button"><i class="fas fa-plus"></i> Add Seat Type</a>
+                        <a th:href="@{/admin/rooms/new}" class="custom-button"><i class="fas fa-plus"></i> Add Room</a>
                     </div>
                 </div>
             </div>

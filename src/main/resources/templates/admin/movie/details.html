@@ -37,8 +37,8 @@
                         <h3 class="card-title mb-4" th:text="${movie.title}">Movie Title</h3>
                         <div class="row">
                             <div class="col-md-4">
-                                <img th:if="${movie.posterUrl != null}" th:src="${movie.posterUrl}" alt="Movie Poster" class="poster-image mb-4">
-                                <img th:unless="${movie.posterUrl != null}" th:src="@{/images/default-poster.png}" alt="Default Poster" class="poster-image mb-4">
+                                <img th:if="${movie.posterUrl != null and !movie.posterUrl.isBlank()}" th:src="@{${movie.posterUrl}}" alt="Movie Poster" class="poster-image mb-4">
+                                <img th:unless="${movie.posterUrl != null and !movie.posterUrl.isBlank()}" th:src="@{/images/default-poster.png}" alt="Default Poster" class="poster-image mb-4">
                                 
                                 <div class="action-grid-container mt-4">
                                     <div class="action-grid">
@@ -75,8 +75,24 @@
                                     <li class="detail-item"><span class="detail-label">Release Date:</span> <span class="detail-value" th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : 'N/A'}"></span></li>
                                     <li class="detail-item"><span class="detail-label">Duration:</span> <span class="detail-value" th:text="${movie.duration != null ? movie.duration + ' minutes' : 'N/A'}"></span></li>
                                     <li class="detail-item"><span class="detail-label">Language:</span> <span class="detail-value" th:text="${movie.language} ?: 'N/A'"></span></li>
-                                    <li class="detail-item"><span class="detail-label">Director:</span> <span class="detail-value" th:text="${movie.director} ?: 'N/A'"></span></li>
-                                    <li class="detail-item"><span class="detail-label">Cast:</span> <span class="detail-value" th:text="${movie.cast != null and !movie.cast.isBlank() ? movie.cast : 'N/A'}"></span></li>
+                                    <li class="detail-item">
+                                        <span class="detail-label">Director(s):</span>
+                                        <span class="detail-value" th:if="${!movie.getDirectors().isEmpty()}"
+                                              th:text="${#strings.listJoin(movie.getDirectors().![person.name], ', ')}">
+                                        </span>
+                                        <span class="detail-value" th:if="${movie.getDirectors().isEmpty()}">N/A</span>
+                                    </li>
+                                    <li class="detail-item">
+                                        <span class="detail-label">Cast:</span>
+                                        <div class="detail-value">
+                                            <p th:if="${movie.getCast().isEmpty()}">N/A</p>
+                                            <ul class="list-unstyled mb-0" th:unless="${movie.getCast().isEmpty()}">
+                                                <li th:each="crew : ${movie.getCast()}"
+                                                    th:text="${crew.person.name} + (${crew.characterName != null and !crew.characterName.isBlank()} ? ' as “' + ${crew.characterName} + '”' : '')">
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
                                     <li class="detail-item"><span class="detail-label">Genres:</span> <span class="detail-value" th:text="${movie.genres != null and not movie.genres.empty ? #strings.listJoin(movie.genres.![name], ', ') : 'N/A'}"></span></li>
                                     <li class="detail-item"><span class="detail-label">Format:</span> <span class="detail-value" th:text="${movie.format?.name ?: 'N/A'}"></span></li>
                                     <li class="detail-item"><span class="detail-label">Status:</span> <span class="detail-value" th:text="${movie.status?.displayName ?: 'N/A'}"></span></li>

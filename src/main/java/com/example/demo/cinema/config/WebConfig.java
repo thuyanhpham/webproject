@@ -12,14 +12,30 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${app.upload.dir}")
     private String uploadDir; 
 
+    @Value("${app.upload.people.dir}")
+    private String peopleUploadDir;
+
+    @Value("${app.upload.movie-posters.dir}")
+    private String moviePostersUploadDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         
         registry.addResourceHandler("/images/avatars/**")
                 .addResourceLocations("file:///" + uploadDir); 
 
-        
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/", "classpath:/public/", "classpath:/resources/", "classpath:/META-INF/resources/");
+        registry.addResourceHandler("/people-photos/**")
+                .addResourceLocations("file:" + peopleUploadDir);
+
+        registry.addResourceHandler("/movie-posters/**")
+        .addResourceLocations("file:" + moviePostersUploadDir);
+
+        registry.addResourceHandler("/css/**", "/js/**", "/images/**", "/webfonts/**")
+                .addResourceLocations(
+                    "classpath:/static/css/",
+                    "classpath:/static/js/",
+                    "classpath:/static/images/",
+                    "classpath:/static/webfonts/"
+                );
     }
 }

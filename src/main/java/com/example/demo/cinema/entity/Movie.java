@@ -10,9 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,6 +27,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "movies")
@@ -54,10 +53,6 @@ public class Movie {
     @Column(nullable = false, length = 50)
     private String language;
 
-    @Column(nullable = false, length = 100)
-    private String director;
-
-
     @Column(precision = 2, scale = 1)
     private BigDecimal rating;
 
@@ -79,9 +74,6 @@ public class Movie {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-    
-    @Column(name = "cast_list", length = 1000)
-    private String cast;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Showtime> showtimes = new HashSet<>();
@@ -120,6 +112,12 @@ public class Movie {
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<MovieCrew> crew = new HashSet<>();
+
+	public static final String ROLE_DIRECTOR = "DIRECTOR";
+	public static final String ROLE_ACTOR = "ACTOR";
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -150,14 +148,6 @@ public class Movie {
 
 	public void setFormat(Format format) {
 		this.format = format;
-	}
-
-	public String getCast() {
-		return cast;
-	}
-
-	public void setCast(String cast) {
-		this.cast = cast;
 	}
 
 	public Long getId() {
@@ -206,14 +196,6 @@ public class Movie {
 
 	public void setLanguage(String language) {
 		this.language = language;
-	}
-
-	public String getDirector() {
-		return director;
-	}
-
-	public void setDirector(String director) {
-		this.director = director;
 	}
 
 	public BigDecimal getRating() {
@@ -279,6 +261,14 @@ public class Movie {
 	public void setReviews(Set<Review> reviews) {
 		this.reviews = reviews;
 	}
+	
+	public Set<MovieCrew> getCrew() {
+		return crew;
+	}
+
+	public void setCrew(Set<MovieCrew> crew) {
+		this.crew = crew;
+	}
 
 	public String getGenresDisplay() {
         if (genres == null || genres.isEmpty()) {
@@ -314,5 +304,19 @@ public class Movie {
                "id=" + id +
                ", title='" + title + '\'' +
                '}';
+    }
+
+	@Transient
+    public List<MovieCrew> getDirectors() {
+        return this.crew.stream()
+                .filter(c -> ROLE_DIRECTOR.equals(c.getRole()))
+                .collect(Collectors.toList());
+    }
+
+    @Transient
+    public List<MovieCrew> getCast() {
+        return this.crew.stream()
+                .filter(c -> ROLE_ACTOR.equals(c.getRole()))
+                .collect(Collectors.toList());
     }
 }

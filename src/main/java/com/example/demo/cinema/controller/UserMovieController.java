@@ -6,18 +6,12 @@ import com.example.demo.cinema.entity.Movie;
 import com.example.demo.cinema.entity.Review;
 import com.example.demo.cinema.entity.Showtime;
 import com.example.demo.cinema.entity.User;
-import com.example.demo.cinema.exception.ResourceNotFoundException;
 import com.example.demo.cinema.service.MovieService;
 import com.example.demo.cinema.service.ReviewService;
 import com.example.demo.cinema.service.SeatPlanService;
 import com.example.demo.cinema.service.ShowtimeService;
-
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +39,6 @@ import java.util.stream.IntStream;
 @Controller
 @RequestMapping("/movies")
 public class UserMovieController {
-
-    private static final Logger log = LoggerFactory.getLogger(UserMovieController.class);
 
     private final MovieService movieService;
     private final ShowtimeService showtimeService;
@@ -113,7 +105,7 @@ public class UserMovieController {
             Pageable firstPageable = PageRequest.of(0, REVIEWS_PER_PAGE, Sort.by("timestamp").descending());
             Page<Review> reviewPage = reviewService.getReviewsForMovie(id, firstPageable);
             model.addAttribute("reviewsForDisplay", reviewPage.getContent());
-            model.addAttribute("reviewPage", reviewPage);
+            model.addAttribute("reviewPage", reviewPage);        
             return "user/movie/moviedetail";
     }
 
@@ -122,23 +114,12 @@ public class UserMovieController {
                                @RequestParam("rating") Integer rating,
                                @RequestParam(name = "title", required = false) String title,
                                @RequestParam("content") String content,
-                               @AuthenticationPrincipal UserDetails currentUser,
-                               RedirectAttributes redirectAttributes) {
+                               @AuthenticationPrincipal UserDetails currentUser) {
         if (currentUser == null) {
-            redirectAttributes.addFlashAttribute("reviewErrorMessage", "You must be logged in to submit a review.");
             return "redirect:/login?redirect=/movies/detail/" + movieId;
         }
         String username = currentUser.getUsername();
-        try {
-            reviewService.createReview(username, movieId, rating, title, content);
-            redirectAttributes.addFlashAttribute("reviewSuccessMessage", "Your review has been submitted successfully!");
-        } catch (DataIntegrityViolationException e) {
-            redirectAttributes.addFlashAttribute("reviewErrorMessage", "You have already reviewed this movie.");
-        } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("reviewErrorMessage", e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("reviewErrorMessage", "An error occurred while submitting your review. Please try again.");
-        }
+        reviewService.createReview(username, movieId, rating, title, content);
         return "redirect:/movies/detail/" + movieId + "#reviews-section";
     }
 
@@ -161,20 +142,9 @@ public class UserMovieController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body(Map.of("error", "User not authenticated. Please login to like reviews."));
         }
-        try {
             Review updatedReview = reviewService.handleLikeReview(reviewId, currentUser.getUsername());
             ReviewDTO updatedReviewDTO = convertToReviewDTO(updatedReview);
             return ResponseEntity.ok(updatedReviewDTO);
-        } catch (ResourceNotFoundException e) {
-            log.warn("API: Like failed. Review not found with ID: {}", reviewId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
-        } catch (IllegalStateException e) {
-            log.warn("API: Like failed for review ID: {}. Reason: {}", reviewId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            log.error("API: Error liking review with ID: {}", reviewId, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Could not process like action."));
-        }
     }
 
     @PostMapping("/api/reviews/{reviewId}/dislike")
@@ -184,20 +154,10 @@ public class UserMovieController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body(Map.of("error", "User not authenticated. Please login to dislike reviews."));
         }
-        try {
-            Review updatedReview = reviewService.handleDislikeReview(reviewId, currentUser.getUsername());
-            ReviewDTO updatedReviewDTO = convertToReviewDTO(updatedReview);
-            return ResponseEntity.ok(updatedReviewDTO);
-        } catch (ResourceNotFoundException e) {
-            log.warn("API: Dislike failed. Review not found with ID: {}", reviewId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
-        } catch (IllegalStateException e) {
-            log.warn("API: Dislike failed for review ID: {}. Reason: {}", reviewId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            log.error("API: Error disliking review with ID: {}", reviewId, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Could not process dislike action."));
-        }
+        Review updatedReview = reviewService.handleDislikeReview(reviewId, currentUser.getUsername());
+        ReviewDTO updatedReviewDTO = convertToReviewDTO(updatedReview);
+        return ResponseEntity.ok(updatedReviewDTO);
+
     }
 
     
@@ -207,22 +167,9 @@ public class UserMovieController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body(Map.of("error", "User not authenticated. Please login to report reviews."));
-        }
-        try {
-            
-            Map<String, Object> reportResult = reviewService.handleReportAbuse(reviewId, currentUser.getUsername());
-            return ResponseEntity.ok(reportResult);
-
-        } catch (ResourceNotFoundException e) {
-            log.warn("API: Report Abuse failed. Resource not found. Review ID: {}, Error: {}", reviewId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
-        } catch (IllegalStateException e) { 
-            log.warn("API: Report Abuse failed for review ID: {}. Reason: {}", reviewId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            log.error("API: Error reporting abuse for review with ID: {}", reviewId, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Could not process report abuse action."));
-        }
+        }  
+        Map<String, Object> reportResult = reviewService.handleReportAbuse(reviewId, currentUser.getUsername());
+        return ResponseEntity.ok(reportResult);
     }
 
     private ReviewDTO convertToReviewDTO(Review reviewEntity) {

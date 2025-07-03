@@ -48,7 +48,9 @@
         <div class="container">
             <div class="details-banner-wrapper" th:if="${movie != null}">
                 <div class="details-banner-thumb">
-                    <img th:src="${movie.posterUrl != null ? movie.posterUrl : '/images/placeholder.jpg'}" alt="movie poster">
+                    <th:block th:with="posterUrl=${movie.posterUrl != null and !movie.posterUrl.isBlank() ? movie.posterUrl : '/images/default-poster.png'}">
+                        <img th:src="@{${posterUrl}}" alt="movie poster">
+                    </th:block>
                     <a th:href="${movie.trailerUrl}" class="video-popup" target="_blank">
                         <img th:src="@{/images/video-button.png}" alt="play trailer">
                     </a>
@@ -163,167 +165,172 @@
                                         <h5 class="sub-title">Synopsis</h5>
                                         <p th:text="${movie.description}">Movie description goes here.</p>
                                     </div>
-                                    <div class="item">
-                                        <div class="header">
-                                            <h5 class="sub-title">cast</h5>
-                                            <div class="navigation">
-                                                <div class="cast-prev"><i class="flaticon-double-right-arrows-angles"></i></div>
-                                                <div class="cast-next"><i class="flaticon-double-right-arrows-angles"></i></div>
+                                    <div class="item cast-section">
+										<div class="header">
+											<h5 class="sub-title">CAST</h5>
+											<div class="navigation">
+												<div class="cast-prev"><i class="flaticon-double-right-arrows-angles"></i></div>
+												<div class="cast-next"><i class="flaticon-double-right-arrows-angles"></i></div>
+											</div>
+										</div>
+										<div class="casting-slider owl-carousel">
+											<div class="cast-item" th:each="crew : ${movie.getCast()}">
+												<div class="cast-thumb">
+													<a href="#0">
+														<th:block th:with="photoUrl=${crew.person.photoUrl != null and !crew.person.photoUrl.isBlank() ? crew.person.photoUrl : '/images/default-avatar.png'}">
+															<img th:src="@{${photoUrl}}" alt="cast-image">
+														</th:block>
+													</a>
+												</div>
+												<div class="cast-content">
+													<h6 class="cast-title"><a href="#0" th:text="${crew.person.name}">Actor Name</a></h6>
+													<span class="cate">Actor</span>
+												</div>
+											</div>
+											<div class="cast-item" th:if="${movie.getCast().isEmpty()}">
+												<p style="padding: 20px; text-align: center; width: 100%;">No cast information available.</p>
+											</div>
+										</div>
+									</div>
+                                    <div class="item director-section">
+										<h5 class="sub-title">DIRECTOR(S)</h5>
+										<div class="director-wrapper">
+											<div class="director-item" th:each="crew : ${movie.getDirectors()}">
+												<div class="director-thumb">
+													<a href="#0">
+														<th:block th:with="photoUrl=${crew.person.photoUrl != null and !crew.person.photoUrl.isBlank() ? crew.person.photoUrl : '/images/default-avatar.png'}">
+															<img th:src="@{${photoUrl}}" alt="director-image">
+														</th:block>
+													</a>
+												</div>
+												<div class="director-content">
+													<h6 class="director-title"><a href="#0" th:text="${crew.person.name}">Director Name</a></h6>
+													<span class="cate">Director</span>
+												</div>
+											</div>
+											<div th:if="${movie.getDirectors().isEmpty()}">
+												<p>N/A</p>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                <div class="tab-item" id="user-review-content-area">
+                                    <div th:if="${movie != null}">
+                                
+                                        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}" th:attr="data-review-id=${review.id}">
+                                            <div class="author">
+                                                <div class="thumb">
+                                                    <a href="#0">
+                                                        <img th:src="${review.user?.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}"
+                                                             alt="user avatar" class="review-user-avatar">
+                                                    </a>
+                                                </div>
+                                                <div class="movie-review-info">
+                                                    <span class="reply-date" th:if="${review.timestamp != null}"
+                                                          th:text="${#temporals.format(review.timestamp, 'dd MMM yy HH:mm')}">Review Date</span>
+                                                    <h6 class="subtitle">
+                                                        <a href="#0"
+                                                           th:text="${review.user?.fullname != null ? review.user.fullname : review.user?.username}">User Name</a>
+                                                    </h6>
+                                                    <span th:if="${review.verified != null and review.verified}">
+                                                        <i class="fas fa-check"></i> verified review
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="movie-review-content">
+                                                <div class="review">
+                                                    <i class="flaticon-favorite-heart-button"
+                                                       th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
+                                                </div>
+                                                <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
+                                                <p th:text="${review.content}">Review content...</p>
+                                                
+                                                <div class="review-meta">
+                                                    <a href="javascript:void(0);" class="review-like-btn" th:attr="data-review-id=${review.id}">
+                                                        <i class="flaticon-hand"></i><span class="like-count" th:text="${review.likes != null ? review.likes : 0}">0</span>
+                                                    </a>
+                                                    <a href="javascript:void(0);" class="review-dislike-btn dislike" th:attr="data-review-id=${review.id}">
+                                                        <i class="flaticon-dont-like-symbol"></i><span class="dislike-count" th:text="${review.dislikes != null ? review.dislikes : 0}">0</span>
+                                                    </a>
+                                                    <a href="javascript:void(0);" class="review-report-btn" 
+                                                       th:attr="data-review-id=${review.id}, data-review-user=${review.user?.fullname != null ? review.user.fullname : review.user?.username}">
+                                                       Report Abuse
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="casting-slider owl-carousel owl-loaded owl-drag">
-                                            <div class="owl-stage-outer"><div class="owl-stage">
-                                                <th:block th:if="${movie.cast != null and !#strings.isEmpty(movie.cast)}">
-												    <div class="owl-item" th:each="actorName : ${#strings.arraySplit(movie.cast, ',')}">
-												        <div class="cast-item">
-												            <div class="cast-thumb">
-												                <a href="javascript:void(0);"><img th:src="@{/images/cast-placeholder.jpg}" alt="cast photo"></a>
-												            </div>
-												            <div class="cast-content">
-												                <h6 class="cast-title"><a href="javascript:void(0);" th:text="${#strings.trim(actorName)}">Actor Name</a></h6>
-												                <span class="cate">actor</span>
-												            </div>
-												        </div>
-												    </div>
-												</th:block>
-												<div class="owl-item" th:if="${movie.cast == null or #strings.isEmpty(movie.cast)}">
-												    <p style="padding: 20px; text-align: center;">No cast information available.</p>
-												</div>
-                                            </div></div>
-                                            <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div><div class="owl-dots disabled"></div>
-                                        </div>
-                                    </div>
-                                    <div class="item">
-										    <h5 class="sub-title">Director</h5>
-										    <p th:if="${movie.director != null and !#strings.isEmpty(movie.director)}"
-										       th:text="${movie.director}">
-										        Director Name
-										    </p>
-										    <p th:unless="${movie.director != null and !#strings.isEmpty(movie.director)}">
-										        N/A
-										    </p>
-                                    </div>
-                                </div>
                                 
- 								<div class="tab-item" id="user-review-content-area">
-						    <div th:if="${movie != null}">
-						
-						        <div class="movie-review-item" th:each="review : ${reviewsForDisplay}" th:attr="data-review-id=${review.id}">
-						            <div class="author">
-						                <div class="thumb">
-						                    <a href="#0">
-						                        <img th:src="${review.user?.avatarUrl != null ? review.user.avatarUrl : '/images/user-placeholder.jpg'}"
-						                             alt="user avatar" class="review-user-avatar">
-						                    </a>
-						                </div>
-						                <div class="movie-review-info">
-						                    <span class="reply-date" th:if="${review.timestamp != null}"
-						                          th:text="${#temporals.format(review.timestamp, 'dd MMM yy HH:mm')}">Review Date</span>
-						                    <h6 class="subtitle">
-						                        <a href="#0"
-						                           th:text="${review.user?.fullname != null ? review.user.fullname : review.user?.username}">User Name</a>
-						                    </h6>
-						                    <span th:if="${review.verified != null and review.verified}">
-						                        <i class="fas fa-check"></i> verified review
-						                    </span>
-						                </div>
-						            </div>
-						            <div class="movie-review-content">
-						                <div class="review">
-						                    <i class="flaticon-favorite-heart-button"
-						                       th:each="star : ${#numbers.sequence(1, review.rating != null ? review.rating : 0)}"></i>
-						                </div>
-						                <h6 class="cont-title" th:text="${review.title}">Review Title</h6>
-						                <p th:text="${review.content}">Review content...</p>
-						                
-						                <div class="review-meta">
-						                    <a href="javascript:void(0);" class="review-like-btn" th:attr="data-review-id=${review.id}">
-						                        <i class="flaticon-hand"></i><span class="like-count" th:text="${review.likes != null ? review.likes : 0}">0</span>
-						                    </a>
-						                    <a href="javascript:void(0);" class="review-dislike-btn dislike" th:attr="data-review-id=${review.id}">
-						                        <i class="flaticon-dont-like-symbol"></i><span class="dislike-count" th:text="${review.dislikes != null ? review.dislikes : 0}">0</span>
-						                    </a>
-						                    <a href="javascript:void(0);" class="review-report-btn" 
-						                       th:attr="data-review-id=${review.id}, data-review-user=${review.user?.fullname != null ? review.user.fullname : review.user?.username}">
-						                       Report Abuse
-						                    </a>
-						                </div>
-						               
-						            </div>
-						        </div>
-						
-						        <div id="no-reviews-message" class="movie-review-item" th:if="${#lists.isEmpty(reviewsForDisplay)}">
-						            <p>No reviews yet.</p>
-						        </div>
-						
-						        <div id="more-reviews-container">
-						            </div>
-						
-						        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
-						            <a href="javascript:void(0);" class="custom-button transparent"
-						               id="load-more-reviews-btn"
-						               th:attr="data-movie-id=${movie.id}, data-next-page=${reviewPage.number + 1}, data-page-size=${reviewPage.size}">
-						                load more
-						            </a>
-						        </div>
-						       
-						    </div> <div th:if="${movie == null}">
-						        <p>Movie information not available.</p>
-						    </div>
-						    
-						    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}">
-						        <div th:if="${#authorization.expression('isAuthenticated()')}">
-						            <h4>Leave a Review for <span th:text="${movie.title}">Movie Title</span></h4>
-						            <div th:if="${param.reviewSuccess}" class="alert alert-success" role="alert"
-						                 th:text="${param.reviewSuccess[0] == 'true' ? 'Your review has been submitted successfully!' : ''}">
-						            </div>
-						            <div th:if="${param.reviewError}" class="alert alert-danger" role="alert"
-						                 th:text="${param.reviewError[0]}">
-						            </div>
-						            <div th:if="${reviewSuccessMessage}" class="alert alert-success" role="alert" th:text="${reviewSuccessMessage}"></div>
-						            <div th:if="${reviewErrorMessage}" class="alert alert-danger" role="alert" th:text="${reviewErrorMessage}"></div>
-						            <form id="reviewForm" th:action="@{/movies/{movieId}/reviews/submit(movieId=${movie.id})}" method="post" class="comment-form mt-3">
-						                <div class="form-group row">
-						                    <label for="rating" class="col-sm-3 col-form-label">Your Rating <span class="text-danger">*</span>:</label>
-						                    <div class="col-sm-9">
-						                        <select class="form-control" id="rating" name="rating" required>
-						                            <option value="" disabled selected>-- Select Rating --</option>
-						                            <option value="5">★★★★★ (Excellent)</option>
-						                            <option value="4">★★★★☆ (Good)</option>
-						                            <option value="3">★★★☆☆ (Average)</option>
-						                            <option value="2">★★☆☆☆ (Fair)</option>
-						                            <option value="1">★☆☆☆☆ (Poor)</option>
-						                        </select>
-						                    </div>
-						                </div>
-						                <div class="form-group row">
-						                    <label for="reviewTitle" class="col-sm-3 col-form-label">Review Title:</label>
-						                    <div class="col-sm-9">
-						                        <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="e.g., Amazing movie!"
-						                               th:value="${submittedTitle}">
-						                    </div>
-						                </div>
-						                <div class="form-group row">
-						                    <label for="reviewContent" class="col-sm-3 col-form-label">Your Review <span class="text-danger">*</span>:</label>
-						                    <div class="col-sm-9">
-						                        <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your thoughts..." required
-						                                  th:text="${submittedContent}"></textarea>
-						                    </div>
-						                </div>
-						                <div class="form-group row">
-						                    <div class="col-sm-9 offset-sm-3">
-						                        <button type="submit" class="custom-button btn-primary">Submit Review</button>
-						                    </div>
-						                </div>
-						            </form>
-						        </div>
-						        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="text-center">
-						            <p class="lead">Want to share your thoughts on this movie?</p>
-						            <a th:href="@{/login(redirectUrl=${#httpServletRequest.requestURI})}" class="custom-button">Login to Write a Review</a>
-						        </div>
-						    </div> </div> 
-
-							</div>
+                                        <div id="no-reviews-message" class="movie-review-item" th:if="${#lists.isEmpty(reviewsForDisplay)}">
+                                            <p>No reviews yet.</p>
+                                        </div>
+                                
+                                        <div id="more-reviews-container">
+                                        </div>
+                                
+                                        <div class="load-more text-center" th:if="${reviewPage != null and reviewPage.hasNext()}">
+                                            <a href="javascript:void(0);" class="custom-button transparent"
+                                               id="load-more-reviews-btn"
+                                               th:attr="data-movie-id=${movie.id}, data-next-page=${reviewPage.number + 1}, data-page-size=${reviewPage.size}">
+                                                load more
+                                            </a>
+                                        </div>
+                                       
+                                    </div> <div th:if="${movie == null}">
+                                        <p>Movie information not available.</p>
+                                    </div>
+                                    
+                                    <div id="reviews-section" class="leave-review-section mt-5 pt-4 border-top" th:if="${movie != null}">
+                                        <div th:if="${#authorization.expression('isAuthenticated()')}">
+                                            <h4>Leave a Review for <span th:text="${movie.title}">Movie Title</span></h4>
+                                            <div th:if="${param.reviewSuccess}" class="alert alert-success" role="alert"
+                                                 th:text="${param.reviewSuccess[0] == 'true' ? 'Your review has been submitted successfully!' : ''}">
+                                            </div>
+                                            <div th:if="${param.reviewError}" class="alert alert-danger" role="alert"
+                                                 th:text="${param.reviewError[0]}">
+                                            </div>
+                                            <div th:if="${reviewSuccessMessage}" class="alert alert-success" role="alert" th:text="${reviewSuccessMessage}"></div>
+                                            <div th:if="${reviewErrorMessage}" class="alert alert-danger" role="alert" th:text="${reviewErrorMessage}"></div>
+                                            <form id="reviewForm" th:action="@{/movies/{movieId}/reviews/submit(movieId=${movie.id})}" method="post" class="comment-form mt-3">
+                                                <div class="form-group row">
+                                                    <label for="rating" class="col-sm-3 col-form-label">Your Rating <span class="text-danger">*</span>:</label>
+                                                    <div class="col-sm-9">
+                                                        <select class="form-control" id="rating" name="rating" required>
+                                                            <option value="" disabled selected>-- Select Rating --</option>
+                                                            <option value="5">★★★★★ (Excellent)</option>
+                                                            <option value="4">★★★★☆ (Good)</option>
+                                                            <option value="3">★★★☆☆ (Average)</option>
+                                                            <option value="2">★★☆☆☆ (Fair)</option>
+                                                            <option value="1">★☆☆☆☆ (Poor)</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="reviewTitle" class="col-sm-3 col-form-label">Review Title:</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="e.g., Amazing movie!"
+                                                               th:value="${submittedTitle}">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="reviewContent" class="col-sm-3 col-form-label">Your Review <span class="text-danger">*</span>:</label>
+                                                    <div class="col-sm-9">
+                                                        <textarea class="form-control" id="reviewContent" name="content" rows="5" placeholder="Share your thoughts..." required
+                                                                  th:text="${submittedContent}"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-sm-9 offset-sm-3">
+                                                        <button type="submit" class="custom-button btn-primary">Submit Review</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div th:unless="${#authorization.expression('isAuthenticated()')}" class="text-center">
+                                            <p class="lead">Want to share your thoughts on this movie?</p>
+                                            <a th:href="@{/login(redirectUrl=${#httpServletRequest.requestURI})}" class="custom-button">Login to Write a Review</a>
+                                        </div>
+                                    </div> 
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -335,7 +342,6 @@
 
     <!-- ==========Footer Section========== -->
     <footer class="footer-section">
-        <!-- Newsletter Section -->
         <div class="newslater-section padding-bottom">
             <div class="container">
                 <div class="newslater-container" th:attr="data-background=@{/images/newslater-bg01.jpg}">
@@ -351,7 +357,6 @@
                 </div>
             </div>
         </div>
-        <!-- Footer Content -->
         <div class="container">
             <div class="footer-top">
                 <div class="logo"> <a th:href="@{/}"> <img th:src="@{/images/footer-logo.png}" alt="footer logo"> </a> </div>
@@ -398,6 +403,35 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 	document.addEventListener('DOMContentLoaded', function() {
+		var castSection = $('.cast-section');
+            var castSlider = castSection.find('.casting-slider');
+            var castNavigation = castSection.find('.navigation');
+
+            if (castSlider.length) {
+                var castItemsCount = castSlider.find('.cast-item').length;
+                var itemsToShowOnDesktop = 3;
+
+                if (castItemsCount > itemsToShowOnDesktop) {
+                    castSlider.owlCarousel({
+                        loop: true,
+                        margin: 30,
+                        nav: true,
+                        dots: false,
+                        navContainer: castNavigation,
+                        navText: [
+                            '<i class="flaticon-double-right-arrows-angles"></i>', 
+                            '<i class="flaticon-double-right-arrows-angles"></i>'
+                        ],
+                        responsive:{
+                            0:{ items: 1 },
+                            576:{ items: 2 },
+                            992:{ items: itemsToShowOnDesktop }
+                        }
+                    });
+                } else {
+                    castNavigation.hide();
+                }
+            }
 	    // --- PHẦN VALIDATE FORM REVIEW ---
 	    const reviewForm = document.getElementById('reviewForm');
 	    if (reviewForm) {
@@ -444,6 +478,7 @@
 	
 	        const authorDiv = document.createElement('div');
 	        authorDiv.className = 'author';
+	        
 	        const thumbDiv = document.createElement('div');
 	        thumbDiv.className = 'thumb';
 	        const authorLink = document.createElement('a');
