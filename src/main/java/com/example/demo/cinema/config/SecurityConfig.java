@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -67,7 +68,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authenticationProvider(authenticationProvider())
-                .csrf(withDefaults()) 
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/momo/ipn") 
+                    )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .maximumSessions(1)
@@ -76,6 +79,7 @@ public class SecurityConfig {
                         .sessionRegistry(sessionRegistry())) 
                 .addFilterAfter(userStatusFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                		.requestMatchers(HttpMethod.POST, "/momo/ipn").permitAll()
                         .requestMatchers(
                                 "/",             
                                 "/movielist",

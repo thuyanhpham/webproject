@@ -26,9 +26,9 @@ public class SeatPlanService {
         Showtime showtime = showtimeRepository.findById(showtimeId)
                 .orElseThrow(() -> new RuntimeException("Showtime not found with id: " + showtimeId));
 
-        List<Seat> allSeatsInRoom = seatRepository.findByRoomIdOrderByRowOrderAscSeatNumberAsc(showtime.getRoom().getId());
-
-        Set<Long> bookedSeatIds = ticketRepository.findSeatIdsByShowtimeId(showtimeId);
+       List<Seat> allSeatsInRoom = seatRepository.findByRoomIdOrderByRowOrderAscSeatNumberAsc(showtime.getRoom().getId());
+        Set<Long> bookedSeatIds = ticketRepository.findConfirmedSeatIdsByShowtimeId(showtimeId);
+        //Set<Long> bookedSeatIds = ticketRepository.findSeatIdsByShowtimeId(showtimeId);
 
         List<SeatDisplayDTO> seatDisplayDTOs = new ArrayList<>();
 
@@ -36,7 +36,8 @@ public class SeatPlanService {
         if (!seat.isActive()) continue;
 
         SeatType seatType = seat.getSeatType();
-        boolean isBooked = !seat.isAvailable() || bookedSeatIds.contains(seat.getId());
+        //boolean isBooked = !seat.isAvailable() || bookedSeatIds.contains(seat.getId());
+        boolean isBooked = bookedSeatIds.contains(seat.getId());
         
         if (seatType.isCouple()) {
             SeatDisplayDTO leftSeat = new SeatDisplayDTO();

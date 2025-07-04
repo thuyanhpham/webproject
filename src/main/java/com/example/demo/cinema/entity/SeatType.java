@@ -63,4 +63,5 @@ public class SeatType {
 		this.isCouple = isCouple;
 	}
 	
+	
 }
